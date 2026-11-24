@@ -138,10 +138,10 @@ export function UpcomingExams() {
   };
 
   return (
-    <section id="exams" className="py-16 bg-[#171B52]/[0.02] border-y border-[#E7E9F0]">
+    <section id="exams" className="py-8 sm:py-14 lg:py-16 bg-[#171B52]/[0.02] border-y border-[#E7E9F0]">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Editorial Section Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 border-b border-[#E7E9F0] pb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 sm:mb-8 gap-4 border-b border-[#E7E9F0] pb-4 sm:pb-6">
           <div>
             <span className="text-[#E31E2B] font-bold text-xs uppercase tracking-wider block mb-1">
               — Official Admission Calendar
@@ -212,16 +212,16 @@ export function UpcomingExams() {
         </div>
 
         {/* Calendar Cards Grid */}
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {filteredExams.map((exam) => (
             <div
               key={exam.id}
-              className="tactile-card rounded-2xl p-5 sm:p-6 transition-all hover:shadow-lg border border-[#E7E9F0] flex flex-col lg:flex-row lg:items-center justify-between gap-6"
+              className="tactile-card rounded-xl sm:rounded-2xl p-3.5 sm:p-6 transition-all hover:shadow-lg border border-[#E7E9F0] flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6"
             >
               {/* Left Column: Calendar Date Badge & Exam Info */}
-              <div className="flex items-start sm:items-center gap-4 flex-1">
+              <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1">
                 {/* 3D Calendar Tear-Off Sheet Badge */}
-                <div className="w-16 h-18 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0 shadow-md border border-[#E7E9F0] text-center flex flex-col justify-between bg-white">
+                <div className="w-14 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl overflow-hidden shrink-0 shadow-md border border-[#E7E9F0] text-center flex flex-col justify-between bg-white">
                   <div className="bg-[#E31E2B] text-white py-1 text-[11px] font-black uppercase tracking-wider">
                     {exam.month}
                   </div>

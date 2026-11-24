@@ -67,10 +67,10 @@ export function AdmissionJourneyTimeline() {
   const [activeStep, setActiveStep] = useState(0);
 
   return (
-    <section id="journey" className="py-20 bg-white border-y border-[#E7E9F0]">
+    <section id="journey" className="py-8 sm:py-14 lg:py-20 bg-white border-y border-[#E7E9F0]">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header on Pure White Canvas */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-14 gap-4 border-b border-[#E7E9F0] pb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-14 gap-4 border-b border-[#E7E9F0] pb-4 sm:pb-6">
           <div>
             <span className="text-[#E31E2B] font-bold text-xs uppercase tracking-wider block mb-1">
               — Top Admission Journey
@@ -239,21 +239,21 @@ export function AdmissionJourneyTimeline() {
         {/* ======================================================== */}
         {/* MOBILE RESPONSIVE ROAD (Vertical Connected Milestones)     */}
         {/* ======================================================== */}
-        <div className="lg:hidden relative pl-6 border-l-2 border-dashed border-[#E31E2B]/50 space-y-6">
+        <div className="lg:hidden relative ml-3 sm:ml-4 pl-4 sm:pl-5 border-l-2 border-dashed border-[#E31E2B]/50 space-y-3.5 sm:space-y-4">
           {JOURNEY_STEPS.map((s, idx) => {
             const Icon = s.icon;
             return (
               <div
                 key={s.num}
                 onClick={() => openModal(`Journey: ${s.stepNum} - ${s.title}`)}
-                className="relative bg-[#F7F8FC] p-5 rounded-2xl border border-[#E7E9F0] cursor-pointer"
+                className="relative bg-[#F7F8FC] p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-[#E7E9F0] cursor-pointer"
               >
                 {/* Milestone Node on the vertical line */}
-                <div className="absolute -left-[37px] top-4 w-8 h-8 rounded-full bg-[#E31E2B] text-white flex items-center justify-center font-bold text-xs shadow-md">
+                <div className="absolute -left-[23px] sm:-left-[27px] top-3 sm:top-3.5 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#E31E2B] text-white flex items-center justify-center font-bold text-[11px] sm:text-xs shadow-md">
                   {s.num}
                 </div>
 
-                <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] font-extrabold text-[#E31E2B] uppercase">
                     {s.stepNum}
                   </span>
@@ -262,9 +262,9 @@ export function AdmissionJourneyTimeline() {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 mb-2">
-                  <Icon className="w-4 h-4 text-[#E31E2B]" />
-                  <h3 className="font-display font-extrabold text-base text-[#15182D]">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E31E2B]" />
+                  <h3 className="font-display font-extrabold text-sm sm:text-base text-[#15182D]">
                     {s.title}
                   </h3>
                 </div>

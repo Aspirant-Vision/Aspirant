@@ -29,11 +29,11 @@ export function ExploreByGoal() {
   ];
 
   return (
-    <section id="courses" className="py-16 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="courses" className="py-8 sm:py-14 lg:py-16 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-3 border-b border-[#E7E9F0] pb-5">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 sm:mb-8 gap-3 border-b border-[#E7E9F0] pb-4 sm:pb-5">
         <div>
-          <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-[#15182D] tracking-tight">
+          <h2 className="font-display text-xl sm:text-3xl font-extrabold text-[#15182D] tracking-tight">
             Explore by <span className="text-[#E31E2B]">Your Goal</span>
           </h2>
           <p className="text-xs sm:text-sm text-[#687086] mt-1">
@@ -42,7 +42,7 @@ export function ExploreByGoal() {
         </div>
         <button
           onClick={() => openModal("All Courses & Streams")}
-          className="tactile-pill px-4 py-2 rounded-full text-[#E31E2B] font-bold text-xs sm:text-sm flex items-center gap-1.5 hover:text-[#c91622] group"
+          className="tactile-pill px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[#E31E2B] font-bold text-xs sm:text-sm flex items-center gap-1.5 hover:text-[#c91622] group"
         >
           <span>Explore All Courses</span>
           <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
@@ -50,19 +50,19 @@ export function ExploreByGoal() {
       </div>
 
       {/* 8 Tactile Cards with Interactive Skeuomorphic Icon Boxes */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3.5 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5 sm:gap-4">
         {streams.map((stream, idx) => {
           const Icon = stream.icon;
           return (
             <button
               key={idx}
               onClick={() => openModal(`Stream: ${stream.name}`)}
-              className="tactile-card rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center gap-2.5 text-center group cursor-pointer"
+              className="tactile-card rounded-xl sm:rounded-2xl p-2.5 sm:p-5 flex flex-col items-center justify-center gap-2 sm:gap-2.5 text-center group cursor-pointer"
             >
-              <div className={`tactile-icon-box w-12 h-12 rounded-2xl flex items-center justify-center ${stream.color}`}>
-                <Icon className="w-6 h-6 stroke-[2]" />
+              <div className={`tactile-icon-box w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center ${stream.color}`}>
+                <Icon className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
-              <div className="leading-tight mt-1">
+              <div className="leading-tight mt-0.5 sm:mt-1">
                 <span className="text-xs sm:text-sm font-bold text-[#15182D] group-hover:text-[#E31E2B] transition-colors block">
                   {stream.name}
                 </span>

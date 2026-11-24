@@ -52,10 +52,10 @@ export function FinalCounsellingCta() {
   ];
 
   return (
-    <section id="counselling" className="py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="counselling" className="py-8 sm:py-14 lg:py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* 1. 3 TACTILE GUARANTEE & ASSURANCE CTA CARDS */}
-      <div className="mb-10">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 gap-2 border-b border-[#E7E9F0] pb-4">
+      <div className="mb-8 sm:mb-10">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 sm:mb-6 gap-2 border-b border-[#E7E9F0] pb-3 sm:pb-4">
           <div>
             <span className="text-[#E31E2B] font-bold text-xs uppercase tracking-wider block mb-1">
               — Guaranteed Student Protection
@@ -69,14 +69,14 @@ export function FinalCounsellingCta() {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           {guaranteeCards.map((card, idx) => {
             const Icon = card.icon;
             return (
               <div
                 key={idx}
                 onClick={() => openModal(card.actionQuery)}
-                className="tactile-card rounded-3xl p-6 sm:p-7 border border-[#E7E9F0] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group bg-white"
+                className="tactile-card rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-[#E7E9F0] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group bg-white"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -120,7 +120,7 @@ export function FinalCounsellingCta() {
       </div>
 
       {/* 2. FLAGSHIP BANNER: 3D GRADUATION CAP & DIRECT CONSULTATION */}
-      <div className="relative rounded-[32px] bg-gradient-to-r from-[#9F0712] via-[#E31E2B] to-[#80050D] p-8 sm:p-10 lg:p-12 text-white shadow-2xl overflow-hidden border border-white/20">
+      <div className="relative rounded-2xl sm:rounded-[32px] bg-gradient-to-r from-[#9F0712] via-[#E31E2B] to-[#80050D] p-5 sm:p-8 lg:p-12 text-white shadow-2xl overflow-hidden border border-white/20">
         {/* Ambient lighting & radial gloss */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-black/20 rounded-full blur-2xl pointer-events-none" />

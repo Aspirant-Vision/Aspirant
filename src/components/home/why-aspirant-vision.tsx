@@ -41,9 +41,9 @@ export function WhyAspirantVision() {
   ];
 
   return (
-    <section id="why" className="py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="why" className="py-8 sm:py-14 lg:py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* 32px Rounded Tactile Canvas with Clearly Visible Campus Background Image */}
-      <div className="relative rounded-[32px] overflow-hidden border border-[#E7E9F0] shadow-2xl bg-white p-8 sm:p-12 lg:p-16">
+      <div className="relative rounded-2xl sm:rounded-[32px] overflow-hidden border border-[#E7E9F0] shadow-2xl bg-white p-5 sm:p-10 lg:p-16">
         {/* Authentic Academic Campus Photography (Different from Hero, clearly visible) */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -122,7 +122,7 @@ export function WhyAspirantVision() {
                   <div
                     key={idx}
                     onClick={() => openModal(`Why Aspirant Vision: ${b.title}`)}
-                    className="tactile-card bg-white/80 backdrop-blur-md rounded-2xl p-5 sm:p-6 border border-white/90 shadow-md hover:shadow-xl hover:-translate-y-1 hover:bg-white/95 transition-all duration-300 cursor-pointer group"
+                    className="tactile-card bg-white/85 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/90 shadow-md hover:shadow-xl hover:-translate-y-1 hover:bg-white/95 transition-all duration-300 cursor-pointer group"
                   >
                     <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#E31E2B] flex items-center justify-center shrink-0 border border-red-100 group-hover:scale-110 group-hover:bg-[#E31E2B] group-hover:text-white transition-all mb-3.5 shadow-xs">
                       <Icon className="w-6 h-6 stroke-[2.2]" />

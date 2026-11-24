@@ -36,10 +36,10 @@ export function CompareCollegesModule() {
   );
 
   return (
-    <section id="compare" className="py-16 bg-[#171B52]/[0.02] border-y border-[#E7E9F0]">
+    <section id="compare" className="py-8 sm:py-14 lg:py-16 bg-[#171B52]/[0.02] border-y border-[#E7E9F0]">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 sm:mb-10 gap-4">
           <div>
             <span className="text-[#E31E2B] font-bold text-xs uppercase tracking-wider block mb-1">
               — Comparison Engine
@@ -47,13 +47,13 @@ export function CompareCollegesModule() {
             <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-[#15182D] tracking-tight">
               Make Smarter College Decisions
             </h2>
-            <p className="text-sm text-[#687086] mt-1 max-w-2xl">
+            <p className="text-xs sm:text-sm text-[#687086] mt-1 max-w-2xl">
               Compare your shortlisted colleges side-by-side and find the institution that matches your goals, budget and career ambitions.
             </p>
           </div>
           <button
             onClick={() => openModal("Detailed Comparison Tool")}
-            className="tactile-btn-red inline-flex items-center gap-1.5 text-white px-6 py-2.5 rounded-full text-xs font-bold transition-all"
+            className="tactile-btn-red inline-flex items-center gap-1.5 text-white px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs font-bold transition-all"
           >
             <span>Compare Now</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -61,8 +61,8 @@ export function CompareCollegesModule() {
         </div>
 
         {/* Product Comparison Matrix Card */}
-        <div className="tactile-card rounded-3xl overflow-hidden shadow-lg border border-[#E7E9F0]">
-          <div className="overflow-x-auto">
+        <div className="tactile-card rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-[#E7E9F0]">
+          <div className="overflow-x-auto w-full">
             <table className="w-full text-left border-collapse table-fixed min-w-[880px]">
               <thead>
                 <tr className="border-b border-[#E7E9F0] bg-[#F7F8FC]">

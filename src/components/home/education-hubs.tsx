@@ -69,9 +69,9 @@ export function EducationHubs() {
   const [activeHub, setActiveHub] = useState(HUBS[0].id);
 
   return (
-    <section className="py-16 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-8 sm:py-14 lg:py-16 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* Section Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4 border-b border-[#E7E9F0] pb-5">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 sm:mb-10 gap-4 border-b border-[#E7E9F0] pb-4 sm:pb-5">
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-100 text-[#E31E2B] text-xs font-bold uppercase tracking-wider mb-2">
             <Compass className="w-3.5 h-3.5" />
@@ -87,7 +87,7 @@ export function EducationHubs() {
 
         <button
           onClick={() => openModal("All Educational Hubs across India")}
-          className="tactile-btn-white inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold text-[#15182D] transition-all"
+          className="tactile-btn-white inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold text-[#15182D] transition-all"
         >
           <span>View All Regions</span>
           <ArrowRight className="w-4 h-4 text-[#E31E2B]" />
@@ -95,7 +95,7 @@ export function EducationHubs() {
       </div>
 
       {/* 4 Interactive Skeuomorphic Hub Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {HUBS.map((hub) => {
           const isSelected = activeHub === hub.id;
           return (
@@ -103,7 +103,7 @@ export function EducationHubs() {
               key={hub.id}
               onMouseEnter={() => setActiveHub(hub.id)}
               onClick={() => openModal(`Education Hub: ${hub.city}`)}
-              className={`tactile-card rounded-3xl p-6 cursor-pointer flex flex-col justify-between group ${
+              className={`tactile-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 cursor-pointer flex flex-col justify-between group ${
                 isSelected ? "border-[#E31E2B]/50 ring-1 ring-[#E31E2B]/30" : ""
               }`}
             >

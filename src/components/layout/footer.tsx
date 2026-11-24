@@ -20,7 +20,7 @@ import {
 
 export function Footer() {
   return (
-    <footer className="bg-[#0C102C] text-gray-300 w-full pt-16 pb-8 border-t border-white/10">
+    <footer className="bg-[#0C102C] text-gray-300 w-full pt-10 sm:pt-16 pb-8 border-t border-white/10">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top 5-Column Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 border-b border-white/10">

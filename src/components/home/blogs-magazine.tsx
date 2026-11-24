@@ -49,9 +49,9 @@ export function BlogsMagazine() {
   const { openModal } = useCounselingModal();
 
   return (
-    <section id="blog" className="py-14 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="blog" className="py-8 sm:py-12 lg:py-14 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-[#E7E9F0] pb-5">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 sm:mb-8 gap-4 border-b border-[#E7E9F0] pb-4 sm:pb-5">
         <div>
           <span className="text-[#E31E2B] font-bold text-xs uppercase tracking-wider block mb-1">
             — Latest Insights
@@ -66,7 +66,7 @@ export function BlogsMagazine() {
 
         <button
           onClick={() => openModal("All Educational Articles")}
-          className="tactile-pill inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[#E31E2B] text-xs font-bold transition-all"
+          className="tactile-pill inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[#E31E2B] text-xs font-bold transition-all"
         >
           <span>View All Blogs</span>
           <ArrowRight className="w-3.5 h-3.5" />
@@ -74,12 +74,12 @@ export function BlogsMagazine() {
       </div>
 
       {/* 3-Card Editorial Magazine Layout matching screenshot */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
         {ARTICLES.map((art) => (
           <article
             key={art.id}
             onClick={() => openModal(`Article: ${art.title}`)}
-            className="tactile-card rounded-3xl overflow-hidden group cursor-pointer flex flex-col justify-between"
+            className="tactile-card rounded-2xl sm:rounded-3xl overflow-hidden group cursor-pointer flex flex-col justify-between"
           >
             <div>
               {/* Cover Image */}

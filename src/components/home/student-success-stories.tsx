@@ -79,15 +79,15 @@ export function StudentSuccessStories() {
   );
 
   return (
-    <section id="testimonials" className="py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="testimonials" className="py-8 sm:py-14 lg:py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* Editorial Section Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 border-b border-[#E7E9F0] pb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 sm:mb-12 gap-4 border-b border-[#E7E9F0] pb-4 sm:pb-6">
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-100 text-[#E31E2B] text-xs font-bold uppercase tracking-wider mb-2">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Verified Student Outcomes</span>
           </div>
-          <h2 className="font-display text-3xl sm:text-4xl font-extrabold text-[#15182D] tracking-tight">
+          <h2 className="font-display text-2xl sm:text-4xl font-extrabold text-[#15182D] tracking-tight">
             Real Students. Real Journeys.{" "}
             <span className="text-[#E31E2B]">Real Success.</span>
           </h2>
@@ -97,11 +97,11 @@ export function StudentSuccessStories() {
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <button
             onClick={() => setActiveStream("all")}
             className={cn(
-              "px-4 py-2 rounded-xl text-xs font-bold transition-all",
+              "px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-bold transition-all",
               activeStream === "all"
                 ? "tactile-btn-red text-white"
                 : "tactile-pill text-[#687086] hover:text-[#15182D]"
@@ -112,7 +112,7 @@ export function StudentSuccessStories() {
           <button
             onClick={() => setActiveStream("engineering")}
             className={cn(
-              "px-4 py-2 rounded-xl text-xs font-bold transition-all",
+              "px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-bold transition-all",
               activeStream === "engineering"
                 ? "tactile-btn-red text-white"
                 : "tactile-pill text-[#687086] hover:text-[#15182D]"
@@ -123,7 +123,7 @@ export function StudentSuccessStories() {
           <button
             onClick={() => setActiveStream("management")}
             className={cn(
-              "px-4 py-2 rounded-xl text-xs font-bold transition-all",
+              "px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-bold transition-all",
               activeStream === "management"
                 ? "tactile-btn-red text-white"
                 : "tactile-pill text-[#687086] hover:text-[#15182D]"
@@ -135,12 +135,12 @@ export function StudentSuccessStories() {
       </div>
 
       {/* 3 Rich High-Impact Testimonial Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 mb-8 sm:mb-12">
         {filteredStories.map((story) => (
           <div
             key={story.id}
             onClick={() => openModal(`Success Story: ${story.name}`)}
-            className="tactile-card rounded-3xl p-6 sm:p-7 border border-[#E7E9F0] hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between group bg-white"
+            className="tactile-card rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-[#E7E9F0] hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between group bg-white"
           >
             <div>
               {/* Top Header: Student Avatar & Verified Badge */}

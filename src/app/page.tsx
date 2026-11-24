@@ -17,7 +17,7 @@ import { FinalCounsellingCta } from "@/components/home/final-counselling-cta";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen bg-[#F7F8FC]">
+    <div className="flex flex-col min-h-screen bg-[#F7F8FC] overflow-x-hidden w-full">
       {/* SECTION 01: Sticky Navigation Bar rendered in RootLayout */}
 
       {/* SECTION 02: Full-Background Hero with herobg.png & Tactile Search Engine */}

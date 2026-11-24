@@ -78,26 +78,26 @@ export function TrustStatisticsBar() {
   ];
 
   return (
-    <div className="w-full relative z-20 -mt-6 sm:-mt-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[1240px] mx-auto tactile-card rounded-2xl lg:rounded-full py-4 px-6 lg:px-10 shadow-lg">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 divide-y lg:divide-y-0 lg:divide-x divide-gray-100">
+    <div className="w-full relative z-20 -mt-4 sm:-mt-8 px-3 sm:px-6 lg:px-8">
+      <div className="max-w-[1240px] mx-auto tactile-card rounded-2xl lg:rounded-full py-3.5 px-4 sm:py-4 sm:px-6 lg:px-10 shadow-lg">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 lg:divide-x divide-gray-100">
           {stats.map((s, idx) => {
             const Icon = s.icon;
             return (
               <div
                 key={idx}
-                className={`flex items-center gap-3.5 group cursor-pointer ${
-                  idx !== 0 ? "pt-3 lg:pt-0 lg:pl-6 xl:pl-8" : ""
+                className={`flex items-center gap-2.5 sm:gap-3.5 group cursor-pointer ${
+                  idx !== 0 ? "lg:pl-6 xl:pl-8" : ""
                 }`}
               >
-                <div className="tactile-icon-box w-11 h-11 rounded-2xl flex items-center justify-center text-[#E31E2B] shrink-0">
-                  <Icon className="w-5 h-5 stroke-[2.2]" />
+                <div className="tactile-icon-box w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl flex items-center justify-center text-[#E31E2B] shrink-0">
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
                 </div>
                 <div>
-                  <div className="font-display font-extrabold text-xl lg:text-2xl text-[#15182D] leading-tight group-hover:text-[#E31E2B] transition-colors">
+                  <div className="font-display font-extrabold text-lg sm:text-2xl text-[#15182D] leading-tight group-hover:text-[#E31E2B] transition-colors">
                     <AnimatedNumber target={s.targetValue} suffix={s.suffix} />
                   </div>
-                  <div className="text-xs font-bold text-[#15182D] mt-0.5 whitespace-nowrap">
+                  <div className="text-[11px] sm:text-xs font-bold text-[#15182D] mt-0.5 whitespace-nowrap">
                     {s.label}
                   </div>
                   <div className="text-[10px] text-[#687086] font-medium hidden sm:block">

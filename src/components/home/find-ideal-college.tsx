@@ -23,12 +23,12 @@ export function FindIdealCollege() {
   };
 
   return (
-    <section id="finder" className="py-16 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="bg-gradient-to-br from-[#171B52] via-[#10143E] to-[#171B52] rounded-[32px] p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden">
+    <section id="finder" className="py-8 sm:py-14 lg:py-16 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="bg-gradient-to-br from-[#171B52] via-[#10143E] to-[#171B52] rounded-2xl sm:rounded-[32px] p-5 sm:p-10 lg:p-12 text-white shadow-2xl relative overflow-hidden">
         {/* Subtle decorative glow */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#E31E2B]/15 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 max-w-3xl mb-8 space-y-2">
+        <div className="relative z-10 max-w-3xl mb-6 sm:mb-8 space-y-2">
           <span className="bg-white/10 text-[#FF8585] px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider inline-block border border-white/10">
             Personalized Discovery
           </span>

@@ -40,9 +40,9 @@ export function RecruitersPlacements() {
   const { openModal } = useCounselingModal();
 
   return (
-    <section id="placements" className="py-16 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="placements" className="py-8 sm:py-14 lg:py-16 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* 1. EDITORIAL HEADER */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4 border-b border-[#E7E9F0] pb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 sm:mb-10 gap-4 border-b border-[#E7E9F0] pb-4 sm:pb-6">
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-100 text-[#E31E2B] text-xs font-bold uppercase tracking-wider mb-2">
             <Briefcase className="w-3.5 h-3.5" />
@@ -66,12 +66,12 @@ export function RecruitersPlacements() {
       </div>
 
       {/* 2. PLACEMENT HIGHLIGHT METRICS (4 Tactile Tiles) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-        <div className="tactile-card rounded-2xl p-5 border border-[#E7E9F0] text-center">
-          <div className="w-10 h-10 rounded-xl bg-red-50 text-[#E31E2B] flex items-center justify-center mx-auto mb-2">
-            <TrendingUp className="w-5 h-5 stroke-[2.2]" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-10">
+        <div className="tactile-card rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-[#E7E9F0] text-center">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-red-50 text-[#E31E2B] flex items-center justify-center mx-auto mb-1.5 sm:mb-2">
+            <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
           </div>
-          <div className="font-display font-black text-2xl sm:text-3xl text-[#15182D]">
+          <div className="font-display font-black text-xl sm:text-3xl text-[#15182D]">
             ₹52.0 LPA
           </div>
           <div className="text-xs font-semibold text-[#687086] mt-0.5">
@@ -117,8 +117,8 @@ export function RecruitersPlacements() {
       </div>
 
       {/* 3. CORPORATE HIRING PARTNERS GRID */}
-      <div className="tactile-card rounded-3xl p-6 sm:p-8 border border-[#E7E9F0] mb-10 bg-white">
-        <div className="flex items-center justify-between mb-6">
+      <div className="tactile-card rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-[#E7E9F0] mb-6 sm:mb-10 bg-white">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div>
             <h3 className="font-display font-bold text-base sm:text-lg text-[#15182D]">
               Prominent Campus Recruiters
@@ -132,12 +132,12 @@ export function RecruitersPlacements() {
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
           {RECRUITERS.map((rec) => (
             <div
               key={rec.name}
               onClick={() => openModal(`Recruiter Details: ${rec.name}`)}
-              className="p-4 rounded-2xl bg-[#F7F8FC] border border-[#E7E9F0] hover:border-[#E31E2B] hover:shadow-sm transition-all cursor-pointer group"
+              className="p-2.5 sm:p-4 rounded-xl sm:rounded-2xl bg-[#F7F8FC] border border-[#E7E9F0] hover:border-[#E31E2B] hover:shadow-sm transition-all cursor-pointer group"
             >
               <div className="flex items-center justify-between mb-1">
                 <span className="font-display font-black text-sm text-[#15182D] group-hover:text-[#E31E2B] transition-colors">

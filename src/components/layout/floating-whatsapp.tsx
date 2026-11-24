@@ -11,7 +11,7 @@ export function FloatingWhatsApp() {
   )}`;
 
   return (
-    <div className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[100] flex items-center gap-3 pointer-events-auto">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 z-[100] flex items-center gap-3 pointer-events-auto">
       {/* 3D Floating Speech Tooltip Chip */}
       <div
         className={`hidden sm:flex items-center gap-2 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-emerald-100 shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-all duration-300 ${
@@ -35,7 +35,7 @@ export function FloatingWhatsApp() {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         aria-label="Chat with senior admission counsellors on WhatsApp"
-        className="relative group w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
+        className="relative group w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
         style={{
           background: "radial-gradient(circle at 35% 30%, #4EFA8B 0%, #25D366 40%, #128C7E 85%, #075E54 100%)",
           boxShadow:

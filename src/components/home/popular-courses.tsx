@@ -86,9 +86,9 @@ export function PopularCourses() {
   const currentCourse = COURSES.find((c) => c.id === selectedCourseId) || COURSES[0];
 
   return (
-    <section id="popular-courses" className="py-16 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="popular-courses" className="py-8 sm:py-14 lg:py-16 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4 border-b border-[#E7E9F0] pb-5">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 sm:mb-10 gap-4 border-b border-[#E7E9F0] pb-4 sm:pb-5">
         <div>
           <span className="text-[#E31E2B] font-bold text-xs uppercase tracking-wider block mb-1">
             — Degree Programs
@@ -96,7 +96,7 @@ export function PopularCourses() {
           <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-[#15182D] tracking-tight">
             Find the Course That Shapes Your Future
           </h2>
-          <p className="text-sm text-[#687086] mt-1">
+          <p className="text-xs sm:text-sm text-[#687086] mt-1">
             Explore industry-aligned degree programs with verified eligibility, career outcomes and premier colleges.
           </p>
         </div>
@@ -110,15 +110,15 @@ export function PopularCourses() {
       </div>
 
       {/* Interactive Course Showcase */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
         {/* Course Navigation List (4 cols) */}
-        <div className="lg:col-span-4 space-y-2">
+        <div className="lg:col-span-4 space-y-1.5 sm:space-y-2">
           {COURSES.map((course) => (
             <button
               key={course.id}
               onClick={() => setSelectedCourseId(course.id)}
               className={cn(
-                "w-full text-left p-4 rounded-2xl border transition-all duration-200 flex items-center justify-between group",
+                "w-full text-left p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all duration-200 flex items-center justify-between group",
                 selectedCourseId === course.id
                   ? "bg-white border-[#E31E2B] shadow-md ring-1 ring-[#E31E2B]/20"
                   : "bg-white/60 hover:bg-white border-[#E7E9F0] text-[#15182D]"
@@ -127,19 +127,19 @@ export function PopularCourses() {
               <div>
                 <span
                   className={cn(
-                    "text-[11px] font-bold uppercase tracking-wider block",
+                    "text-[10px] sm:text-[11px] font-bold uppercase tracking-wider block",
                     selectedCourseId === course.id ? "text-[#E31E2B]" : "text-[#687086]"
                   )}
                 >
                   {course.degree}
                 </span>
-                <span className="font-display font-bold text-sm sm:text-base text-[#15182D] block mt-0.5">
+                <span className="font-display font-bold text-xs sm:text-base text-[#15182D] block mt-0.5">
                   {course.name.split(" (")[0]}
                 </span>
               </div>
               <ArrowRight
                 className={cn(
-                  "w-4 h-4 transition-transform",
+                  "w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform",
                   selectedCourseId === course.id
                     ? "text-[#E31E2B] translate-x-1"
                     : "text-gray-300 group-hover:text-gray-600"
@@ -150,7 +150,7 @@ export function PopularCourses() {
         </div>
 
         {/* Course In-Depth Feature Card (8 cols) */}
-        <div className="lg:col-span-8 tactile-card rounded-3xl p-6 sm:p-8 space-y-6">
+        <div className="lg:col-span-8 tactile-card rounded-2xl sm:rounded-3xl p-4 sm:p-8 space-y-4 sm:space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E7E9F0] pb-5">
             <div>
               <span className="bg-red-50 text-[#E31E2B] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-red-100">

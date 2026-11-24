@@ -108,9 +108,9 @@ export function FeaturedColleges() {
   };
 
   return (
-    <section id="colleges" className="py-16 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="colleges" className="py-8 sm:py-14 lg:py-16 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* Editorial Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 border-b border-[#E7E9F0] pb-5">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 sm:mb-8 gap-4 border-b border-[#E7E9F0] pb-4 sm:pb-5">
         <div>
           <span className="text-[#E31E2B] font-bold text-xs uppercase tracking-wider block mb-1">
             — Top Institutions
@@ -127,7 +127,7 @@ export function FeaturedColleges() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => openModal("All Featured Colleges")}
-            className="tactile-pill inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[#E31E2B] text-xs font-bold transition-all"
+            className="tactile-pill inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[#E31E2B] text-xs font-bold transition-all"
           >
             <span>Explore All Colleges</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -152,16 +152,16 @@ export function FeaturedColleges() {
       </div>
 
       {/* 3 Rich Institutional Cards (Original 1st Version Preserved) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
         {FEATURED_COLLEGES.slice(currentIndex, currentIndex + 3).map((college) => (
           <div
             key={college.id}
             onClick={() => openModal(college.name)}
-            className="tactile-card rounded-3xl overflow-hidden group cursor-pointer flex flex-col justify-between"
+            className="tactile-card rounded-2xl sm:rounded-3xl overflow-hidden group cursor-pointer flex flex-col justify-between"
           >
             <div>
               {/* Campus Photography (Dominant & Crisp) */}
-              <div className="relative h-48 w-full bg-gray-100 overflow-hidden">
+              <div className="relative h-40 sm:h-48 w-full bg-gray-100 overflow-hidden">
                 <Image
                   src={college.image}
                   alt={college.name}
@@ -191,7 +191,7 @@ export function FeaturedColleges() {
               </div>
 
               {/* Card Meta Content */}
-              <div className="p-5 space-y-3">
+              <div className="p-3.5 sm:p-5 space-y-2.5 sm:space-y-3">
                 <div>
                   <span className="text-[11px] font-bold text-[#E31E2B] uppercase tracking-wider block">
                     {college.type}

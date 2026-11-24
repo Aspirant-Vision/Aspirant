@@ -35,7 +35,7 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative w-full min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden bg-[#F7F8FC]">
+    <section className="relative w-full min-h-0 sm:min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden bg-[#F7F8FC]">
       {/* 1. CINEMATIC FULL-WIDTH BACKGROUND PHOTOGRAPHY (herobg.png) */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -44,75 +44,88 @@ export function HeroSection() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[78%_center] sm:object-[82%_center]"
+          className="object-cover object-[79%_12%] sm:object-[82%_center]"
         />
 
-        {/* Clean, gentle fade strictly on far-left for text contrast - NO white fog or milky shadow on student or campus */}
-        <div className="absolute inset-y-0 left-0 w-full sm:w-[60%] lg:w-[48%] bg-gradient-to-r from-[#F7F8FC] via-[#F7F8FC]/90 to-transparent pointer-events-none" />
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#F7F8FC] to-transparent sm:hidden pointer-events-none" />
+        {/* Mobile: Gentle top-to-bottom soft gradient so student/campus remain clearly visible */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F7F8FC]/25 via-[#F7F8FC]/70 to-[#F7F8FC] sm:hidden pointer-events-none" />
+
+        {/* Desktop: Clean, gentle fade strictly on far-left for text contrast */}
+        <div className="hidden sm:block absolute inset-y-0 left-0 w-[60%] lg:w-[48%] bg-gradient-to-r from-[#F7F8FC] via-[#F7F8FC]/90 to-transparent pointer-events-none" />
       </div>
 
       {/* 2. HERO CONTENT LAYER */}
-      <div className="relative z-10 w-full max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-        <div className="max-w-2xl space-y-5">
-          {/* Eyebrow Trust Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#E7E9F0] text-xs font-bold text-[#E31E2B] shadow-sm">
-            <ShieldCheck className="w-4 h-4 text-[#E31E2B]" />
-            <span>India&apos;s Trusted Admission Partner</span>
+      <div className="relative z-10 w-full max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-16 lg:py-20">
+        <div className="max-w-2xl space-y-3.5 sm:space-y-5">
+          {/* Eyebrow Trust Badge & Mobile Student Metric Row */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white/95 backdrop-blur-sm border border-[#E7E9F0] text-[11px] sm:text-xs font-bold text-[#E31E2B] shadow-xs">
+              <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E31E2B]" />
+              <span>India&apos;s Trusted Admission Partner</span>
+            </div>
+
+            {/* Mobile-only compact Students Guided chip */}
+            <div
+              onClick={() => openModal("50,000+ Guided Students Showcase")}
+              className="inline-flex sm:hidden items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm border border-[#E7E9F0] text-[10px] font-bold text-[#15182D] shadow-xs cursor-pointer"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>50,000+ Students Guided</span>
+            </div>
           </div>
 
-          {/* Main Headline */}
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-[56px] font-extrabold text-[#15182D] leading-[1.12] tracking-tight">
+          {/* Main Headline - perfectly scaled for mobile */}
+          <h1 className="font-display text-[29px] sm:text-5xl lg:text-[56px] font-extrabold text-[#15182D] leading-[1.14] tracking-tight drop-shadow-xs">
             Discover. Compare. Apply. <br />
             <span className="text-[#E31E2B]">Get Admitted.</span>
           </h1>
 
-          {/* Supporting Copy: 100% visible, crisp, bold, crystal clear contrast */}
-          <p className="font-body text-base sm:text-lg text-[#15182D] font-medium leading-relaxed max-w-xl">
+          {/* Supporting Copy */}
+          <p className="font-body text-xs sm:text-lg text-[#15182D] font-medium leading-relaxed max-w-xl">
             Find the right college, explore top courses, and get expert counselling to complete your admission journey — all in one place.
           </p>
 
-          {/* Tactile Skeuomorphic Search Engine Module */}
-          <div className="tactile-card rounded-3xl p-4 sm:p-5 max-w-xl pt-4">
+          {/* Tactile Skeuomorphic Search Engine Module - Compact on Mobile */}
+          <div className="tactile-card rounded-2xl sm:rounded-3xl p-3 sm:p-5 max-w-xl pt-3 sm:pt-4">
             {/* Search Category Tabs with Skeuomorphic Pills */}
-            <div className="flex items-center gap-2 mb-3 pb-2.5 border-b border-gray-100">
+            <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3 pb-2 border-b border-gray-100">
               <button
                 type="button"
                 onClick={() => setActiveTab("colleges")}
                 className={cn(
-                  "flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all",
+                  "flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all",
                   activeTab === "colleges"
                     ? "tactile-btn-red text-white"
                     : "tactile-pill text-[#687086] hover:text-[#15182D]"
                 )}
               >
-                <Landmark className="w-3.5 h-3.5" />
+                <Landmark className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 <span>Colleges</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("courses")}
                 className={cn(
-                  "flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all",
+                  "flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all",
                   activeTab === "courses"
                     ? "tactile-btn-red text-white"
                     : "tactile-pill text-[#687086] hover:text-[#15182D]"
                 )}
               >
-                <GraduationCap className="w-3.5 h-3.5" />
+                <GraduationCap className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 <span>Courses</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("exams")}
                 className={cn(
-                  "flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all",
+                  "flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all",
                   activeTab === "exams"
                     ? "tactile-btn-red text-white"
                     : "tactile-pill text-[#687086] hover:text-[#15182D]"
                 )}
               >
-                <FileText className="w-3.5 h-3.5" />
+                <FileText className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 <span>Exams</span>
               </button>
             </div>
@@ -120,27 +133,27 @@ export function HeroSection() {
             {/* Input & Location Row with Tactile Well */}
             <form
               onSubmit={handleSearch}
-              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-[#F7F8FC] rounded-2xl p-1.5 border border-[#E7E9F0] shadow-inner"
+              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5 sm:gap-2 bg-[#F7F8FC] rounded-xl sm:rounded-2xl p-1 sm:p-1.5 border border-[#E7E9F0] shadow-inner"
             >
               {/* Search text input */}
               <div className="relative flex-1 flex items-center">
-                <Search className="w-4 h-4 text-gray-400 absolute left-3.5 pointer-events-none" />
+                <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 absolute left-3 pointer-events-none" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search colleges, courses or programs..."
-                  className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm bg-transparent outline-none text-[#15182D] placeholder:text-[#687086] font-medium"
+                  className="w-full pl-8 sm:pl-10 pr-2.5 py-2 sm:py-2.5 text-xs sm:text-sm bg-transparent outline-none text-[#15182D] placeholder:text-[#687086] font-medium"
                 />
               </div>
 
               {/* Location Selector */}
-              <div className="flex items-center gap-1.5 border-t sm:border-t-0 sm:border-l border-gray-200 px-3 py-2 sm:py-0">
-                <MapPin className="w-3.5 h-3.5 text-[#E31E2B] shrink-0" />
+              <div className="flex items-center gap-1.5 border-t sm:border-t-0 sm:border-l border-gray-200 px-2 sm:px-3 py-1.5 sm:py-0">
+                <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#E31E2B] shrink-0" />
                 <select
                   value={selectedLocation}
                   onChange={(e) => setSelectedLocation(e.target.value)}
-                  className="bg-transparent text-xs font-semibold text-[#15182D] outline-none cursor-pointer"
+                  className="bg-transparent text-[11px] sm:text-xs font-semibold text-[#15182D] outline-none cursor-pointer"
                 >
                   <option value="All India">All India</option>
                   <option value="Odisha">Odisha</option>
@@ -155,16 +168,16 @@ export function HeroSection() {
               {/* Red Tactile Search Button */}
               <button
                 type="submit"
-                className="tactile-btn-red text-white p-3 rounded-xl flex items-center justify-center shrink-0"
+                className="tactile-btn-red text-white p-2.5 sm:p-3 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0"
                 aria-label="Search"
               >
-                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
               </button>
             </form>
 
             {/* Popular Searches Tactile Chips */}
-            <div className="flex flex-wrap items-center gap-2 pt-3 px-1 text-xs">
-              <span className="text-[#15182D] font-bold text-[11px]">Popular:</span>
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-2 sm:pt-3 px-0.5 text-xs">
+              <span className="text-[#15182D] font-bold text-[10px] sm:text-[11px]">Popular:</span>
               {popularSearches.map((term) => (
                 <button
                   key={term}
@@ -173,7 +186,7 @@ export function HeroSection() {
                     setSearchQuery(term);
                     openModal(`${activeTab}: ${term}`);
                   }}
-                  className="tactile-pill px-3 py-1 rounded-lg text-[#15182D] hover:text-[#E31E2B] font-semibold text-[11px] transition-colors"
+                  className="tactile-pill px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md sm:rounded-lg text-[#15182D] hover:text-[#E31E2B] font-semibold text-[10px] sm:text-[11px] transition-colors"
                 >
                   {term}
                 </button>

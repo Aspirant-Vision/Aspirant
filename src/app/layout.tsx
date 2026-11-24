@@ -111,7 +111,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-[#F7F8FC] text-[#15182D] antialiased flex flex-col selection:bg-red-100 selection:text-red-700" suppressHydrationWarning>
         <CounselingModalProvider>
           <TopNavBar />
-          <main className="flex-grow pt-[68px] sm:pt-[72px]">{children}</main>
+          <main className="flex-grow pt-[64px] sm:pt-[72px] overflow-x-hidden w-full">{children}</main>
           <Footer />
           <FloatingWhatsApp />
           <StickyConsultationTab />
