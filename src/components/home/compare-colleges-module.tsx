@@ -2,10 +2,9 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Plus, X, Check, ArrowRight, ArrowLeftRight, Building } from "lucide-react";
+import { Plus, X, ArrowRight, ArrowLeftRight } from "lucide-react";
 import { useCounselingModal } from "@/components/forms/counseling-modal-context";
 import { FEATURED_COLLEGES, CollegeShowcase } from "./featured-colleges";
-import { cn } from "@/lib/utils";
 
 export function CompareCollegesModule() {
   const { openModal } = useCounselingModal();
@@ -60,14 +59,25 @@ export function CompareCollegesModule() {
           </button>
         </div>
 
-        {/* 1. DESKTOP COMPARISON MATRIX TABLE (hidden on mobile) */}
-        <div className="hidden lg:block tactile-card rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-[#E7E9F0]">
-          <div className="overflow-x-auto w-full">
-            <table className="w-full text-left border-collapse table-fixed min-w-[880px]">
+        {/* COMPARISON MATRIX TABLE (Universal Across All Devices with smooth touch scrolling on mobile) */}
+        <div className="tactile-card rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-[#E7E9F0] w-full max-w-full">
+          {/* Mobile Swipe Guidance Banner */}
+          <div className="sm:hidden px-4 py-2.5 bg-gradient-to-r from-red-50/60 to-white border-b border-[#E7E9F0] flex items-center justify-between text-xs text-[#687086]">
+            <span className="flex items-center gap-1.5 font-bold text-[#E31E2B]">
+              <ArrowLeftRight className="w-3.5 h-3.5" />
+              <span>Swipe table horizontally to compare</span>
+            </span>
+            <span className="text-[11px] font-semibold text-[#15182D] bg-white px-2 py-0.5 rounded-full border border-[#E7E9F0] shadow-2xs">
+              {selectedColleges.length} Colleges
+            </span>
+          </div>
+
+          <div className="overflow-x-auto w-full max-w-full overscroll-x-contain touch-pan-x">
+            <table className="w-full text-left border-collapse table-fixed min-w-[700px] sm:min-w-[880px]">
               <thead>
                 <tr className="border-b border-[#E7E9F0] bg-[#F7F8FC]">
                   {/* Label Column Header */}
-                  <th className="p-5 w-56 text-xs font-bold uppercase tracking-wider text-[#687086] border-r border-[#E7E9F0]">
+                  <th className="p-3.5 sm:p-5 w-44 sm:w-56 text-xs font-bold uppercase tracking-wider text-[#687086] border-r border-[#E7E9F0]">
                     <div className="flex items-center gap-2">
                       <ArrowLeftRight className="w-4 h-4 text-[#E31E2B]" />
                       <span>Comparison Matrix</span>
@@ -76,7 +86,7 @@ export function CompareCollegesModule() {
 
                   {/* College Columns */}
                   {selectedColleges.map((col) => (
-                    <th key={col.id} className="p-5 w-64 align-top border-r border-[#E7E9F0] last:border-r-0">
+                    <th key={col.id} className="p-3.5 sm:p-5 w-56 sm:w-64 align-top border-r border-[#E7E9F0] last:border-r-0">
                       <div className="relative">
                         <button
                           onClick={() => removeCollege(col.id)}
@@ -85,7 +95,7 @@ export function CompareCollegesModule() {
                         >
                           <X className="w-4 h-4" />
                         </button>
-                        <div className="relative h-24 w-full rounded-xl overflow-hidden mb-3 bg-gray-100 shadow-inner">
+                        <div className="relative h-20 sm:h-24 w-full rounded-xl overflow-hidden mb-2.5 sm:mb-3 bg-gray-100 shadow-inner">
                           <Image
                             src={col.image}
                             alt={col.name}
@@ -93,7 +103,7 @@ export function CompareCollegesModule() {
                             className="object-cover"
                           />
                         </div>
-                        <h4 className="font-display font-bold text-sm text-[#15182D] line-clamp-1">
+                        <h4 className="font-display font-bold text-xs sm:text-sm text-[#15182D] line-clamp-1">
                           {col.name}
                         </h4>
                         <span className="text-[11px] text-[#687086] block mt-0.5 line-clamp-1">
@@ -105,9 +115,9 @@ export function CompareCollegesModule() {
 
                   {/* Empty slot to add college if < 4 */}
                   {selectedColleges.length < 4 && (
-                    <th className="p-5 w-64 align-middle">
-                      <div className="border-2 border-dashed border-[#E7E9F0] hover:border-[#E31E2B] rounded-2xl p-5 text-center transition-all bg-white hover:bg-red-50/20">
-                        <Plus className="w-6 h-6 text-[#E31E2B] mx-auto mb-1.5" />
+                    <th className="p-3.5 sm:p-5 w-52 sm:w-64 align-middle">
+                      <div className="border-2 border-dashed border-[#E7E9F0] hover:border-[#E31E2B] rounded-2xl p-4 sm:p-5 text-center transition-all bg-white hover:bg-red-50/20">
+                        <Plus className="w-5 h-5 sm:w-6 sm:h-6 text-[#E31E2B] mx-auto mb-1.5" />
                         <span className="text-xs font-bold text-[#15182D] block mb-2">
                           Add College
                         </span>
@@ -140,65 +150,65 @@ export function CompareCollegesModule() {
               <tbody className="divide-y divide-[#E7E9F0] text-xs sm:text-sm">
                 {/* Row 1: NIRF Ranking */}
                 <tr className="hover:bg-gray-50/50 transition-colors">
-                  <td className="p-4 font-bold text-[#15182D] bg-[#F7F8FC]/60 border-r border-[#E7E9F0]">
+                  <td className="p-3.5 sm:p-4 font-bold text-[#15182D] bg-[#F7F8FC]/60 border-r border-[#E7E9F0]">
                     NIRF Ranking
                   </td>
                   {selectedColleges.map((col) => (
-                    <td key={col.id} className="p-4 font-semibold text-[#15182D] border-r border-[#E7E9F0] last:border-r-0">
-                      <span className="bg-red-50 text-[#E31E2B] px-3 py-1 rounded-md text-xs font-extrabold inline-block border border-red-100 shadow-2xs">
+                    <td key={col.id} className="p-3.5 sm:p-4 font-semibold text-[#15182D] border-r border-[#E7E9F0] last:border-r-0">
+                      <span className="bg-red-50 text-[#E31E2B] px-2.5 sm:px-3 py-1 rounded-md text-xs font-extrabold inline-block border border-red-100 shadow-2xs">
                         {col.nirfRank}
                       </span>
                     </td>
                   ))}
-                  {selectedColleges.length < 4 && <td className="p-4 bg-gray-50/20" />}
+                  {selectedColleges.length < 4 && <td className="p-3.5 sm:p-4 bg-gray-50/20" />}
                 </tr>
 
                 {/* Row 2: Tuition Fees */}
                 <tr className="hover:bg-gray-50/50 transition-colors">
-                  <td className="p-4 font-bold text-[#15182D] bg-[#F7F8FC]/60 border-r border-[#E7E9F0]">
+                  <td className="p-3.5 sm:p-4 font-bold text-[#15182D] bg-[#F7F8FC]/60 border-r border-[#E7E9F0]">
                     Annual Tuition
                   </td>
                   {selectedColleges.map((col) => (
-                    <td key={col.id} className="p-4 font-extrabold text-[#15182D] border-r border-[#E7E9F0] last:border-r-0">
+                    <td key={col.id} className="p-3.5 sm:p-4 font-extrabold text-[#15182D] border-r border-[#E7E9F0] last:border-r-0">
                       {col.fees}
                     </td>
                   ))}
-                  {selectedColleges.length < 4 && <td className="p-4 bg-gray-50/20" />}
+                  {selectedColleges.length < 4 && <td className="p-3.5 sm:p-4 bg-gray-50/20" />}
                 </tr>
 
                 {/* Row 3: Average CTC */}
                 <tr className="hover:bg-gray-50/50 transition-colors">
-                  <td className="p-4 font-bold text-[#15182D] bg-[#F7F8FC]/60 border-r border-[#E7E9F0]">
+                  <td className="p-3.5 sm:p-4 font-bold text-[#15182D] bg-[#F7F8FC]/60 border-r border-[#E7E9F0]">
                     Average Placement
                   </td>
                   {selectedColleges.map((col) => (
-                    <td key={col.id} className="p-4 font-extrabold text-[#16A34A] border-r border-[#E7E9F0] last:border-r-0">
+                    <td key={col.id} className="p-3.5 sm:p-4 font-extrabold text-[#16A34A] border-r border-[#E7E9F0] last:border-r-0">
                       {col.avgCtc}
                     </td>
                   ))}
-                  {selectedColleges.length < 4 && <td className="p-4 bg-gray-50/20" />}
+                  {selectedColleges.length < 4 && <td className="p-3.5 sm:p-4 bg-gray-50/20" />}
                 </tr>
 
                 {/* Row 4: Accreditation */}
                 <tr className="hover:bg-gray-50/50 transition-colors">
-                  <td className="p-4 font-bold text-[#15182D] bg-[#F7F8FC]/60 border-r border-[#E7E9F0]">
+                  <td className="p-3.5 sm:p-4 font-bold text-[#15182D] bg-[#F7F8FC]/60 border-r border-[#E7E9F0]">
                     Accreditation
                   </td>
                   {selectedColleges.map((col) => (
-                    <td key={col.id} className="p-4 text-[#687086] font-medium border-r border-[#E7E9F0] last:border-r-0">
+                    <td key={col.id} className="p-3.5 sm:p-4 text-[#687086] font-medium border-r border-[#E7E9F0] last:border-r-0">
                       {col.type}
                     </td>
                   ))}
-                  {selectedColleges.length < 4 && <td className="p-4 bg-gray-50/20" />}
+                  {selectedColleges.length < 4 && <td className="p-3.5 sm:p-4 bg-gray-50/20" />}
                 </tr>
 
                 {/* Row 5: Action Row */}
                 <tr className="bg-[#F7F8FC]/30">
-                  <td className="p-4 font-bold text-[#15182D] bg-[#F7F8FC]/60 border-r border-[#E7E9F0]">
+                  <td className="p-3.5 sm:p-4 font-bold text-[#15182D] bg-[#F7F8FC]/60 border-r border-[#E7E9F0]">
                     Admissions
                   </td>
                   {selectedColleges.map((col) => (
-                    <td key={col.id} className="p-4 border-r border-[#E7E9F0] last:border-r-0">
+                    <td key={col.id} className="p-3.5 sm:p-4 border-r border-[#E7E9F0] last:border-r-0">
                       <button
                         onClick={() => openModal(`Apply: ${col.name}`)}
                         className="w-full py-2.5 px-3 rounded-xl bg-[#171B52] hover:bg-[#E31E2B] text-white text-xs font-bold transition-all text-center shadow-sm"
@@ -207,146 +217,29 @@ export function CompareCollegesModule() {
                       </button>
                     </td>
                   ))}
-                  {selectedColleges.length < 4 && <td className="p-4 bg-gray-50/20" />}
+                  {selectedColleges.length < 4 && <td className="p-3.5 sm:p-4 bg-gray-50/20" />}
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        {/* 2. MOBILE RESPONSIVE COMPARISON (ZERO Horizontal Scrolling) */}
-        <div className="lg:hidden space-y-4">
-          {(() => {
-            const colA = selectedColleges[0] || FEATURED_COLLEGES[0];
-            const colB = selectedColleges[1] || FEATURED_COLLEGES[1];
-
-            return (
-              <div className="tactile-card rounded-2xl p-4 border border-[#E7E9F0] shadow-md bg-white space-y-4">
-                {/* Header Badge */}
-                <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#E31E2B]">
-                    <ArrowLeftRight className="w-3.5 h-3.5" />
-                    <span>Direct Comparison</span>
-                  </div>
-                  <button
-                    onClick={() => openModal("Detailed Comparison Tool")}
-                    className="tactile-pill px-2.5 py-1 rounded-lg text-[10px] font-bold text-[#15182D]"
-                  >
-                    Compare More
-                  </button>
-                </div>
-
-                {/* Side-by-Side College Cards (50% - 50%) */}
-                <div className="grid grid-cols-2 gap-3 pb-3 border-b border-gray-100">
-                  {/* College 1 */}
-                  <div className="space-y-1.5">
-                    <div className="relative h-24 w-full rounded-xl overflow-hidden bg-gray-100 shadow-inner">
-                      <Image src={colA.image} alt={colA.name} fill className="object-cover" />
-                    </div>
-                    <h4 className="font-display font-extrabold text-xs text-[#15182D] line-clamp-1">
-                      {colA.name.split(" - ")[0]}
-                    </h4>
-                    <span className="text-[10px] text-[#687086] block truncate">{colA.location}</span>
-                  </div>
-
-                  {/* College 2 */}
-                  <div className="space-y-1.5">
-                    <div className="relative h-24 w-full rounded-xl overflow-hidden bg-gray-100 shadow-inner">
-                      <Image src={colB.image} alt={colB.name} fill className="object-cover" />
-                    </div>
-                    <h4 className="font-display font-extrabold text-xs text-[#15182D] line-clamp-1">
-                      {colB.name.split(" - ")[0]}
-                    </h4>
-                    <span className="text-[10px] text-[#687086] block truncate">{colB.location}</span>
-                  </div>
-                </div>
-
-                {/* Vertical Comparison Metrics Stack */}
-                <div className="space-y-2 text-xs">
-                  {/* Metric: NIRF Ranking */}
-                  <div className="bg-[#F7F8FC] p-2.5 rounded-xl border border-gray-100">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#687086] block mb-1">
-                      NIRF Ranking
-                    </span>
-                    <div className="grid grid-cols-2 gap-3 font-extrabold text-[#E31E2B]">
-                      <span>{colA.nirfRank}</span>
-                      <span>{colB.nirfRank}</span>
-                    </div>
-                  </div>
-
-                  {/* Metric: Annual Tuition */}
-                  <div className="bg-[#F7F8FC] p-2.5 rounded-xl border border-gray-100">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#687086] block mb-1">
-                      Annual Tuition
-                    </span>
-                    <div className="grid grid-cols-2 gap-3 font-extrabold text-[#15182D]">
-                      <span>{colA.fees}</span>
-                      <span>{colB.fees}</span>
-                    </div>
-                  </div>
-
-                  {/* Metric: Average Placement */}
-                  <div className="bg-[#F7F8FC] p-2.5 rounded-xl border border-gray-100">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#687086] block mb-1">
-                      Average Placement (CTC)
-                    </span>
-                    <div className="grid grid-cols-2 gap-3 font-extrabold text-[#16A34A]">
-                      <span>{colA.avgCtc}</span>
-                      <span>{colB.avgCtc}</span>
-                    </div>
-                  </div>
-
-                  {/* Metric: Accreditation */}
-                  <div className="bg-[#F7F8FC] p-2.5 rounded-xl border border-gray-100">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#687086] block mb-1">
-                      Accreditation
-                    </span>
-                    <div className="grid grid-cols-2 gap-3 font-medium text-[#687086] text-[11px]">
-                      <span className="truncate">{colA.type}</span>
-                      <span className="truncate">{colB.type}</span>
-                    </div>
-                  </div>
-
-                  {/* Apply Actions */}
-                  <div className="grid grid-cols-2 gap-3 pt-2">
-                    <button
-                      onClick={() => openModal(`Apply: ${colA.name}`)}
-                      className="tactile-btn-red text-white py-2 px-3 rounded-xl text-xs font-bold text-center"
-                    >
-                      Apply Now
-                    </button>
-                    <button
-                      onClick={() => openModal(`Apply: ${colB.name}`)}
-                      className="tactile-btn-white text-[#15182D] border border-gray-200 py-2 px-3 rounded-xl text-xs font-bold text-center"
-                    >
-                      Apply Now
-                    </button>
-                  </div>
-                </div>
-
-                {/* Quick Switcher Chips */}
-                <div className="pt-2 border-t border-gray-100">
-                  <span className="text-[10px] font-bold text-[#687086] uppercase tracking-wider block mb-1.5">
-                    Compare with other campuses:
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {FEATURED_COLLEGES.filter((c) => c.id !== colA.id && c.id !== colB.id).slice(0, 4).map((c) => (
-                      <button
-                        key={c.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedIds([colA.id, c.id, ...selectedIds.filter((id) => id !== colA.id && id !== c.id)]);
-                        }}
-                        className="tactile-pill px-2.5 py-1 rounded-lg text-[10px] font-semibold text-[#15182D] hover:text-[#E31E2B]"
-                      >
-                        + {c.name.split(" - ")[0]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
+        {/* Quick Add Campus Suggestions */}
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
+          <span className="font-bold text-[#687086] text-[11px] uppercase tracking-wider">
+            Quick Add to Compare:
+          </span>
+          {availableColleges.slice(0, 5).map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => addCollege(c.id)}
+              disabled={selectedIds.length >= 4}
+              className="tactile-pill px-3 py-1 rounded-full text-xs font-semibold text-[#15182D] hover:text-[#E31E2B] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              + {c.name.split(" - ")[0]}
+            </button>
+          ))}
         </div>
       </div>
     </section>
