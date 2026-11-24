@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Inter } from "next/font/google";
 import "./globals.css";
 import { TopAnnouncementBar } from "@/components/layout/top-announcement-bar";
 import { TopNavBar } from "@/components/layout/top-nav-bar";
@@ -7,20 +6,6 @@ import { Footer } from "@/components/layout/footer";
 import { FloatingWhatsApp } from "@/components/layout/floating-whatsapp";
 import { StickyConsultationTab } from "@/components/layout/sticky-consultation-tab";
 import { CounselingModalProvider } from "@/components/forms/counseling-modal-context";
-
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-jakarta",
-  display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-});
 
 export const viewport: Viewport = {
   themeColor: "#0B2240",
@@ -78,8 +63,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${inter.variable} scroll-smooth`} suppressHydrationWarning>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Prevent hydration mismatches caused by Chrome autofill and password manager extensions injecting fdprocessedid */}
         <script
           dangerouslySetInnerHTML={{
