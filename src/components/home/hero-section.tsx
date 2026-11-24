@@ -44,40 +44,43 @@ export function HeroSection() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[79%_12%] sm:object-[82%_center]"
+          className="object-cover object-[84%_10%] sm:object-[82%_center]"
         />
       </div>
 
       {/* 2. HERO CONTENT LAYER */}
-      <div className="relative z-10 w-full max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-16 lg:py-20">
-        <div className="max-w-2xl space-y-3.5 sm:space-y-5">
-          {/* Eyebrow Trust Badge & Mobile Student Metric Row */}
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white/95 backdrop-blur-sm border border-[#E7E9F0] text-[11px] sm:text-xs font-bold text-[#E31E2B] shadow-xs">
-              <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E31E2B]" />
-              <span>India&apos;s Trusted Admission Partner</span>
+      <div className="relative z-10 w-full max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-16 lg:py-20">
+        <div className="max-w-2xl space-y-3 sm:space-y-5">
+          {/* Hero Headline & Intro Card (Frosted glass on mobile ensures 100% text clarity over background photo) */}
+          <div className="bg-white/90 sm:bg-transparent backdrop-blur-md sm:backdrop-blur-none p-3.5 sm:p-0 rounded-2xl sm:rounded-none border border-white/80 sm:border-transparent shadow-xs sm:shadow-none space-y-2.5 sm:space-y-4">
+            {/* Eyebrow Trust Badge & Mobile Student Metric Row */}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white/95 backdrop-blur-sm border border-[#E7E9F0] text-[11px] sm:text-xs font-bold text-[#E31E2B] shadow-2xs">
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E31E2B]" />
+                <span>India&apos;s Trusted Admission Partner</span>
+              </div>
+
+              {/* Mobile-only compact Students Guided chip */}
+              <div
+                onClick={() => openModal("50,000+ Guided Students Showcase")}
+                className="inline-flex sm:hidden items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm border border-[#E7E9F0] text-[10px] font-bold text-[#15182D] shadow-2xs cursor-pointer"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>50,000+ Students Guided</span>
+              </div>
             </div>
 
-            {/* Mobile-only compact Students Guided chip */}
-            <div
-              onClick={() => openModal("50,000+ Guided Students Showcase")}
-              className="inline-flex sm:hidden items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm border border-[#E7E9F0] text-[10px] font-bold text-[#15182D] shadow-xs cursor-pointer"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>50,000+ Students Guided</span>
-            </div>
+            {/* Main Headline - perfectly scaled for mobile with 100% legibility */}
+            <h1 className="font-display text-[27px] sm:text-5xl lg:text-[56px] font-extrabold text-[#15182D] leading-[1.14] tracking-tight">
+              Discover. Compare. Apply. <br />
+              <span className="text-[#E31E2B]">Get Admitted.</span>
+            </h1>
+
+            {/* Supporting Copy */}
+            <p className="font-body text-xs sm:text-lg text-[#15182D] font-medium leading-relaxed max-w-xl">
+              Find the right college, explore top courses, and get expert counselling to complete your admission journey — all in one place.
+            </p>
           </div>
-
-          {/* Main Headline - perfectly scaled for mobile */}
-          <h1 className="font-display text-[29px] sm:text-5xl lg:text-[56px] font-extrabold text-[#15182D] leading-[1.14] tracking-tight drop-shadow-xs">
-            Discover. Compare. Apply. <br />
-            <span className="text-[#E31E2B]">Get Admitted.</span>
-          </h1>
-
-          {/* Supporting Copy */}
-          <p className="font-body text-xs sm:text-lg text-[#15182D] font-medium leading-relaxed max-w-xl">
-            Find the right college, explore top courses, and get expert counselling to complete your admission journey — all in one place.
-          </p>
 
           {/* Tactile Skeuomorphic Search Engine Module - Compact on Mobile */}
           <div className="tactile-card rounded-2xl sm:rounded-3xl p-3 sm:p-5 max-w-xl pt-3 sm:pt-4">
