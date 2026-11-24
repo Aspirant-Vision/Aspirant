@@ -60,8 +60,8 @@ export function CompareCollegesModule() {
           </button>
         </div>
 
-        {/* Product Comparison Matrix Card */}
-        <div className="tactile-card rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-[#E7E9F0]">
+        {/* 1. DESKTOP COMPARISON MATRIX TABLE (hidden on mobile) */}
+        <div className="hidden lg:block tactile-card rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-[#E7E9F0]">
           <div className="overflow-x-auto w-full">
             <table className="w-full text-left border-collapse table-fixed min-w-[880px]">
               <thead>
@@ -212,6 +212,141 @@ export function CompareCollegesModule() {
               </tbody>
             </table>
           </div>
+        </div>
+
+        {/* 2. MOBILE RESPONSIVE COMPARISON (ZERO Horizontal Scrolling) */}
+        <div className="lg:hidden space-y-4">
+          {(() => {
+            const colA = selectedColleges[0] || FEATURED_COLLEGES[0];
+            const colB = selectedColleges[1] || FEATURED_COLLEGES[1];
+
+            return (
+              <div className="tactile-card rounded-2xl p-4 border border-[#E7E9F0] shadow-md bg-white space-y-4">
+                {/* Header Badge */}
+                <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#E31E2B]">
+                    <ArrowLeftRight className="w-3.5 h-3.5" />
+                    <span>Direct Comparison</span>
+                  </div>
+                  <button
+                    onClick={() => openModal("Detailed Comparison Tool")}
+                    className="tactile-pill px-2.5 py-1 rounded-lg text-[10px] font-bold text-[#15182D]"
+                  >
+                    Compare More
+                  </button>
+                </div>
+
+                {/* Side-by-Side College Cards (50% - 50%) */}
+                <div className="grid grid-cols-2 gap-3 pb-3 border-b border-gray-100">
+                  {/* College 1 */}
+                  <div className="space-y-1.5">
+                    <div className="relative h-24 w-full rounded-xl overflow-hidden bg-gray-100 shadow-inner">
+                      <Image src={colA.image} alt={colA.name} fill className="object-cover" />
+                    </div>
+                    <h4 className="font-display font-extrabold text-xs text-[#15182D] line-clamp-1">
+                      {colA.name.split(" - ")[0]}
+                    </h4>
+                    <span className="text-[10px] text-[#687086] block truncate">{colA.location}</span>
+                  </div>
+
+                  {/* College 2 */}
+                  <div className="space-y-1.5">
+                    <div className="relative h-24 w-full rounded-xl overflow-hidden bg-gray-100 shadow-inner">
+                      <Image src={colB.image} alt={colB.name} fill className="object-cover" />
+                    </div>
+                    <h4 className="font-display font-extrabold text-xs text-[#15182D] line-clamp-1">
+                      {colB.name.split(" - ")[0]}
+                    </h4>
+                    <span className="text-[10px] text-[#687086] block truncate">{colB.location}</span>
+                  </div>
+                </div>
+
+                {/* Vertical Comparison Metrics Stack */}
+                <div className="space-y-2 text-xs">
+                  {/* Metric: NIRF Ranking */}
+                  <div className="bg-[#F7F8FC] p-2.5 rounded-xl border border-gray-100">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#687086] block mb-1">
+                      NIRF Ranking
+                    </span>
+                    <div className="grid grid-cols-2 gap-3 font-extrabold text-[#E31E2B]">
+                      <span>{colA.nirfRank}</span>
+                      <span>{colB.nirfRank}</span>
+                    </div>
+                  </div>
+
+                  {/* Metric: Annual Tuition */}
+                  <div className="bg-[#F7F8FC] p-2.5 rounded-xl border border-gray-100">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#687086] block mb-1">
+                      Annual Tuition
+                    </span>
+                    <div className="grid grid-cols-2 gap-3 font-extrabold text-[#15182D]">
+                      <span>{colA.fees}</span>
+                      <span>{colB.fees}</span>
+                    </div>
+                  </div>
+
+                  {/* Metric: Average Placement */}
+                  <div className="bg-[#F7F8FC] p-2.5 rounded-xl border border-gray-100">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#687086] block mb-1">
+                      Average Placement (CTC)
+                    </span>
+                    <div className="grid grid-cols-2 gap-3 font-extrabold text-[#16A34A]">
+                      <span>{colA.avgCtc}</span>
+                      <span>{colB.avgCtc}</span>
+                    </div>
+                  </div>
+
+                  {/* Metric: Accreditation */}
+                  <div className="bg-[#F7F8FC] p-2.5 rounded-xl border border-gray-100">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#687086] block mb-1">
+                      Accreditation
+                    </span>
+                    <div className="grid grid-cols-2 gap-3 font-medium text-[#687086] text-[11px]">
+                      <span className="truncate">{colA.type}</span>
+                      <span className="truncate">{colB.type}</span>
+                    </div>
+                  </div>
+
+                  {/* Apply Actions */}
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <button
+                      onClick={() => openModal(`Apply: ${colA.name}`)}
+                      className="tactile-btn-red text-white py-2 px-3 rounded-xl text-xs font-bold text-center"
+                    >
+                      Apply Now
+                    </button>
+                    <button
+                      onClick={() => openModal(`Apply: ${colB.name}`)}
+                      className="tactile-btn-white text-[#15182D] border border-gray-200 py-2 px-3 rounded-xl text-xs font-bold text-center"
+                    >
+                      Apply Now
+                    </button>
+                  </div>
+                </div>
+
+                {/* Quick Switcher Chips */}
+                <div className="pt-2 border-t border-gray-100">
+                  <span className="text-[10px] font-bold text-[#687086] uppercase tracking-wider block mb-1.5">
+                    Compare with other campuses:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {FEATURED_COLLEGES.filter((c) => c.id !== colA.id && c.id !== colB.id).slice(0, 4).map((c) => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedIds([colA.id, c.id, ...selectedIds.filter((id) => id !== colA.id && id !== c.id)]);
+                        }}
+                        className="tactile-pill px-2.5 py-1 rounded-lg text-[10px] font-semibold text-[#15182D] hover:text-[#E31E2B]"
+                      >
+                        + {c.name.split(" - ")[0]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
     </section>

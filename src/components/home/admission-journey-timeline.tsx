@@ -94,11 +94,11 @@ export function AdmissionJourneyTimeline() {
         </div>
 
         {/* ======================================================== */}
-        {/* DESKTOP CURVED ROAD (Directly on Pure White Background)   */}
+        {/* CURVED ROAD & STEP CARDS (Exact Desktop View on All Devices) */}
         {/* ======================================================== */}
-        <div className="hidden lg:block relative mb-12">
+        <div className="relative mb-6 sm:mb-12">
           {/* Elegant SVG Curved Road Path */}
-          <div className="relative w-full h-32 mb-4">
+          <div className="relative w-full h-24 sm:h-32 mb-3 sm:mb-4">
             <svg
               className="w-full h-full overflow-visible"
               viewBox="0 0 1200 120"
@@ -159,25 +159,25 @@ export function AdmissionJourneyTimeline() {
                     <button
                       type="button"
                       onClick={() => setActiveStep(idx)}
-                      className="group flex flex-col items-center focus:outline-none"
+                      className="group flex flex-col items-center focus:outline-none cursor-pointer"
                     >
                       <div className="relative">
                         {isActive && (
-                          <span className="absolute -inset-2.5 rounded-full bg-[#E31E2B] animate-ping opacity-30" />
+                          <span className="absolute -inset-1.5 sm:-inset-2.5 rounded-full bg-[#E31E2B] animate-ping opacity-30" />
                         )}
                         <div
                           className={cn(
-                            "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-md",
+                            "w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-300 shadow-md",
                             isActive
                               ? "bg-gradient-to-tr from-[#B5121B] to-[#E31E2B] text-white scale-110 shadow-red-500/40"
                               : "bg-white text-[#15182D] border-2 border-[#E7E9F0] hover:border-[#E31E2B] hover:scale-105"
                           )}
                         >
-                          <Icon className="w-6 h-6 stroke-[2.2]" />
+                          <Icon className="w-4 h-4 sm:w-6 sm:h-6 stroke-[2.2]" />
                         </div>
                         <div
                           className={cn(
-                            "absolute -top-2 -right-2 w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center shadow-xs",
+                            "absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-4 h-4 sm:w-6 sm:h-6 rounded-full text-[9px] sm:text-[11px] font-black flex items-center justify-center shadow-xs",
                             isActive ? "bg-[#171B52] text-white" : "bg-[#E31E2B] text-white"
                           )}
                         >
@@ -191,8 +191,8 @@ export function AdmissionJourneyTimeline() {
             </div>
           </div>
 
-          {/* 4 Direct Text Blocks (NO dark blue box, placed directly on white canvas) */}
-          <div className="grid grid-cols-4 gap-6 pt-2">
+          {/* 4 Connected Step Cards (Directly on Pure White Canvas) */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6 pt-2">
             {JOURNEY_STEPS.map((s, idx) => {
               const isActive = activeStep === idx;
               return (
@@ -203,78 +203,39 @@ export function AdmissionJourneyTimeline() {
                     openModal(`Journey: ${s.stepNum} - ${s.title}`);
                   }}
                   className={cn(
-                    "p-5 rounded-2xl transition-all duration-300 cursor-pointer border",
+                    "p-3 sm:p-5 rounded-xl sm:rounded-2xl transition-all duration-300 cursor-pointer border flex flex-col justify-between",
                     isActive
-                      ? "bg-red-50/40 border-[#E31E2B] shadow-sm"
+                      ? "bg-red-50/40 border-[#E31E2B] shadow-sm ring-1 ring-[#E31E2B]/20"
                       : "bg-[#F7F8FC] border-[#E7E9F0] hover:bg-white hover:border-gray-300 hover:shadow-xs"
                   )}
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-extrabold text-[#E31E2B] uppercase tracking-wider">
-                      {s.stepNum}
-                    </span>
-                    <span className="text-[10px] font-bold text-[#687086] bg-white px-2 py-0.5 rounded-md border border-gray-100">
-                      {s.timeline}
-                    </span>
+                  <div>
+                    <div className="flex items-center justify-between mb-1 sm:mb-2">
+                      <span className="text-[10px] sm:text-[11px] font-extrabold text-[#E31E2B] uppercase tracking-wider">
+                        {s.stepNum}
+                      </span>
+                      <span className="text-[9px] sm:text-[10px] font-bold text-[#687086] bg-white px-1.5 py-0.5 rounded-md border border-gray-100">
+                        {s.timeline}
+                      </span>
+                    </div>
+
+                    <h3 className="font-display font-extrabold text-xs sm:text-base text-[#15182D] mb-1">
+                      {s.title}
+                    </h3>
+
+                    <p className="text-[11px] sm:text-xs text-[#687086] leading-relaxed font-normal line-clamp-3 sm:line-clamp-none">
+                      {s.desc}
+                    </p>
                   </div>
 
-                  <h3 className="font-display font-extrabold text-base text-[#15182D] mb-1.5">
-                    {s.title}
-                  </h3>
-
-                  <p className="text-xs text-[#687086] leading-relaxed font-normal">
-                    {s.desc}
-                  </p>
-
-                  <div className="mt-3 pt-3 border-t border-gray-200/60 flex items-center gap-1.5 text-[11px] font-semibold text-[#15182D]">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <div className="mt-2.5 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-200/60 flex items-center gap-1.5 text-[10px] sm:text-[11px] font-semibold text-[#15182D]">
+                    <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-600 shrink-0" />
                     <span className="truncate">{s.keyFeature}</span>
                   </div>
                 </div>
               );
             })}
           </div>
-        </div>
-
-        {/* ======================================================== */}
-        {/* MOBILE RESPONSIVE ROAD (Vertical Connected Milestones)     */}
-        {/* ======================================================== */}
-        <div className="lg:hidden relative ml-3 sm:ml-4 pl-4 sm:pl-5 border-l-2 border-dashed border-[#E31E2B]/50 space-y-3.5 sm:space-y-4">
-          {JOURNEY_STEPS.map((s, idx) => {
-            const Icon = s.icon;
-            return (
-              <div
-                key={s.num}
-                onClick={() => openModal(`Journey: ${s.stepNum} - ${s.title}`)}
-                className="relative bg-[#F7F8FC] p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-[#E7E9F0] cursor-pointer"
-              >
-                {/* Milestone Node on the vertical line */}
-                <div className="absolute -left-[23px] sm:-left-[27px] top-3 sm:top-3.5 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#E31E2B] text-white flex items-center justify-center font-bold text-[11px] sm:text-xs shadow-md">
-                  {s.num}
-                </div>
-
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-extrabold text-[#E31E2B] uppercase">
-                    {s.stepNum}
-                  </span>
-                  <span className="text-[10px] font-bold text-[#687086]">
-                    {s.timeline}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-1.5 mb-1.5">
-                  <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E31E2B]" />
-                  <h3 className="font-display font-extrabold text-sm sm:text-base text-[#15182D]">
-                    {s.title}
-                  </h3>
-                </div>
-
-                <p className="text-xs text-[#687086] leading-relaxed">
-                  {s.desc}
-                </p>
-              </div>
-            );
-          })}
         </div>
       </div>
     </section>

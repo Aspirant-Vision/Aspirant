@@ -46,12 +46,6 @@ export function HeroSection() {
           sizes="100vw"
           className="object-cover object-[79%_12%] sm:object-[82%_center]"
         />
-
-        {/* Mobile: Gentle top-to-bottom soft gradient so student/campus remain clearly visible */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F7F8FC]/25 via-[#F7F8FC]/70 to-[#F7F8FC] sm:hidden pointer-events-none" />
-
-        {/* Desktop: Clean, gentle fade strictly on far-left for text contrast */}
-        <div className="hidden sm:block absolute inset-y-0 left-0 w-[60%] lg:w-[48%] bg-gradient-to-r from-[#F7F8FC] via-[#F7F8FC]/90 to-transparent pointer-events-none" />
       </div>
 
       {/* 2. HERO CONTENT LAYER */}
