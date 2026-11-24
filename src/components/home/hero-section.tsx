@@ -1,0 +1,215 @@
+"use client";
+
+import React, { useState } from "react";
+import Image from "next/image";
+import {
+  ShieldCheck,
+  Search,
+  MapPin,
+  ArrowRight,
+  Landmark,
+  GraduationCap,
+  FileText,
+  Play,
+} from "lucide-react";
+import { useCounselingModal } from "@/components/forms/counseling-modal-context";
+import { cn } from "@/lib/utils";
+
+export function HeroSection() {
+  const { openModal } = useCounselingModal();
+  const [activeTab, setActiveTab] = useState<"colleges" | "courses" | "exams">("colleges");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("All India");
+
+  const popularSearches = [
+    "Engineering",
+    "Management",
+    "Medical",
+    "Law",
+    "Design",
+  ];
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    openModal(searchQuery ? `${activeTab}: ${searchQuery} in ${selectedLocation}` : selectedLocation);
+  };
+
+  return (
+    <section className="relative w-full min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden bg-[#F7F8FC]">
+      {/* 1. CINEMATIC FULL-WIDTH BACKGROUND PHOTOGRAPHY (herobg.png) */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/images/herobg.png"
+          alt="Premier Academic Campus and Aspirant Vision Student"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[78%_center] sm:object-[82%_center]"
+        />
+
+        {/* Clean, gentle fade strictly on far-left for text contrast - NO white fog or milky shadow on student or campus */}
+        <div className="absolute inset-y-0 left-0 w-full sm:w-[60%] lg:w-[48%] bg-gradient-to-r from-[#F7F8FC] via-[#F7F8FC]/90 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#F7F8FC] to-transparent sm:hidden pointer-events-none" />
+      </div>
+
+      {/* 2. HERO CONTENT LAYER */}
+      <div className="relative z-10 w-full max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+        <div className="max-w-2xl space-y-5">
+          {/* Eyebrow Trust Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#E7E9F0] text-xs font-bold text-[#E31E2B] shadow-sm">
+            <ShieldCheck className="w-4 h-4 text-[#E31E2B]" />
+            <span>India&apos;s Trusted Admission Partner</span>
+          </div>
+
+          {/* Main Headline */}
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-[56px] font-extrabold text-[#15182D] leading-[1.12] tracking-tight">
+            Discover. Compare. Apply. <br />
+            <span className="text-[#E31E2B]">Get Admitted.</span>
+          </h1>
+
+          {/* Supporting Copy: 100% visible, crisp, bold, crystal clear contrast */}
+          <p className="font-body text-base sm:text-lg text-[#15182D] font-medium leading-relaxed max-w-xl">
+            Find the right college, explore top courses, and get expert counselling to complete your admission journey — all in one place.
+          </p>
+
+          {/* Tactile Skeuomorphic Search Engine Module */}
+          <div className="tactile-card rounded-3xl p-4 sm:p-5 max-w-xl pt-4">
+            {/* Search Category Tabs with Skeuomorphic Pills */}
+            <div className="flex items-center gap-2 mb-3 pb-2.5 border-b border-gray-100">
+              <button
+                type="button"
+                onClick={() => setActiveTab("colleges")}
+                className={cn(
+                  "flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all",
+                  activeTab === "colleges"
+                    ? "tactile-btn-red text-white"
+                    : "tactile-pill text-[#687086] hover:text-[#15182D]"
+                )}
+              >
+                <Landmark className="w-3.5 h-3.5" />
+                <span>Colleges</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("courses")}
+                className={cn(
+                  "flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all",
+                  activeTab === "courses"
+                    ? "tactile-btn-red text-white"
+                    : "tactile-pill text-[#687086] hover:text-[#15182D]"
+                )}
+              >
+                <GraduationCap className="w-3.5 h-3.5" />
+                <span>Courses</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("exams")}
+                className={cn(
+                  "flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all",
+                  activeTab === "exams"
+                    ? "tactile-btn-red text-white"
+                    : "tactile-pill text-[#687086] hover:text-[#15182D]"
+                )}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Exams</span>
+              </button>
+            </div>
+
+            {/* Input & Location Row with Tactile Well */}
+            <form
+              onSubmit={handleSearch}
+              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-[#F7F8FC] rounded-2xl p-1.5 border border-[#E7E9F0] shadow-inner"
+            >
+              {/* Search text input */}
+              <div className="relative flex-1 flex items-center">
+                <Search className="w-4 h-4 text-gray-400 absolute left-3.5 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search colleges, courses or programs..."
+                  className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm bg-transparent outline-none text-[#15182D] placeholder:text-[#687086] font-medium"
+                />
+              </div>
+
+              {/* Location Selector */}
+              <div className="flex items-center gap-1.5 border-t sm:border-t-0 sm:border-l border-gray-200 px-3 py-2 sm:py-0">
+                <MapPin className="w-3.5 h-3.5 text-[#E31E2B] shrink-0" />
+                <select
+                  value={selectedLocation}
+                  onChange={(e) => setSelectedLocation(e.target.value)}
+                  className="bg-transparent text-xs font-semibold text-[#15182D] outline-none cursor-pointer"
+                >
+                  <option value="All India">All India</option>
+                  <option value="Odisha">Odisha</option>
+                  <option value="Delhi NCR">Delhi NCR</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="West Bengal">West Bengal</option>
+                  <option value="Tamil Nadu">Tamil Nadu</option>
+                </select>
+              </div>
+
+              {/* Red Tactile Search Button */}
+              <button
+                type="submit"
+                className="tactile-btn-red text-white p-3 rounded-xl flex items-center justify-center shrink-0"
+                aria-label="Search"
+              >
+                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+              </button>
+            </form>
+
+            {/* Popular Searches Tactile Chips */}
+            <div className="flex flex-wrap items-center gap-2 pt-3 px-1 text-xs">
+              <span className="text-[#15182D] font-bold text-[11px]">Popular:</span>
+              {popularSearches.map((term) => (
+                <button
+                  key={term}
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery(term);
+                    openModal(`${activeTab}: ${term}`);
+                  }}
+                  className="tactile-pill px-3 py-1 rounded-lg text-[#15182D] hover:text-[#E31E2B] font-semibold text-[11px] transition-colors"
+                >
+                  {term}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* 3. FLOATING TACTILE BADGE: TOP RIGHT (50,000+ Students Guided) */}
+        <div className="hidden lg:block absolute top-16 right-16 z-20">
+          <div
+            onClick={() => openModal("50,000+ Guided Students Showcase")}
+            className="tactile-card rounded-2xl px-5 py-3 flex items-center gap-3.5 shadow-xl hover:scale-105 transition-transform cursor-pointer"
+          >
+            <div className="flex -space-x-2 overflow-hidden">
+              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-white overflow-hidden bg-gray-200 relative shadow-sm">
+                <Image src="/images/ss_crops/priya_sharma.png" alt="Student" fill className="object-cover" />
+              </div>
+              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-white overflow-hidden bg-amber-100 relative shadow-sm">
+                <Image src="/images/hero/hero_student_wide.png" alt="Student" fill className="object-cover object-top" />
+              </div>
+              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-white overflow-hidden bg-rose-100 relative shadow-sm">
+                <Image src="/images/ss_crops/priya_sharma.png" alt="Student" fill className="object-cover" />
+              </div>
+            </div>
+            <div>
+              <div className="font-display font-extrabold text-sm text-[#15182D] leading-none">
+                50,000+
+              </div>
+              <div className="text-[11px] font-semibold text-[#687086] mt-0.5">
+                Students Guided
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
