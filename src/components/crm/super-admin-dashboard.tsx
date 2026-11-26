@@ -24,6 +24,9 @@ import {
   Phone,
   Mail,
   GraduationCap,
+  Activity,
+  AlertCircle,
+  BarChart3,
 } from "lucide-react";
 
 interface SuperAdminDashboardProps {
@@ -32,6 +35,15 @@ interface SuperAdminDashboardProps {
 }
 
 export function SuperAdminDashboard({ data, displayName }: SuperAdminDashboardProps) {
+  const totalLeads = data.totalLeads || 0;
+  const totalApps = data.totalApplications || 0;
+  const confirmedAdmissions = data.confirmedAdmissionsCount || 0;
+  const unassignedLeads = data.unassignedLeadsCount || 0;
+  const pendingFollowUps = data.followUpsDueCount || 0;
+
+  const appConversionPct = totalLeads > 0 ? Math.min(100, Math.round((totalApps / totalLeads) * 100)) : 0;
+  const admissionConversionPct = totalApps > 0 ? Math.min(100, Math.round((confirmedAdmissions / totalApps) * 100)) : 0;
+
   return (
     <div className="space-y-6">
       {/* 1. EXECUTIVE COMMAND HERO BANNER */}
@@ -102,8 +114,8 @@ export function SuperAdminDashboard({ data, displayName }: SuperAdminDashboardPr
             Prospective student inquiries
           </p>
           <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
-            <span>Stage: New & Scheduled</span>
-            <span className="text-primary font-semibold group-hover:translate-x-0.5 transition-transform">
+            <span>{unassignedLeads > 0 ? `${unassignedLeads} Unassigned` : "Pipeline Assigned"}</span>
+            <span className="text-[#E31E2B] font-semibold group-hover:translate-x-0.5 transition-transform">
               Open CRM &rarr;
             </span>
           </div>
@@ -132,8 +144,8 @@ export function SuperAdminDashboard({ data, displayName }: SuperAdminDashboardPr
             Submitted student applications
           </p>
           <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
-            <span>Eligibility & Verification</span>
-            <span className="text-primary font-semibold group-hover:translate-x-0.5 transition-transform">
+            <span>{data.pendingApplicationsCount ? `${data.pendingApplicationsCount} in Review` : "Verification Queue"}</span>
+            <span className="text-amber-600 font-semibold group-hover:translate-x-0.5 transition-transform">
               Review &rarr;
             </span>
           </div>
@@ -164,8 +176,8 @@ export function SuperAdminDashboard({ data, displayName }: SuperAdminDashboardPr
             Verified universities & institutes
           </p>
           <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
-            <span>NIRF & UGC Catalog</span>
-            <span className="text-primary font-semibold group-hover:translate-x-0.5 transition-transform">
+            <span>NIRF &amp; UGC Catalog</span>
+            <span className="text-purple-600 font-semibold group-hover:translate-x-0.5 transition-transform">
               Manage &rarr;
             </span>
           </div>
@@ -196,8 +208,8 @@ export function SuperAdminDashboard({ data, displayName }: SuperAdminDashboardPr
             Active student & counsellor accounts
           </p>
           <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
-            <span>Authentication & RBAC</span>
-            <span className="text-primary font-semibold group-hover:translate-x-0.5 transition-transform">
+            <span>Authentication &amp; Staff</span>
+            <span className="text-emerald-600 font-semibold group-hover:translate-x-0.5 transition-transform">
               Directory &rarr;
             </span>
           </div>
@@ -310,74 +322,128 @@ export function SuperAdminDashboard({ data, displayName }: SuperAdminDashboardPr
           )}
         </div>
 
-        {/* Right Column: Platform Readiness & Quick Actions (4 cols) */}
+        {/* Right Column: Admissions Velocity, SLAs & Quick Actions (4 cols) */}
         <div className="lg:col-span-4 space-y-6">
-          {/* Platform Setup Checklist */}
-          <div className="bg-white border border-gray-200/90 rounded-2xl p-6 shadow-2xs space-y-4">
-            <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <h3 className="font-bold text-gray-900 text-sm">
-                Operational Readiness
-              </h3>
+          {/* Admissions Pipeline & SLA Velocity (Replaces Operational Readiness) */}
+          <div className="bg-white border border-gray-200/90 rounded-2xl p-6 shadow-2xs space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <Activity className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 text-sm">
+                    Admissions Velocity &amp; SLA
+                  </h3>
+                  <p className="text-[11px] text-gray-400">Live conversion funnel &amp; team response health</p>
+                </div>
+              </div>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                Healthy
+              </span>
             </div>
 
-            <div className="space-y-3 text-xs">
-              <div className="flex items-start gap-2.5 text-gray-700">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                <div>
-                  <span className="font-bold text-gray-900 block">
-                    Supabase PostgreSQL Engine
+            {/* Funnel Progress Bars */}
+            <div className="space-y-3.5 text-xs">
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-semibold text-gray-700 mb-1">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#E31E2B]" />
+                    Leads Inquired
                   </span>
-                  <span className="text-[11px] text-gray-500">
-                    Database schema & security RLS policies active.
-                  </span>
+                  <span className="font-bold text-gray-900">{totalLeads}</span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
+                  <div className="h-full bg-[#E31E2B] rounded-full transition-all duration-500" style={{ width: totalLeads > 0 ? "100%" : "0%" }} />
                 </div>
               </div>
 
-              <div className="flex items-start gap-2.5 text-gray-700">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                <div>
-                  <span className="font-bold text-gray-900 block">
-                    Public Lead Capture Forms
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-semibold text-gray-700 mb-1">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-amber-500" />
+                    Applications Lodged
                   </span>
-                  <span className="text-[11px] text-gray-500">
-                    Homepage modals & course inquiries live.
+                  <span className="font-bold text-gray-900">
+                    {totalApps} <span className="text-[10px] text-gray-400">({appConversionPct}%)</span>
                   </span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
+                  <div
+                    className="h-full bg-amber-500 rounded-full transition-all duration-500"
+                    style={{ width: `${Math.max(4, Math.min(100, appConversionPct))}%` }}
+                  />
                 </div>
               </div>
 
-              <div className="flex items-start gap-2.5 text-gray-700">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                <div>
-                  <span className="font-bold text-gray-900 block">
-                    Super Admin Authentication
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-semibold text-gray-700 mb-1">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                    Confirmed Admissions
                   </span>
-                  <span className="text-[11px] text-gray-500">
-                    Master credentials active and verified.
+                  <span className="font-bold text-gray-900">
+                    {confirmedAdmissions} <span className="text-[10px] text-gray-400">({admissionConversionPct}%)</span>
                   </span>
                 </div>
-              </div>
-
-              <div className="flex items-start gap-2.5 text-gray-700">
-                <div className="w-4 h-4 rounded-full border-2 border-amber-400 shrink-0 mt-0.5 flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                </div>
-                <div>
-                  <span className="font-bold text-gray-900 block">
-                    Institutional Catalog
-                  </span>
-                  <span className="text-[11px] text-gray-500">
-                    Add NIRF ranked universities & cutoff tables.
-                  </span>
+                <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                    style={{ width: `${Math.max(4, Math.min(100, admissionConversionPct))}%` }}
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="pt-2 border-t border-gray-100">
-              <Link href="/admin/colleges" className="block">
-                <button className="w-full py-2 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 text-xs font-bold text-gray-800 transition-colors cursor-pointer flex items-center justify-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-primary" />
-                  <span>Configure Universities</span>
+            {/* Team Operational Alerts */}
+            <div className="space-y-2 pt-2 border-t border-gray-100 text-xs">
+              {unassignedLeads > 0 ? (
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-800">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-[#E31E2B] shrink-0" />
+                    <span className="font-bold text-[11px]">{unassignedLeads} Unassigned Leads</span>
+                  </div>
+                  <Link
+                    href="/admin/leads?status=new"
+                    className="text-[11px] font-bold text-[#E31E2B] hover:underline"
+                  >
+                    Assign &rarr;
+                  </Link>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-gray-50 border border-gray-100 text-gray-700 text-[11px]">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  <span>All incoming leads assigned to team</span>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 border border-gray-100 text-gray-700 text-[11px]">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                  <span>Pending follow-up actions</span>
+                </div>
+                <Link href="/admin/follow-ups" className="font-bold text-blue-600 hover:underline">
+                  {pendingFollowUps} Due
+                </Link>
+              </div>
+
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 border border-gray-100 text-gray-700 text-[11px]">
+                <div className="flex items-center gap-2">
+                  <UserCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>Active counsellors on duty</span>
+                </div>
+                <Link href="/admin/counsellors" className="font-bold text-emerald-700 hover:underline">
+                  {data.totalCounsellors} Active
+                </Link>
+              </div>
+            </div>
+
+            <div className="pt-1">
+              <Link href="/admin/leads" className="block">
+                <button className="w-full py-2.5 rounded-xl bg-[#15182D] hover:bg-black text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
+                  <Inbox className="w-3.5 h-3.5 text-red-400" />
+                  <span>Manage Lead Pipeline &amp; Seats</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </Link>
             </div>
@@ -386,32 +452,36 @@ export function SuperAdminDashboard({ data, displayName }: SuperAdminDashboardPr
           {/* Quick Shortcuts */}
           <div className="bg-white border border-gray-200/90 rounded-2xl p-6 shadow-2xs space-y-3">
             <h4 className="font-bold text-sm text-gray-900 flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-primary" />
+              <Sparkles className="w-4 h-4 text-[#E31E2B]" />
               <span>Quick Operations</span>
             </h4>
             <p className="text-xs text-gray-500 leading-relaxed">
-              Fast shortcuts to export reports, configure staff permissions, or view live analytics.
+              Instant shortcuts to mission-critical administrative console modules.
             </p>
 
             <div className="grid grid-cols-2 gap-2 pt-1">
               <Link href="/admin/analytics">
-                <button className="w-full py-2 px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-xs font-semibold text-gray-700 transition-colors border border-gray-100 text-left truncate">
-                  📊 Analytics
+                <button className="w-full py-2.5 px-3 rounded-xl bg-gray-50 hover:bg-red-50/60 hover:text-[#E31E2B] hover:border-red-200 text-xs font-semibold text-gray-700 transition-all border border-gray-200/80 text-left flex items-center gap-2 cursor-pointer">
+                  <BarChart3 className="w-3.5 h-3.5 text-red-500" />
+                  <span>Analytics</span>
                 </button>
               </Link>
-              <Link href="/admin/settings">
-                <button className="w-full py-2 px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-xs font-semibold text-gray-700 transition-colors border border-gray-100 text-left truncate">
-                  ⚙️ Settings
+              <Link href="/admin/leads/performance">
+                <button className="w-full py-2.5 px-3 rounded-xl bg-gray-50 hover:bg-indigo-50/60 hover:text-indigo-600 hover:border-indigo-200 text-xs font-semibold text-gray-700 transition-all border border-gray-200/80 text-left flex items-center gap-2 cursor-pointer">
+                  <TrendingUp className="w-3.5 h-3.5 text-indigo-500" />
+                  <span>Performance</span>
                 </button>
               </Link>
               <Link href="/admin/applications">
-                <button className="w-full py-2 px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-xs font-semibold text-gray-700 transition-colors border border-gray-100 text-left truncate">
-                  📄 Applications
+                <button className="w-full py-2.5 px-3 rounded-xl bg-gray-50 hover:bg-amber-50/60 hover:text-amber-700 hover:border-amber-200 text-xs font-semibold text-gray-700 transition-all border border-gray-200/80 text-left flex items-center gap-2 cursor-pointer">
+                  <FileCheck2 className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Applications</span>
                 </button>
               </Link>
-              <Link href="/admin/counsellors">
-                <button className="w-full py-2 px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-xs font-semibold text-gray-700 transition-colors border border-gray-100 text-left truncate">
-                  👥 Counsellors
+              <Link href="/admin/colleges">
+                <button className="w-full py-2.5 px-3 rounded-xl bg-gray-50 hover:bg-purple-50/60 hover:text-purple-600 hover:border-purple-200 text-xs font-semibold text-gray-700 transition-all border border-gray-200/80 text-left flex items-center gap-2 cursor-pointer">
+                  <Building2 className="w-3.5 h-3.5 text-purple-500" />
+                  <span>Colleges</span>
                 </button>
               </Link>
             </div>

@@ -7,6 +7,10 @@ export interface SuperAdminDashboardData {
   totalStudents: number;
   totalApplications: number;
   totalCounsellors: number;
+  unassignedLeadsCount?: number;
+  pendingApplicationsCount?: number;
+  confirmedAdmissionsCount?: number;
+  followUpsDueCount?: number;
   recentLeads: Array<{
     id: string;
     fullName: string;
@@ -80,6 +84,10 @@ export async function getSuperAdminDashboardData(): Promise<SuperAdminDashboardD
     counsellorsRes,
     recentLeadsRes,
     recentAdmissionsRes,
+    unassignedLeadsRes,
+    pendingAppsRes,
+    confirmedAdmissionsRes,
+    followUpsDueRes,
   ] = await Promise.all([
     supabase.from("colleges").select("*", { count: "exact", head: true }),
     supabase.from("courses").select("*", { count: "exact", head: true }),
@@ -91,12 +99,16 @@ export async function getSuperAdminDashboardData(): Promise<SuperAdminDashboardD
       .from("leads")
       .select("id, full_name, email, phone, status, created_at, preferred_location, enquiry_message, source")
       .order("created_at", { ascending: false })
-      .limit(5),
+      .limit(6),
     supabase
       .from("admissions")
       .select("id, admission_status, academic_year, created_at")
       .order("created_at", { ascending: false })
       .limit(5),
+    supabase.from("leads").select("*", { count: "exact", head: true }).is("assigned_counsellor_id", null),
+    supabase.from("applications").select("*", { count: "exact", head: true }).in("status", ["submitted", "under_review"]),
+    supabase.from("admissions").select("*", { count: "exact", head: true }).eq("admission_status", "admitted"),
+    supabase.from("follow_ups").select("*", { count: "exact", head: true }).eq("status", "pending"),
   ]);
 
   return {
@@ -106,6 +118,10 @@ export async function getSuperAdminDashboardData(): Promise<SuperAdminDashboardD
     totalStudents: studentsRes.count ?? 0,
     totalApplications: applicationsRes.count ?? 0,
     totalCounsellors: counsellorsRes.count ?? 0,
+    unassignedLeadsCount: unassignedLeadsRes.count ?? 0,
+    pendingApplicationsCount: pendingAppsRes.count ?? 0,
+    confirmedAdmissionsCount: confirmedAdmissionsRes.count ?? 0,
+    followUpsDueCount: followUpsDueRes.count ?? 0,
     recentLeads: (recentLeadsRes.data || []).map((l: any) => ({
       id: l.id,
       fullName: l.full_name,
