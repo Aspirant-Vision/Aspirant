@@ -701,7 +701,7 @@ export default async function PublicCollegeDetailPage({
                     <div>
                       <span className="text-[10px] text-gray-400 font-semibold block uppercase">Highest Package</span>
                       <span className="font-bold text-gray-800">
-                        {rel.highest_placement ? `₹${rel.highest_placement} LPA` : "Verified Placements"}
+                        {rel.highest_placement ? `₹${rel.highest_placement} LPA` : "Top Placements"}
                       </span>
                     </div>
                   </div>

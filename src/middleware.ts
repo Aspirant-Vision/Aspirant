@@ -43,16 +43,17 @@ export async function middleware(request: NextRequest) {
   }
 
   // 5. Authenticated redirect for public auth pages
-  // If already logged in, prevent accessing login/register repeatedly
+  // Only redirect an already authenticated STUDENT away from student login/register
   if (user) {
     const userRole = (user.user_metadata?.role as string) || "student";
     const isStaffUser = userRole === "admin" || userRole === "super_admin" || userRole === "counsellor";
 
-    if (pathname === "/login" || pathname === "/register") {
-      const redirectTarget = isStaffUser ? "/admin/dashboard" : "/profile";
-      return NextResponse.redirect(new URL(redirectTarget, request.url));
+    // If an authenticated STUDENT visits /login or /register, redirect to their profile
+    if (userRole === "student" && (pathname === "/login" || pathname === "/register")) {
+      return NextResponse.redirect(new URL("/profile", request.url));
     }
 
+    // Only if a staff user visits the dedicated staff login page (/admin/login), redirect to /admin/dashboard
     if (pathname === "/admin/login" && isStaffUser) {
       return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }

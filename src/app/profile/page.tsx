@@ -50,6 +50,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [dashboardData, setDashboardData] = useState<StudentDashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isStaffRole, setIsStaffRole] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -105,13 +106,15 @@ export default function ProfilePage() {
           created_at: dbProfile?.created_at,
         };
 
-        // If an administrator or counsellor visits the student profile, route them to Admin Dashboard
+        // If an administrator or counsellor visits the student profile, show staff account screen
         if (
           resolvedProfile.role === "super_admin" ||
           resolvedProfile.role === "admin" ||
           resolvedProfile.role === "counsellor"
         ) {
-          router.replace("/admin/dashboard");
+          setIsStaffRole(true);
+          setProfile(resolvedProfile);
+          setIsLoading(false);
           return;
         }
 
@@ -224,6 +227,38 @@ export default function ProfilePage() {
       <div className="min-h-[70vh] flex flex-col items-center justify-center">
         <Loader2 className="w-7 h-7 text-red-600 animate-spin mb-3" />
         <p className="text-xs text-slate-500 font-medium tracking-wide">Loading your admissions dashboard...</p>
+      </div>
+    );
+  }
+
+  if (isStaffRole) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center p-4">
+        <div className="max-w-md w-full p-8 bg-white rounded-2xl border border-gray-200 text-center space-y-4 shadow-sm">
+          <div className="w-12 h-12 rounded-full bg-red-50 text-[#E31E2B] flex items-center justify-center mx-auto">
+            <ShieldCheck className="w-6 h-6" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900">Staff Account Detected</h2>
+          <p className="text-xs text-gray-600 leading-relaxed">
+            You are currently authenticated as <strong>{profile?.email}</strong> with staff role (
+            <span className="capitalize font-semibold text-gray-800">{profile?.role}</span>). The public admissions portal is reserved for student applicants.
+          </p>
+          <div className="flex flex-col gap-2 pt-2">
+            <Link
+              href="/admin/dashboard"
+              className="w-full py-2.5 rounded-xl bg-[#15182D] text-white text-xs font-bold hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5"
+            >
+              <span>Go to Admin Operations Console</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+            <button
+              onClick={handleSignOut}
+              className="w-full py-2.5 rounded-xl border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors cursor-pointer"
+            >
+              Sign Out Staff Account
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

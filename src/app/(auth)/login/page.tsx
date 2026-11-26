@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { studentLoginSchema, StudentLoginInput, getSafeRedirectUrl } from "@/lib/validation/auth";
 import { loginAction } from "@/lib/auth/actions";
-import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { Eye, EyeOff, Loader2, AlertCircle, ShieldAlert, ArrowRight } from "lucide-react";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 
 function LoginForm() {
@@ -19,6 +20,25 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(errorParam || null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentStaffEmail, setCurrentStaffEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        const role = (session.user.app_metadata?.role || session.user.user_metadata?.role) as string;
+        const isStaff =
+          role === "admin" ||
+          role === "super_admin" ||
+          role === "counsellor" ||
+          session.user.email?.toLowerCase().includes("admin@aspirantvision.com");
+
+        if (isStaff) {
+          setCurrentStaffEmail(session.user.email || "Staff User");
+        }
+      }
+    });
+  }, []);
 
   const {
     register,
@@ -58,6 +78,41 @@ function LoginForm() {
 
   return (
     <div className="w-full">
+      {/* Staff Session Notice (if staff is logged in on this browser) */}
+      {currentStaffEmail && (
+        <div className="mb-4 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 space-y-2">
+          <div className="flex items-center gap-1.5 font-bold text-slate-800">
+            <ShieldAlert className="w-4 h-4 text-[#E31E2B]" />
+            <span>Staff Account Active</span>
+          </div>
+          <p className="text-[11px] text-slate-500 leading-relaxed">
+            You are signed in as <strong>{currentStaffEmail}</strong>. To manage admissions, use the Admin Console. To access a student portal, enter your student credentials below.
+          </p>
+          <div className="flex items-center gap-3 pt-1 text-xs">
+            <Link
+              href="/admin/dashboard"
+              className="font-bold text-[#E31E2B] hover:underline flex items-center gap-1"
+            >
+              <span>Go to Admin Console</span>
+              <ArrowRight className="w-3 h-3" />
+            </Link>
+            <span className="text-slate-300">|</span>
+            <button
+              type="button"
+              onClick={async () => {
+                const supabase = createClient();
+                await supabase.auth.signOut();
+                setCurrentStaffEmail(null);
+                window.location.reload();
+              }}
+              className="font-semibold text-slate-600 hover:text-slate-900 cursor-pointer"
+            >
+              Sign Out Staff
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Heading */}
       <div className="mb-5">
         <h2 className="text-2xl font-bold tracking-tight text-slate-900">

@@ -247,11 +247,10 @@ export async function loginAction(
       profile?.role === "counsellor";
     const defaultDestination = isAdminUser ? "/admin/dashboard" : "/profile";
 
-    // Determine safe redirect
-    const safeDestination = getSafeRedirectUrl(
-      parsed.data.redirectUrl,
-      defaultDestination
-    );
+    // Determine safe redirect - staff users must always be routed to admin dashboard
+    const safeDestination = isAdminUser
+      ? "/admin/dashboard"
+      : getSafeRedirectUrl(parsed.data.redirectUrl, defaultDestination);
 
     return {
       success: true,
