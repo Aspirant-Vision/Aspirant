@@ -83,8 +83,8 @@ export function HeroSection() {
             Find the right college, explore top courses, and get expert counselling to complete your admission journey — all in one place.
           </p>
 
-          {/* Tactile Skeuomorphic Search Engine Module - Compact on Mobile */}
-          <div className="tactile-card rounded-2xl sm:rounded-3xl p-3 sm:p-5 max-w-xl pt-3 sm:pt-4">
+          {/* Search Engine Module - Solid, static, no hover jump animation */}
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-5 max-w-xl pt-3 sm:pt-4 border border-[#E7E9F0] shadow-md">
             {/* Search Category Tabs with Skeuomorphic Pills */}
             <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3 pb-2 border-b border-gray-100">
               <button
@@ -205,7 +205,7 @@ export function HeroSection() {
         <div className="hidden lg:block absolute top-16 right-16 z-20">
           <div
             onClick={() => openModal("50,000+ Guided Students Showcase")}
-            className="tactile-card rounded-2xl px-5 py-3 flex items-center gap-3.5 shadow-xl hover:scale-105 transition-transform cursor-pointer"
+            className="rounded-2xl px-5 py-3 flex items-center gap-3.5 shadow-md bg-white/95 backdrop-blur-md border border-[#E7E9F0] cursor-pointer"
           >
             <div className="flex -space-x-2 overflow-hidden">
               <div className="inline-block h-8 w-8 rounded-full ring-2 ring-white overflow-hidden bg-gray-200 relative shadow-sm">
