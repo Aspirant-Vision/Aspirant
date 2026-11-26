@@ -20,9 +20,21 @@ interface PublicShellProps {
 export function PublicShell({ children }: PublicShellProps) {
   const pathname = usePathname();
 
+  const authRoutes = [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+    "/verify-email",
+    "/accept-invite",
+  ];
+
   const isAdminPortal = pathname?.startsWith("/admin");
   const isStudentPortal = pathname?.startsWith("/student");
-  const isDedicatedPortal = isAdminPortal || isStudentPortal;
+  const isAuthPage = authRoutes.some(
+    (route) => pathname === route || pathname?.startsWith(route + "/")
+  );
+  const isDedicatedPortal = isAdminPortal || isStudentPortal || isAuthPage;
 
   if (isDedicatedPortal) {
     return <div className="min-h-screen w-full bg-[#F8FAFC]">{children}</div>;

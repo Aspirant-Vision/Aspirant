@@ -86,39 +86,39 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="w-full max-w-[500px] bg-white rounded-3xl shadow-[0_20px_50px_-10px_rgba(15,23,42,0.08),0_1px_3px_rgba(15,23,42,0.04)] border border-slate-200/90 p-7 sm:p-9 transition-all">
+    <div className="w-full max-w-[420px] mx-auto py-2">
       {/* Category Pill & Heading */}
-      <div className="mb-6">
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-red-50 text-red-700 text-[11px] font-bold tracking-wider uppercase mb-2.5">
+      <div className="mb-4">
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 text-red-700 text-[11px] font-bold tracking-wider uppercase mb-1.5">
           <Sparkles className="w-3 h-3 text-red-600" />
           <span>New Student Registration</span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
-          Create Student Account
+          Create Account
         </h2>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1.5 leading-relaxed">
-          Join 50,000+ aspirants discovering verified cutoffs, direct admissions & scholarships.
+        <p className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">
+          Join 50,000+ aspirants discovering verified admissions & scholarships.
         </p>
       </div>
 
       {/* Server Error Alert */}
       {serverError && (
-        <div className="mb-5 flex items-start gap-3 p-3.5 rounded-xl bg-red-50/90 border border-red-200 text-red-700 text-xs sm:text-sm animate-in fade-in slide-in-from-top-1 duration-200">
+        <div className="mb-4 flex items-start gap-2.5 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs animate-in fade-in slide-in-from-top-1 duration-200">
           <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
           <div className="flex-1 font-medium leading-relaxed">{serverError}</div>
         </div>
       )}
 
       {/* Google One-Click Registration */}
-      <div className="mb-5">
+      <div className="mb-4">
         <GoogleSignInButton
           label="Sign up with Google"
           redirectUrl="/student/dashboard"
           onError={(msg) => setServerError(msg)}
         />
-        <div className="relative my-5">
+        <div className="relative my-4">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-200" />
+            <div className="w-full border-t border-slate-200/90" />
           </div>
           <div className="relative flex justify-center text-xs">
             <span className="bg-white px-3 text-slate-400 font-semibold uppercase tracking-wider text-[10px]">

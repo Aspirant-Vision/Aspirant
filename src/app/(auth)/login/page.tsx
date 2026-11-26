@@ -68,53 +68,53 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-[460px] bg-white rounded-3xl shadow-[0_20px_50px_-10px_rgba(15,23,42,0.08),0_1px_3px_rgba(15,23,42,0.04)] border border-slate-200/90 p-7 sm:p-9 transition-all">
+    <div className="w-full max-w-[390px] sm:max-w-[410px] mx-auto">
       {/* Category Pill & Heading */}
-      <div className="mb-6">
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-red-50 text-red-700 text-[11px] font-bold tracking-wider uppercase mb-2.5">
+      <div className="mb-5">
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 text-red-700 text-[11px] font-bold tracking-wider uppercase mb-2">
           <Sparkles className="w-3 h-3 text-red-600" />
           <span>Student Portal Access</span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
-          Student Login
+          Welcome Back
         </h2>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1.5 leading-relaxed">
-          Sign in to track your college applications, shortlists, and counselling status.
+        <p className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">
+          Sign in to track applications, cutoffs, and counselling.
         </p>
       </div>
 
       {/* Error Alert Box */}
       {serverError && (
-        <div className="mb-5 flex items-start gap-3 p-3.5 rounded-xl bg-red-50/90 border border-red-200 text-red-700 text-xs sm:text-sm animate-in fade-in slide-in-from-top-1 duration-200">
+        <div className="mb-4 flex items-start gap-2.5 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs animate-in fade-in slide-in-from-top-1 duration-200">
           <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
           <div className="flex-1 font-medium leading-relaxed">{serverError}</div>
         </div>
       )}
 
       {/* Google One-Click Login */}
-      <div className="mb-5">
+      <div className="mb-4">
         <GoogleSignInButton
           label="Continue with Google"
           redirectUrl={nextParam ? getSafeRedirectUrl(nextParam) : "/student/dashboard"}
           onError={(msg) => setServerError(msg)}
         />
-        <div className="relative my-5">
+        <div className="relative my-4">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-200" />
+            <div className="w-full border-t border-slate-200/90" />
           </div>
           <div className="relative flex justify-center text-xs">
             <span className="bg-white px-3 text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
-              or sign in with email
+              or continue with email
             </span>
           </div>
         </div>
       </div>
 
       {/* Login Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5">
         {/* Email Field */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1.5" htmlFor="email">
+          <label className="block text-xs font-bold text-slate-700 mb-1" htmlFor="email">
             Email Address
           </label>
           <div className="relative">
@@ -133,13 +133,13 @@ function LoginForm() {
             />
           </div>
           {errors.email && (
-            <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.email.message}</p>
+            <p className="mt-1 text-xs text-red-600 font-medium">{errors.email.message}</p>
           )}
         </div>
 
         {/* Password Field */}
         <div>
-          <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-center justify-between mb-1">
             <label className="block text-xs font-bold text-slate-700" htmlFor="password">
               Password
             </label>
@@ -147,7 +147,7 @@ function LoginForm() {
               href="/forgot-password"
               className="text-xs font-semibold text-red-600 hover:text-red-700 transition-colors"
             >
-              Forgot password?
+              Forgot?
             </Link>
           </div>
           <div className="relative">
@@ -174,28 +174,28 @@ function LoginForm() {
             </button>
           </div>
           {errors.password && (
-            <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.password.message}</p>
+            <p className="mt-1 text-xs text-red-600 font-medium">{errors.password.message}</p>
           )}
         </div>
 
         {/* Remember Me Checkbox */}
-        <div className="flex items-center justify-between pt-1">
-          <label className="flex items-center gap-2.5 cursor-pointer select-none">
+        <div className="flex items-center justify-between pt-0.5">
+          <label className="flex items-center gap-2 cursor-pointer select-none">
             <input
               type="checkbox"
               {...register("rememberMe")}
-              className="w-4 h-4 rounded text-red-600 border-slate-300 focus:ring-red-500/20 cursor-pointer accent-red-600"
+              className="w-3.5 h-3.5 rounded text-red-600 border-slate-300 focus:ring-red-500/20 cursor-pointer accent-red-600"
             />
             <span className="text-xs text-slate-600 font-medium">Keep me signed in</span>
           </label>
         </div>
 
         {/* Submit Button */}
-        <div className="pt-2">
+        <div className="pt-1.5">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3.5 px-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-500 hover:via-rose-500 hover:to-red-600 active:scale-[0.99] shadow-[0_10px_25px_-5px_rgba(225,29,72,0.35)] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+            className="w-full py-3 px-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-500 hover:via-rose-500 hover:to-red-600 active:scale-[0.99] shadow-[0_10px_20px_-5px_rgba(225,29,72,0.35)] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
           >
             {isSubmitting ? (
               <>
@@ -213,7 +213,7 @@ function LoginForm() {
       </form>
 
       {/* Switch to Register */}
-      <div className="mt-6 pt-5 border-t border-slate-100 text-center text-xs text-slate-600">
+      <div className="mt-5 pt-4 border-t border-slate-100 text-center text-xs text-slate-600">
         Don&apos;t have an account yet?{" "}
         <Link
           href="/register"
@@ -224,7 +224,7 @@ function LoginForm() {
       </div>
 
       {/* Security Reassurance */}
-      <div className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
+      <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
         <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
         <span>Direct 256-bit SSL encrypted student session</span>
       </div>
@@ -236,7 +236,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="w-full max-w-[460px] bg-white rounded-3xl p-8 border border-slate-200 flex items-center justify-center min-h-[380px] shadow-sm">
+        <div className="w-full max-w-[400px] p-8 flex items-center justify-center min-h-[360px]">
           <Loader2 className="w-8 h-8 animate-spin text-red-600" />
         </div>
       }

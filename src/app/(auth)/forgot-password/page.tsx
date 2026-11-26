@@ -56,7 +56,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="w-full max-w-[460px] bg-white rounded-3xl shadow-[0_20px_50px_-10px_rgba(15,23,42,0.08),0_1px_3px_rgba(15,23,42,0.04)] border border-slate-200/90 p-7 sm:p-9 transition-all">
+    <div className="w-full max-w-[390px] sm:max-w-[410px] mx-auto py-2">
       {successEmail ? (
         <div className="text-center py-4 space-y-4">
           <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl mx-auto flex items-center justify-center border border-emerald-100 shadow-xs">
