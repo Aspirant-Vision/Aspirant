@@ -47,7 +47,7 @@ export function WhyAspirantVision() {
         {/* Authentic Academic Campus Photography (Why Aspirant Vision Custom Visual) */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/why_aspirant_vision.webp"
+            src="/images/why_Aspirantvision.webp"
             alt="Premier Academic University Campus - Why Aspirant Vision"
             fill
             sizes="100vw"

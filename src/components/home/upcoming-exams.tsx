@@ -168,7 +168,7 @@ export function UpcomingExams() {
         <div className="mb-6 relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#E7E9F0] shadow-sm bg-slate-900">
           <div className="relative h-32 sm:h-44 md:h-52 w-full">
             <Image
-              src="/images/upcoming_exam.webp"
+              src="/images/upcomingexam.webp"
               alt="Upcoming Entrance Exams & Admission Calendar - Aspirant Vision"
               fill
               sizes="100vw"
