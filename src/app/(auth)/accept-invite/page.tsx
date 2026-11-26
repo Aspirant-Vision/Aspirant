@@ -93,7 +93,7 @@ function AcceptInviteForm() {
         <div className="pt-2">
           <Link href="/admin/login">
             <Button variant="primary" className="w-full py-2.5 text-xs font-semibold">
-              Return to Staff Login
+              Return to Admin Sign In
             </Button>
           </Link>
         </div>
@@ -114,7 +114,7 @@ function AcceptInviteForm() {
           </h2>
 
           <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-            Your staff account has been provisioned with the role of{" "}
+            Your account has been provisioned with the role of{" "}
             <span className="font-bold text-primary uppercase tracking-wide px-2 py-0.5 bg-red-50 rounded-md">
               {successData.role}
             </span>{" "}
@@ -128,7 +128,7 @@ function AcceptInviteForm() {
           <div className="pt-2">
             <Link href="/admin/login" className="block w-full">
               <Button variant="primary" className="w-full py-3 text-sm font-semibold justify-center shadow-lg shadow-primary/20">
-                <span>Sign In to Staff Console</span>
+                <span>Sign In to Admin Console</span>
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -140,10 +140,10 @@ function AcceptInviteForm() {
           <div className="mb-6">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold mb-2">
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Staff Invitation Verified</span>
+              <span>Admin Invitation Verified</span>
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-[#151820]">
-              Activate Your Staff Account
+              Activate Your Admin Account
             </h2>
             <p className="text-xs sm:text-sm text-gray-500 mt-1">
               Complete your profile details and set a secure password to access the administrative portal.

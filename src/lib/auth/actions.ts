@@ -617,6 +617,8 @@ export async function acceptStaffInviteAction(
     }
 
     // Create identity via Supabase Auth Admin API (pre-confirmed email)
+    let targetUserId: string;
+
     const { data: authData, error: authCreateError } = await adminClient.auth.admin.createUser({
       email: invite.email,
       password: parsed.data.password,
@@ -629,23 +631,70 @@ export async function acceptStaffInviteAction(
     });
 
     if (authCreateError) {
-      return {
-        success: false,
-        error: {
-          code: "ACCOUNT_CREATION_FAILED",
-          message: authCreateError.message || "Failed to establish staff account.",
-        },
-      };
-    }
+      const isAlreadyRegistered =
+        authCreateError.code === "email_exists" ||
+        authCreateError.message?.toLowerCase().includes("already been registered") ||
+        authCreateError.message?.toLowerCase().includes("already registered");
 
-    const newUserId = authData.user.id;
+      if (isAlreadyRegistered) {
+        // Look up existing user
+        const { data: userList } = await adminClient.auth.admin.listUsers({ page: 1, perPage: 1000 });
+        const existingUser = userList?.users?.find(
+          (u) => u.email?.toLowerCase() === invite.email.toLowerCase()
+        );
+
+        if (!existingUser) {
+          return {
+            success: false,
+            error: {
+              code: "USER_LOOKUP_FAILED",
+              message: "An account with this email address already exists but could not be resolved. Please contact your administrator.",
+            },
+          };
+        }
+
+        targetUserId = existingUser.id;
+
+        // Update password and promote role metadata
+        const { error: updateAuthError } = await adminClient.auth.admin.updateUserById(targetUserId, {
+          password: parsed.data.password,
+          email_confirm: true,
+          user_metadata: {
+            ...existingUser.user_metadata,
+            full_name: fullName || existingUser.user_metadata?.full_name,
+            phone: phone || existingUser.user_metadata?.phone,
+            role: invite.role,
+          },
+        });
+
+        if (updateAuthError) {
+          return {
+            success: false,
+            error: {
+              code: "ACCOUNT_UPDATE_FAILED",
+              message: updateAuthError.message || "Failed to update existing account.",
+            },
+          };
+        }
+      } else {
+        return {
+          success: false,
+          error: {
+            code: "ACCOUNT_CREATION_FAILED",
+            message: authCreateError.message || "Failed to establish staff account.",
+          },
+        };
+      }
+    } else {
+      targetUserId = authData.user.id;
+    }
 
     // Ensure profile and authorized staff role in user_roles
     await Promise.all([
       adminClient
         .from("profiles")
         .upsert({
-          id: newUserId,
+          id: targetUserId,
           email: invite.email,
           full_name: fullName,
           phone,
@@ -657,17 +706,23 @@ export async function acceptStaffInviteAction(
         .from("user_roles")
         .upsert(
           {
-            user_id: newUserId,
+            user_id: targetUserId,
             role: invite.role,
           },
           { onConflict: "user_id, role" }
         ),
+      // Clean up previous student role if present to prevent any dual-role confusion
+      adminClient
+        .from("user_roles")
+        .delete()
+        .eq("user_id", targetUserId)
+        .eq("role", "student"),
       adminClient
         .from("staff_invitations")
         .update({ accepted_at: new Date().toISOString() })
         .eq("id", invite.id),
       adminClient.from("audit_logs").insert({
-        actor_id: newUserId,
+        actor_id: targetUserId,
         action: "STAFF_INVITATION_ACCEPTED",
         entity_type: "staff_invitations",
         entity_id: invite.id,
