@@ -5,7 +5,6 @@ import { ExploreByGoal } from "@/components/home/explore-by-goal";
 import { FeaturedColleges } from "@/components/home/featured-colleges";
 import { EducationHubs } from "@/components/home/education-hubs";
 import { CompareCollegesModule } from "@/components/home/compare-colleges-module";
-import { PopularCourses } from "@/components/home/popular-courses";
 import { AdmissionJourneyTimeline } from "@/components/home/admission-journey-timeline";
 import { WhyAspirantVision } from "@/components/home/why-aspirant-vision";
 import { UpcomingExams } from "@/components/home/upcoming-exams";
@@ -59,26 +58,23 @@ export default async function HomePage() {
       {/* SECTION 07: Compare Colleges Interactive Multi-Column Matrix */}
       <CompareCollegesModule />
 
-      {/* SECTION 08: Popular Degree Courses & Verified Career Paths */}
-      <PopularCourses />
-
-      {/* MINIMALIST FORM 02: Merit Scholarship & Fee Concession Desk */}
+      {/* MINIMALIST FORM 02: Merit Fee Concession & Aid Desk */}
       <MinimalLeadForm
-        badge="Tuition Aid & Scholarship Desk"
-        title="Apply for Up to ₹5 Lakhs Merit Scholarship"
+        badge="Tuition Aid & Fee Concession Desk"
+        title="Apply for Up to ₹5 Lakhs Merit Fee Concession"
         subtitle="Verify institutional tuition fee concessions, early applicant aid, and 0% advance loans."
-        buttonLabel="Claim Scholarship"
-        source="home_scholarship_desk"
+        buttonLabel="Check Fee Concession"
+        source="home_fee_concession_desk"
         defaultCourse="Management (MBA / PGDM)"
       />
 
-      {/* SECTION 09: Admission Journey (Curved Road with Milestone Markers) */}
+      {/* SECTION 08: Admission Journey (Curved Road with Milestone Markers) */}
       <AdmissionJourneyTimeline />
 
-      {/* SECTION 10: Why Aspirant Vision (Editorial Trust & Mentorship Ecosystem) */}
+      {/* SECTION 09: Why Aspirant Vision (Editorial Trust & Mentorship Ecosystem) */}
       <WhyAspirantVision />
 
-      {/* SECTION 11: Upcoming Entrance Exams & Application Deadlines */}
+      {/* SECTION 10: Upcoming Entrance Exams & Application Deadlines */}
       <UpcomingExams />
 
       {/* MINIMALIST FORM 03: 1-on-1 Exam Strategy & Backup Admission */}
@@ -91,10 +87,20 @@ export default async function HomePage() {
         defaultCourse="Engineering (B.Tech / B.E.)"
       />
 
-      {/* SECTION 12: Real Students. Real Journeys. Real Success. (Editorial Storytelling) */}
+      {/* SECTION 11: Real Students. Real Journeys. Real Success. (Editorial Storytelling) */}
       <StudentSuccessStories />
 
-      {/* SECTION 13: Top University Recruiters & Career Ecosystem */}
+      {/* MINIMALIST FORM 04: Fast-Track Direct Admission Allotment Desk */}
+      <MinimalLeadForm
+        badge="Direct Admission Advisory Desk"
+        title="Ready to Secure Your Campus Seat for 2026?"
+        subtitle="1-on-1 official allotment guidance, course selection, and guaranteed zero hidden fees."
+        buttonLabel="Get Direct Admission Guidance"
+        source="home_campus_admission_desk"
+        defaultCourse="Engineering (B.Tech / B.E.)"
+      />
+
+      {/* SECTION 12: Top University Recruiters & Career Ecosystem */}
       <RecruitersPlacements />
 
       {/* SECTION 14: Find Your Ideal College (Interactive Multi-Criteria Finder Tool) */}

@@ -512,36 +512,35 @@ export default function MbaLandingPage() {
       {/* ======================================================== */}
       {/* 1. HERO SECTION: LOOKING FOR MBA | PGDM INTO TOP COLLEGES */}
       {/* ======================================================== */}
-      <section className="relative pt-8 sm:pt-14 pb-16 sm:pb-24 overflow-hidden border-b border-[#0F143A] bg-[#0A0D28]">
-        {/* Modern Campus Background Image with dark luxury overlay */}
+      <section className="relative pt-6 sm:pt-10 pb-12 sm:pb-16 overflow-hidden border-b border-[#E7E9F0] bg-white">
+        {/* Premier Campus Architectural Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/auth/campus_modern.jpg"
-            alt="Premier MBA Campuses"
+            src="/images/auth/auth_campus_highres.jpg"
+            alt="Premier MBA Campuses in India"
             fill
             priority
-            className="object-cover object-center opacity-30 mix-blend-luminosity scale-105 transition-transform duration-1000"
+            className="object-cover object-[75%_center] opacity-15"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#080B22]/95 via-[#0C1133]/90 to-[#080B22]/95" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-600/15 via-transparent to-transparent pointer-events-none" />
-          <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.04] pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/70" />
+          <div className="absolute inset-y-0 right-0 w-1/3 bg-radial from-red-500/5 to-transparent pointer-events-none" />
         </div>
 
         <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Breadcrumb & Live Admission Status */}
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
-              <Link href="/" className="hover:text-white transition-colors">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6 sm:mb-8">
+            <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
+              <Link href="/" className="hover:text-[#E31E2B] transition-colors">
                 Home
               </Link>
-              <span className="text-slate-500">/</span>
-              <span className="text-slate-200">Management Admissions</span>
-              <span className="text-slate-500">/</span>
-              <span className="text-red-400 font-bold">MBA &amp; PGDM Special Portal</span>
+              <span className="text-gray-300">/</span>
+              <span className="text-gray-600">Management Admissions</span>
+              <span className="text-gray-300">/</span>
+              <span className="text-[#E31E2B] font-bold">MBA &amp; PGDM Portal</span>
             </div>
 
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-500/15 border border-red-500/30 text-red-300 text-xs font-bold backdrop-blur-md shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 border border-red-200 text-[#E31E2B] text-xs font-bold">
+              <span className="w-2 h-2 rounded-full bg-[#E31E2B] animate-pulse" />
               <span>Admissions Open for Session 2026–2028</span>
             </div>
           </div>
@@ -549,45 +548,45 @@ export default function MbaLandingPage() {
           {/* Hero Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Column: Headline, Narrative & Key Highlights */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold uppercase tracking-wider backdrop-blur-md">
-                <Sparkles className="w-3.5 h-3.5 text-red-400" />
+            <div className="lg:col-span-7 space-y-5 sm:space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-bold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-[#E31E2B]" />
                 <span>Premier B-School Fast-Track Hub</span>
               </div>
 
-              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-extrabold text-white leading-[1.12] tracking-tight">
-                Looking for <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-red-500 to-rose-400">MBA | PGDM</span> into Top Colleges?
+              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-extrabold text-[#15182D] leading-[1.12] tracking-tight">
+                Looking for <span className="text-[#E31E2B]">MBA | PGDM</span> into Top Colleges?
               </h1>
 
-              <p className="text-sm sm:text-base md:text-lg text-slate-200 leading-relaxed max-w-2xl font-normal">
-                Direct merit counselling, profile-based admissions, CAT / XAT / CMAT / MAT cutoff analytics, and verified seat allocation across <strong className="text-white font-bold">350+ premier AICTE &amp; AACSB approved B-Schools</strong> in India and abroad.
+              <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed max-w-2xl font-normal">
+                Direct merit counselling, profile-based admissions, CAT / XAT / CMAT / MAT cutoff analytics, and verified seat allocation across <strong className="text-gray-900 font-bold">350+ premier AICTE &amp; AACSB approved B-Schools</strong> in India and abroad.
               </p>
 
-              {/* 4 Trust Feature Badges */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                <div className="p-3.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm hover:bg-white/15 transition-all">
-                  <div className="text-white font-extrabold text-lg sm:text-xl">350+</div>
-                  <div className="text-[11px] font-semibold text-slate-300 leading-tight mt-0.5">Partner B-Schools</div>
+              {/* 4 Trust Feature Badges (Flat, Clean, No Shadow) */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+                <div className="p-3.5 rounded-xl bg-gray-50/80 border border-gray-200 transition-colors">
+                  <div className="text-[#15182D] font-extrabold text-lg sm:text-xl">350+</div>
+                  <div className="text-[11px] font-semibold text-gray-500 leading-tight mt-0.5">Partner B-Schools</div>
                 </div>
-                <div className="p-3.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm hover:bg-white/15 transition-all">
-                  <div className="text-emerald-400 font-extrabold text-lg sm:text-xl">₹34.8 LPA</div>
-                  <div className="text-[11px] font-semibold text-slate-300 leading-tight mt-0.5">Highest Placement</div>
+                <div className="p-3.5 rounded-xl bg-gray-50/80 border border-gray-200 transition-colors">
+                  <div className="text-emerald-600 font-extrabold text-lg sm:text-xl">₹34.8 LPA</div>
+                  <div className="text-[11px] font-semibold text-gray-500 leading-tight mt-0.5">Highest Placement</div>
                 </div>
-                <div className="p-3.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm hover:bg-white/15 transition-all">
-                  <div className="text-amber-400 font-extrabold text-lg sm:text-xl">Up to ₹5L</div>
-                  <div className="text-[11px] font-semibold text-slate-300 leading-tight mt-0.5">Merit Scholarship</div>
+                <div className="p-3.5 rounded-xl bg-gray-50/80 border border-gray-200 transition-colors">
+                  <div className="text-amber-600 font-extrabold text-lg sm:text-xl">Up to ₹5L</div>
+                  <div className="text-[11px] font-semibold text-gray-500 leading-tight mt-0.5">Merit Fee Concession</div>
                 </div>
-                <div className="p-3.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm hover:bg-white/15 transition-all">
-                  <div className="text-red-400 font-extrabold text-lg sm:text-xl">100%</div>
-                  <div className="text-[11px] font-semibold text-slate-300 leading-tight mt-0.5">Zero-Donation Policy</div>
+                <div className="p-3.5 rounded-xl bg-gray-50/80 border border-gray-200 transition-colors">
+                  <div className="text-[#E31E2B] font-extrabold text-lg sm:text-xl">100%</div>
+                  <div className="text-[11px] font-semibold text-gray-500 leading-tight mt-0.5">Zero-Donation Policy</div>
                 </div>
               </div>
 
-              {/* CTAs */}
+              {/* CTAs (Flat, Clean, No Shadow) */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <button
                   onClick={() => openModal("MBA / PGDM Comprehensive Profile Evaluation")}
-                  className="bg-linear-to-r from-[#E31E2B] to-[#C01520] hover:from-[#C01520] hover:to-[#A01019] text-white px-7 py-3.5 rounded-full font-bold text-sm flex items-center gap-2 shadow-xl hover:shadow-red-500/30 transition-all hover:scale-102"
+                  className="bg-[#E31E2B] hover:bg-[#c91824] text-white px-7 py-3 rounded-full font-bold text-sm flex items-center gap-2 transition-colors cursor-pointer"
                 >
                   <GraduationCap className="w-4 h-4" />
                   <span>Evaluate My MBA Profile (Free)</span>
@@ -596,20 +595,20 @@ export default function MbaLandingPage() {
 
                 <a
                   href="#colleges-directory"
-                  className="px-6 py-3.5 rounded-full text-xs sm:text-sm font-bold text-white hover:text-red-300 transition-colors border border-white/25 bg-white/10 backdrop-blur-md hover:bg-white/20 flex items-center gap-2"
+                  className="px-6 py-3 rounded-full text-xs sm:text-sm font-bold text-gray-800 hover:text-[#E31E2B] transition-colors border border-gray-200 bg-white hover:bg-gray-50 flex items-center gap-2"
                 >
-                  <Building2 className="w-4 h-4 text-red-400" />
+                  <Building2 className="w-4 h-4 text-[#E31E2B]" />
                   <span>Browse Top B-Schools</span>
                 </a>
               </div>
             </div>
 
-            {/* Right Column: Quick Interactive Matcher & Lead Capture Box */}
+            {/* Right Column: Quick Interactive Matcher & Lead Capture Box (Flat, Clean, No Shadow) */}
             <div className="lg:col-span-5">
-              <div className="rounded-2xl sm:rounded-3xl p-6 sm:p-8 bg-white/95 backdrop-blur-xl border border-white/50 shadow-2xl relative overflow-hidden text-[#15182D]">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-bl-full pointer-events-none" />
+              <div className="rounded-2xl sm:rounded-3xl p-6 sm:p-8 bg-white border border-gray-200 relative overflow-hidden text-[#15182D]">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-bl-full pointer-events-none" />
 
-                <div className="mb-5">
+                <div className="mb-4">
                   <span className="text-[11px] font-extrabold text-[#E31E2B] uppercase tracking-wider block">
                     Instant Recommendation
                   </span>
@@ -629,10 +628,10 @@ export default function MbaLandingPage() {
                     <select
                       value={matcherExam}
                       onChange={(e) => setMatcherExam(e.target.value)}
-                      className="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:border-[#E31E2B] focus:bg-white transition-colors"
+                      className="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:border-[#E31E2B] focus:bg-white transition-colors cursor-pointer"
                     >
-                      <option value="CAT (IIMs & Premier Tier 1)">CAT (IIMs & Premier Tier 1)</option>
-                      <option value="XAT (XLRI & Top Private)">XAT (XLRI & Top Private)</option>
+                      <option value="CAT (IIMs & Premier Tier 1)">CAT (IIMs &amp; Premier Tier 1)</option>
+                      <option value="XAT (XLRI & Top Private)">XAT (XLRI &amp; Top Private)</option>
                       <option value="NMAT by GMAC (NMIMS)">NMAT by GMAC (NMIMS)</option>
                       <option value="SNAP (Symbiosis International)">SNAP (Symbiosis International)</option>
                       <option value="CMAT / MAT / ATMA">CMAT / MAT / ATMA</option>
@@ -648,7 +647,7 @@ export default function MbaLandingPage() {
                       <select
                         value={matcherGrad}
                         onChange={(e) => setMatcherGrad(e.target.value)}
-                        className="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:border-[#E31E2B] focus:bg-white transition-colors"
+                        className="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:border-[#E31E2B] focus:bg-white transition-colors cursor-pointer"
                       >
                         <option value="75%+ (First Class Distinction)">75%+ (Distinction)</option>
                         <option value="60% - 75% (First Class)">60% - 75% (1st Class)</option>
@@ -664,7 +663,7 @@ export default function MbaLandingPage() {
                       <select
                         value={matcherBudget}
                         onChange={(e) => setMatcherBudget(e.target.value)}
-                        className="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:border-[#E31E2B] focus:bg-white transition-colors"
+                        className="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:border-[#E31E2B] focus:bg-white transition-colors cursor-pointer"
                       >
                         <option value="Under ₹10 Lakhs (High ROI)">Under ₹10 Lakhs</option>
                         <option value="₹10L - ₹18L (Top Private)">₹10L - ₹18L</option>
@@ -681,12 +680,12 @@ export default function MbaLandingPage() {
                     <select
                       value={matcherSpec}
                       onChange={(e) => setMatcherSpec(e.target.value)}
-                      className="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:border-[#E31E2B] focus:bg-white transition-colors"
+                      className="w-full text-xs font-semibold px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:border-[#E31E2B] focus:bg-white transition-colors cursor-pointer"
                     >
-                      <option value="Finance & Fintech">Finance & Fintech</option>
-                      <option value="Marketing & Digital Strategy">Marketing & Digital Strategy</option>
-                      <option value="Business Analytics & AI">Business Analytics & AI</option>
-                      <option value="Operations & Supply Chain">Operations & Supply Chain</option>
+                      <option value="Finance & Fintech">Finance &amp; Fintech</option>
+                      <option value="Marketing & Digital Strategy">Marketing &amp; Digital Strategy</option>
+                      <option value="Business Analytics & AI">Business Analytics &amp; AI</option>
+                      <option value="Operations & Supply Chain">Operations &amp; Supply Chain</option>
                       <option value="Human Resources (HR)">Human Resources (HR)</option>
                       <option value="International Business">International Business</option>
                     </select>
@@ -698,7 +697,7 @@ export default function MbaLandingPage() {
                         `MBA Matcher: ${matcherExam} | Budget: ${matcherBudget} | Spec: ${matcherSpec}`
                       )
                     }
-                    className="w-full mt-2 bg-gradient-to-r from-[#E31E2B] to-[#C01520] hover:from-[#C01520] hover:to-[#A01019] text-white py-3.5 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg hover:shadow-red-500/25 transition-all"
+                    className="w-full mt-2 bg-[#E31E2B] hover:bg-[#c91824] text-white py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer"
                   >
                     <Compass className="w-4 h-4" />
                     <span>Get Shortlist for {matcherBudget}</span>
@@ -876,7 +875,7 @@ export default function MbaLandingPage() {
                 className={cn(
                   "px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer",
                   selectedTier === tier
-                    ? "bg-[#171B52] text-white shadow-xs"
+                    ? "bg-[#171B52] text-white"
                     : "bg-[#F7F8FC] text-[#687086] hover:text-[#15182D] border border-gray-200"
                 )}
               >
@@ -891,7 +890,7 @@ export default function MbaLandingPage() {
           {filteredColleges.map((college) => (
             <div
               key={college.id}
-              className="tactile-card rounded-2xl sm:rounded-3xl overflow-hidden bg-white border border-[#E7E9F0] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
+              className="rounded-2xl sm:rounded-3xl overflow-hidden bg-white border border-[#E7E9F0] hover:border-gray-400 transition-colors flex flex-col justify-between group"
             >
               <div>
                 {/* College Card Image */}
@@ -907,12 +906,12 @@ export default function MbaLandingPage() {
 
                   {/* Badges on Image */}
                   <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wide bg-white/90 backdrop-blur-xs text-[#15182D] shadow-xs">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wide bg-white/90 backdrop-blur-xs text-[#15182D]">
                       {college.tier}
                     </span>
 
                     {college.directMeritEligible && (
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-600 text-white shadow-xs flex items-center gap-1">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-600 text-white flex items-center gap-1">
                         <Check className="w-3 h-3 stroke-[3]" />
                         Direct Merit Available
                       </span>
@@ -1049,7 +1048,7 @@ export default function MbaLandingPage() {
             {SPECIALIZATIONS.map((spec) => (
               <div
                 key={spec.title}
-                className="tactile-card rounded-2xl p-5 sm:p-6 bg-[#F7F8FC] border border-[#E7E9F0] hover:border-[#E31E2B]/40 hover:bg-white hover:shadow-lg transition-all flex flex-col justify-between"
+                className="rounded-2xl p-5 sm:p-6 bg-[#F7F8FC] border border-[#E7E9F0] hover:border-[#E31E2B]/40 hover:bg-white transition-colors flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
@@ -1126,7 +1125,7 @@ export default function MbaLandingPage() {
         </div>
 
         {/* Exams Table */}
-        <div className="tactile-card rounded-2xl sm:rounded-3xl overflow-hidden border border-[#E7E9F0] shadow-sm bg-white overflow-x-auto">
+        <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-[#E7E9F0] bg-white overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-[#171B52] text-white">
@@ -1222,7 +1221,7 @@ export default function MbaLandingPage() {
 
             {/* Quick Consultation Trigger on Navy Background */}
             <div className="lg:col-span-5">
-              <div className="p-6 sm:p-8 rounded-3xl bg-white text-[#15182D] shadow-2xl space-y-4">
+              <div className="p-6 sm:p-8 rounded-3xl bg-white text-[#15182D] border border-gray-200 space-y-4">
                 <div>
                   <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#E31E2B] block">
                     Fast-Track Advisory
@@ -1242,7 +1241,7 @@ export default function MbaLandingPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>GD-PI & WAT prep tips for upcoming interview calls</span>
+                    <span>GD-PI &amp; WAT prep tips for upcoming interview calls</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -1252,7 +1251,7 @@ export default function MbaLandingPage() {
 
                 <button
                   onClick={() => openModal("1-on-1 MBA Direct Admission Call")}
-                  className="w-full tactile-btn-red text-white py-3.5 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg"
+                  className="w-full bg-[#E31E2B] hover:bg-[#c91824] text-white py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer"
                 >
                   <PhoneCall className="w-4 h-4" />
                   <span>Connect with MBA Counselor Now</span>
@@ -1268,7 +1267,7 @@ export default function MbaLandingPage() {
       {/* ======================================================== */}
       <section className="py-10 sm:py-16 bg-[#F8FAFC] border-b border-[#E7E9F0]">
         <div className="max-w-[800px] mx-auto px-4 sm:px-6">
-          <div className="tactile-card rounded-2xl sm:rounded-3xl p-6 sm:p-10 bg-white border border-[#E7E9F0] shadow-xl">
+          <div className="rounded-2xl sm:rounded-3xl p-6 sm:p-10 bg-white border border-[#E7E9F0]">
             <div className="text-center mb-6">
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#E31E2B] block mb-1">
                 Official Admission Desk
@@ -1408,7 +1407,7 @@ export default function MbaLandingPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full tactile-btn-red text-white py-3.5 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg mt-2 cursor-pointer disabled:opacity-50"
+                  className="w-full bg-[#E31E2B] hover:bg-[#c91824] text-white py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors mt-2 cursor-pointer disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <>
@@ -1444,7 +1443,7 @@ export default function MbaLandingPage() {
             Frequently Asked Questions
           </h2>
           <p className="text-xs sm:text-sm text-[#687086] mt-1.5">
-            Everything you need to know about MBA & PGDM admissions, fees, and eligibility.
+            Everything you need to know about MBA &amp; PGDM admissions, fees, and eligibility.
           </p>
         </div>
 
@@ -1454,7 +1453,7 @@ export default function MbaLandingPage() {
             return (
               <div
                 key={idx}
-                className="tactile-card rounded-2xl border border-[#E7E9F0] bg-white overflow-hidden transition-all"
+                className="rounded-2xl border border-[#E7E9F0] bg-white overflow-hidden transition-all"
               >
                 <button
                   type="button"
@@ -1492,13 +1491,13 @@ export default function MbaLandingPage() {
             Take the First Confident Step Towards Your Dream B-School
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
-            Book a complimentary session with certified senior academic counselors and get your tailored cutoff and scholarship report today.
+            Book a complimentary session with certified senior academic counselors and get your tailored cutoff and fee structure report today.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-3">
             <button
               onClick={() => openModal("MBA Fast-Track Application 2026")}
-              className="tactile-btn-red text-white px-8 py-3.5 rounded-full font-bold text-xs sm:text-sm flex items-center gap-2 shadow-xl hover:shadow-red-500/30"
+              className="bg-[#E31E2B] hover:bg-[#c91824] text-white px-8 py-3 rounded-full font-bold text-xs sm:text-sm flex items-center gap-2 transition-colors cursor-pointer"
             >
               <GraduationCap className="w-4 h-4" />
               <span>Apply for 2026–28 Batch Now</span>
@@ -1509,7 +1508,7 @@ export default function MbaLandingPage() {
               href="https://wa.me/919876543210?text=Hello%20Aspirant%20Vision,%20I%20am%20looking%20for%20MBA%20PGDM%20admissions%20in%20top%20colleges."
               target="_blank"
               rel="noopener noreferrer"
-              className="tactile-pill px-6 py-3.5 rounded-full font-bold text-xs sm:text-sm text-white bg-emerald-600 hover:bg-emerald-700 transition-colors flex items-center gap-2"
+              className="px-6 py-3 rounded-full font-bold text-xs sm:text-sm text-white bg-emerald-600 hover:bg-emerald-700 transition-colors flex items-center gap-2"
             >
               <MessageSquare className="w-4 h-4" />
               <span>WhatsApp an MBA Mentor</span>

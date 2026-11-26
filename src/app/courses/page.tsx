@@ -80,7 +80,7 @@ export default async function PublicCoursesPage({ searchParams }: CoursesPagePro
               <span className="text-[#E31E2B] font-bold">Courses &amp; Degrees</span>
             </nav>
 
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 border border-red-200 text-[#E31E2B] text-xs font-bold shadow-xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 border border-red-200 text-[#E31E2B] text-xs font-bold">
               <span className="w-2 h-2 rounded-full bg-[#E31E2B] animate-pulse" />
               <span>Session 2026–27 Syllabi &amp; Cutoffs Live</span>
             </div>

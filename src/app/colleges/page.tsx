@@ -78,14 +78,14 @@ export default async function CollegesPage({ searchParams }: CollegesPageProps) 
               <span className="text-[#E31E2B] font-bold">Colleges &amp; Universities</span>
             </nav>
 
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 border border-red-200 text-[#E31E2B] text-xs font-bold shadow-xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 border border-red-200 text-[#E31E2B] text-xs font-bold">
               <span className="w-2 h-2 rounded-full bg-[#E31E2B] animate-pulse" />
               <span>Session 2026–27 Verified Admissions Open</span>
             </div>
           </div>
 
           <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#15182D] text-white text-xs font-bold uppercase tracking-wider shadow-xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#15182D] text-white text-xs font-bold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5 text-red-400" />
               <span>Verified Institutional Directory</span>
             </div>

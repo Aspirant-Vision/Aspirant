@@ -169,7 +169,7 @@ export function PublicCollegeCatalog({
   return (
     <div className="space-y-6">
       {/* Mobile Filters Trigger Bar */}
-      <div className="lg:hidden flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-gray-200 shadow-xs">
+      <div className="lg:hidden flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-gray-200">
         <button
           type="button"
           onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
@@ -200,7 +200,7 @@ export function PublicCollegeCatalog({
             isMobileFilterOpen ? "block" : "hidden lg:block"
           }`}
         >
-          <div className="bg-white rounded-2xl border border-gray-200/90 p-5 shadow-xs space-y-6 sticky top-24">
+          <div className="bg-white rounded-2xl border border-gray-200/90 p-5 space-y-6 sticky top-24">
             {/* Sidebar Header */}
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div className="flex items-center gap-2">
@@ -339,7 +339,7 @@ export function PublicCollegeCatalog({
         {/* RIGHT MAIN CONTENT: Search bar, active tags & college cards grid */}
         <div className="flex-1 min-w-0 space-y-5">
           {/* Top Search & Sorting Bar */}
-          <div className="bg-white rounded-2xl border border-gray-200/80 p-3.5 sm:p-4 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="bg-white rounded-2xl border border-gray-200/80 p-3.5 sm:p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             {/* Search Input */}
             <form onSubmit={handleSearchSubmit} className="relative flex-1">
               <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -483,7 +483,7 @@ export function PublicCollegeCatalog({
                 return (
                   <div
                     key={college.id}
-                    className="bg-white rounded-2xl border border-gray-200/90 overflow-hidden hover:shadow-xl hover:border-gray-300 transition-all flex flex-col group"
+                    className="bg-white rounded-2xl border border-gray-200/90 overflow-hidden hover:border-gray-400 transition-colors flex flex-col group"
                   >
                     {/* Cover Photography */}
                     <div className="relative h-44 w-full bg-slate-900 overflow-hidden">
@@ -501,25 +501,25 @@ export function PublicCollegeCatalog({
                       {/* Badges on banner */}
                       <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
                         {hasRank && (
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-400 text-slate-950 shadow-xs">
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-400 text-slate-950">
                             NIRF #{college.nirf_rank}
                           </span>
                         )}
                         {hasNaac && (
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500 text-white shadow-xs">
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500 text-white">
                             NAAC {college.naac_grade}
                           </span>
                         )}
                       </div>
 
                       {college.is_featured && (
-                        <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E31E2B] text-white shadow-xs">
+                        <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E31E2B] text-white">
                           Featured
                         </div>
                       )}
 
                       {/* City & State Tag */}
-                      <div className="absolute bottom-2.5 left-3 text-[11px] text-white/95 font-medium flex items-center gap-1 drop-shadow-sm">
+                      <div className="absolute bottom-2.5 left-3 text-[11px] text-white/95 font-medium flex items-center gap-1">
                         <MapPin className="w-3.5 h-3.5 text-red-400 shrink-0" />
                         <span>{college.city}, {college.state}</span>
                       </div>
@@ -530,7 +530,7 @@ export function PublicCollegeCatalog({
                       <div className="space-y-2">
                         {/* Logo & Name */}
                         <div className="flex items-start gap-3 -mt-10 relative z-10">
-                          <div className="w-14 h-14 rounded-xl bg-white border-2 border-white shadow-md overflow-hidden relative shrink-0">
+                          <div className="w-14 h-14 rounded-xl bg-white border-2 border-white overflow-hidden relative shrink-0">
                             {college.logo_url ? (
                               <Image
                                 src={college.logo_url}

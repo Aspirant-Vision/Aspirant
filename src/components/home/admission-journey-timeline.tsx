@@ -47,7 +47,7 @@ const JOURNEY_STEPS: JourneyStep[] = [
     num: "3",
     stepNum: "STEP 03",
     title: "Apply",
-    desc: "Complete error-free multi-college application filing, document verification, and institutional scholarship processing.",
+    desc: "Complete error-free multi-college application filing, document verification, and institutional fee concession & aid processing.",
     icon: FileText,
     timeline: "Day 6 – 10",
     keyFeature: "Direct Quota & Merit Documentation",

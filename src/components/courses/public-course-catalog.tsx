@@ -186,7 +186,7 @@ export function PublicCourseCatalog({
   return (
     <div className="space-y-6">
       {/* Mobile Filters Trigger Bar */}
-      <div className="lg:hidden flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-gray-200 shadow-xs">
+      <div className="lg:hidden flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-gray-200">
         <button
           type="button"
           onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
@@ -217,7 +217,7 @@ export function PublicCourseCatalog({
             isMobileFilterOpen ? "block" : "hidden lg:block"
           }`}
         >
-          <div className="bg-white rounded-2xl border border-gray-200/90 p-5 shadow-xs space-y-6 sticky top-24">
+          <div className="bg-white rounded-2xl border border-gray-200/90 p-5 space-y-6 sticky top-24">
             {/* Sidebar Header */}
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div className="flex items-center gap-2">
@@ -356,7 +356,7 @@ export function PublicCourseCatalog({
               </label>
               <Link
                 href="/mba"
-                className="w-full text-left p-3 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 border border-red-200/80 text-xs font-bold text-[#E31E2B] flex items-center justify-between hover:shadow-xs transition-shadow"
+                className="w-full text-left p-3 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 border border-red-200/80 text-xs font-bold text-[#E31E2B] flex items-center justify-between transition-colors"
               >
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-[#E31E2B] shrink-0" />
@@ -383,7 +383,7 @@ export function PublicCourseCatalog({
         {/* RIGHT MAIN CATALOG */}
         <main className="flex-1 w-full space-y-6">
           {/* Top Control Bar: Search Input & Sort Dropdown */}
-          <div className="bg-white rounded-2xl border border-gray-200/90 p-4 sm:p-5 shadow-xs space-y-3">
+          <div className="bg-white rounded-2xl border border-gray-200/90 p-4 sm:p-5 space-y-3">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <form onSubmit={handleSearchSubmit} className="relative flex-1">
                 <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -543,7 +543,7 @@ export function PublicCourseCatalog({
                 return (
                   <div
                     key={course.id}
-                    className="bg-white rounded-2xl border border-gray-200/90 p-5 shadow-xs hover:shadow-lg hover:border-gray-300 transition-all flex flex-col justify-between space-y-4 group"
+                    className="bg-white rounded-2xl border border-gray-200/90 p-5 hover:border-gray-400 transition-colors flex flex-col justify-between space-y-4 group"
                   >
                     <div className="space-y-3">
                       <div className="flex items-center justify-between gap-2">

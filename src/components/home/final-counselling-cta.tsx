@@ -41,13 +41,13 @@ export function FinalCounsellingCta() {
     },
     {
       icon: Banknote,
-      badge: "Financial Aid & Scholarship Desk",
+      badge: "Financial Aid & Fee Concession Desk",
       badgeColor: "bg-emerald-50 text-emerald-800 border-emerald-200",
       title: "Tuition Waivers & 0% Advance Loans",
       desc: "Pre-approved education loans up to ₹20 Lakhs with nationalized banks (SBI, HDFC Credila) alongside direct 25% to 100% institutional merit fee concessions.",
       highlight: "Up to 100% Tuition Waiver",
-      actionText: "Apply for Scholarship",
-      actionQuery: "Scholarship & Student Loan Guidance",
+      actionText: "Apply for Fee Concession",
+      actionQuery: "Fee Concession & Student Loan Guidance",
     },
   ];
 
@@ -151,7 +151,7 @@ export function FinalCounsellingCta() {
               </h2>
 
               <p className="text-xs sm:text-sm text-red-100 max-w-xl leading-relaxed font-normal">
-                Book a free counselling session with our senior experts and get personalised, end-to-end guidance for the right college, stream and scholarship.
+                Book a free counselling session with our senior experts and get personalised, end-to-end guidance for the right college, stream and fee planning.
               </p>
 
               {/* 3 Value Pillars */}

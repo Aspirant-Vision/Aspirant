@@ -29,10 +29,10 @@ export function CounselingTriggerButton({
       case "outline":
         return "border border-[#E31E2B] text-[#E31E2B] hover:bg-red-50";
       case "white":
-        return "bg-white text-[#15182D] hover:bg-gray-100 shadow-md font-bold";
+        return "bg-white text-[#15182D] hover:bg-gray-100 font-bold border border-gray-200";
       case "primary":
       default:
-        return "bg-[#E31E2B] hover:bg-[#c91824] text-white shadow-md font-bold";
+        return "bg-[#E31E2B] hover:bg-[#c91824] text-white font-bold";
     }
   };
 

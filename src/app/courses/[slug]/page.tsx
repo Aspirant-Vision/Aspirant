@@ -109,7 +109,7 @@ export default async function PublicCourseDetailPage({
 
       {/* 2. PRESTIGIOUS EDITORIAL HERO HEADER */}
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
-        <div className="relative rounded-2xl sm:rounded-3xl border border-gray-200/90 p-6 sm:p-10 shadow-xs overflow-hidden bg-white">
+        <div className="relative rounded-2xl sm:rounded-3xl border border-gray-200/90 p-6 sm:p-10 overflow-hidden bg-white">
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/auth/campus_library.jpg"
@@ -125,7 +125,7 @@ export default async function PublicCourseDetailPage({
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-3.5 max-w-3xl">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#E31E2B] text-white shadow-xs">
+                <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#E31E2B] text-white">
                   {course.degree_type}
                 </span>
                 <span className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-200">
@@ -161,7 +161,7 @@ export default async function PublicCourseDetailPage({
                 collegeName={`Course Enquiry: ${course.name}`}
                 size="lg"
                 label="Apply for Admission"
-                className="text-sm px-8 w-full md:w-auto shadow-md bg-[#E31E2B] hover:bg-[#c91824] text-white font-bold cursor-pointer"
+                className="text-sm px-8 w-full md:w-auto bg-[#E31E2B] hover:bg-[#c91824] text-white font-bold cursor-pointer"
               />
             </div>
           </div>
@@ -174,7 +174,7 @@ export default async function PublicCourseDetailPage({
           {/* Main (2 cols) */}
           <div className="lg:col-span-2 space-y-8">
             {/* Overview */}
-            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-xs space-y-4">
+            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 space-y-4">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-[#E31E2B]" /> Program Overview
               </h2>
@@ -189,7 +189,7 @@ export default async function PublicCourseDetailPage({
             </div>
 
             {/* Eligibility Benchmarks */}
-            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-xs space-y-4">
+            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 space-y-4">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <FileCheck className="w-5 h-5 text-[#E31E2B]" /> Eligibility Benchmarks
               </h2>
@@ -222,7 +222,7 @@ export default async function PublicCourseDetailPage({
             </div>
 
             {/* Offering Colleges */}
-            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-xs space-y-4">
+            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 space-y-4">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-[#E31E2B]" /> Colleges Offering {course.name} ({offeringColleges.length})
               </h2>
@@ -269,7 +269,7 @@ export default async function PublicCourseDetailPage({
 
           {/* Sidebar (1 col) */}
           <div className="space-y-6">
-            <div className="bg-gradient-to-br from-[#15182D] to-slate-900 rounded-2xl p-6 text-white space-y-4 shadow-lg">
+            <div className="bg-gradient-to-br from-[#15182D] to-slate-900 rounded-2xl p-6 text-white space-y-4">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-bold text-red-300">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 <span>Admission Guidance</span>
@@ -334,7 +334,7 @@ export default async function PublicCourseDetailPage({
             {relatedCourses.map((rel) => (
               <div
                 key={rel.id}
-                className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
+                className="bg-white rounded-2xl border border-gray-200/80 p-5 hover:border-gray-400 transition-colors flex flex-col justify-between group"
               >
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-center gap-1.5">

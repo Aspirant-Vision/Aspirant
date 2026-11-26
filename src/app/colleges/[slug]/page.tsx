@@ -139,7 +139,7 @@ export default async function PublicCollegeDetailPage({
 
       {/* 2. COVER BANNER */}
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
-        <div className="relative w-full h-56 sm:h-80 lg:h-96 rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900 shadow-md">
+        <div className="relative w-full h-56 sm:h-80 lg:h-96 rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900">
           <Image
             src={college.cover_image_url || "/images/auth/auth_campus_highres.jpg"}
             alt={college.name}
@@ -152,11 +152,11 @@ export default async function PublicCollegeDetailPage({
         </div>
 
         {/* 3. PROFILE HEADER CARD (Floats over bottom of banner) */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl border border-gray-200/80 p-5 sm:p-8 shadow-sm -mt-14 sm:-mt-20 relative z-10 space-y-6">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-gray-200/80 p-5 sm:p-8 -mt-14 sm:-mt-20 relative z-10 space-y-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex items-start gap-4 sm:gap-6">
               {/* College Logo */}
-              <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl bg-white border-2 border-white shadow-lg overflow-hidden relative shrink-0">
+              <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl bg-white border-2 border-white overflow-hidden relative shrink-0">
                 {college.logo_url ? (
                   <Image
                     src={college.logo_url}
@@ -281,7 +281,7 @@ export default async function PublicCollegeDetailPage({
           {/* LEFT COLUMN (2 COLS) */}
           <div className="lg:col-span-2 space-y-8">
             {/* About Institution */}
-            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 space-y-4">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-[#E31E2B]" /> About {college.name}
               </h2>
@@ -300,7 +300,7 @@ export default async function PublicCollegeDetailPage({
 
             {/* Key Highlights */}
             {highlights.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+              <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 space-y-4">
                 <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-[#E31E2B]" /> Key Highlights & Strengths
                 </h2>
@@ -320,7 +320,7 @@ export default async function PublicCollegeDetailPage({
 
             {/* Campus Facilities */}
             {facilities.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+              <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 space-y-4">
                 <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                   <Layers className="w-5 h-5 text-[#E31E2B]" /> Campus Infrastructure & Facilities
                 </h2>
@@ -338,7 +338,7 @@ export default async function PublicCollegeDetailPage({
             )}
 
             {/* Admission Information */}
-            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-sm space-y-5">
+            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 space-y-5">
               <div className="flex items-center justify-between pb-3 border-b border-gray-100">
                 <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                   <FileCheck className="w-5 h-5 text-[#E31E2B]" /> Admission Overview & Eligibility
@@ -390,7 +390,7 @@ export default async function PublicCollegeDetailPage({
 
             {/* Academic Programs & Degrees Offered */}
             {offeredCourses.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+              <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-gray-100">
                   <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                     <GraduationCap className="w-5 h-5 text-[#E31E2B]" /> Programs & Courses Offered ({offeredCourses.length})
@@ -454,7 +454,7 @@ export default async function PublicCollegeDetailPage({
 
             {/* Scholarships & Financial Aid */}
             {scholarships.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+              <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-gray-100">
                   <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                     <Award className="w-5 h-5 text-[#E31E2B]" /> Scholarships & Financial Grants ({scholarships.length})
@@ -498,7 +498,7 @@ export default async function PublicCollegeDetailPage({
 
             {/* Campus Photo Gallery */}
             {gallery.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+              <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 space-y-4">
                 <h2 className="text-lg font-bold text-gray-900">Campus Photo Gallery</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {gallery.map((img, i) => (
@@ -523,7 +523,7 @@ export default async function PublicCollegeDetailPage({
           {/* RIGHT COLUMN / SIDEBAR (1 COL) */}
           <div className="space-y-6">
             {/* COUNSELLING ASSISTANCE CTA CARD */}
-            <div className="bg-gradient-to-br from-[#15182D] to-slate-900 rounded-2xl p-6 text-white space-y-4 shadow-lg">
+            <div className="bg-gradient-to-br from-[#15182D] to-slate-900 rounded-2xl p-6 text-white space-y-4">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-bold text-red-300">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 <span>Expert Admission Guidance</span>
@@ -543,12 +543,12 @@ export default async function PublicCollegeDetailPage({
                 variant="white"
                 size="md"
                 label="Book Free Consultation"
-                className="w-full text-xs"
+                className="w-full text-xs cursor-pointer"
               />
             </div>
 
             {/* CONTACT & LOCATION CARD */}
-            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 shadow-sm space-y-4">
+            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 space-y-4">
               <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-[#E31E2B]" /> Campus Location & Contact
               </h3>
@@ -631,7 +631,7 @@ export default async function PublicCollegeDetailPage({
             {relatedColleges.map((rel) => (
               <div
                 key={rel.id}
-                className="bg-white rounded-2xl border border-gray-200/80 overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 flex flex-col group"
+                className="bg-white rounded-2xl border border-gray-200/80 overflow-hidden hover:border-gray-400 transition-colors flex flex-col group"
               >
                 {/* Cover Image */}
                 <div className="relative h-40 w-full bg-slate-900 overflow-hidden">
@@ -652,15 +652,15 @@ export default async function PublicCollegeDetailPage({
 
                   {/* Badges */}
                   <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-1 text-[10px] font-bold">
-                    <span className="px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-md text-[#15182D] shadow-xs">
+                    <span className="px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-md text-[#15182D]">
                       {rel.college_type}
                     </span>
                     {rel.nirf_rank ? (
-                      <span className="px-2 py-0.5 rounded-full bg-[#E31E2B] text-white shadow-xs font-extrabold">
+                      <span className="px-2 py-0.5 rounded-full bg-[#E31E2B] text-white font-extrabold">
                         NIRF #{rel.nirf_rank}
                       </span>
                     ) : rel.naac_grade ? (
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white shadow-xs">
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white">
                         NAAC {rel.naac_grade}
                       </span>
                     ) : null}

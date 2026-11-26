@@ -61,11 +61,11 @@ const SUCCESS_STORIES: StudentStory[] = [
     stream: "engineering",
     course: "B.Tech AI & Data Science",
     college: "KIIT University",
-    rankBadge: "Merit Scholarship Winner",
+    rankBadge: "Merit Fee Concession Awardee",
     companyBadge: "Placed @ Deloitte (₹12 LPA)",
     image: "/images/ss_crops/student_3_highres.jpg",
     quote:
-      "Coming from Odisha, having Aspirant Vision's counsellors walk my parents through the fee breakdown, hostel safety, and 50% merit scholarship cutoffs gave our whole family immense confidence.",
+      "Coming from Odisha, having Aspirant Vision's counsellors walk my parents through the fee breakdown, hostel safety, and 50% merit fee concession cutoffs gave our whole family immense confidence.",
     rating: 5,
   },
 ];
