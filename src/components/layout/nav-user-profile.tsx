@@ -69,6 +69,27 @@ export function NavUserProfile() {
             .eq("id", session.user.id)
             .maybeSingle();
 
+          const userRole =
+            dbProfile?.role ||
+            (session.user.app_metadata?.role as string) ||
+            (session.user.user_metadata?.role as string) ||
+            "student";
+
+          // Strict separation: Administrative & staff roles (super_admin, admin, counsellor)
+          // must NEVER appear as student users in the public website navbar.
+          // The public consumer navbar is reserved exclusively for student applicants.
+          const isStaff =
+            userRole === "super_admin" ||
+            userRole === "admin" ||
+            userRole === "counsellor" ||
+            session.user.email?.toLowerCase().includes("admin@aspirantvision.com");
+
+          if (isStaff) {
+            setProfile(null);
+            setIsLoading(false);
+            return;
+          }
+
           const currentProfile: StudentProfile = {
             id: session.user.id,
             email: session.user.email || "",
@@ -84,7 +105,7 @@ export function NavUserProfile() {
               dbProfile?.avatar_url ||
               (session.user.user_metadata?.avatar_url as string) ||
               null,
-            role: dbProfile?.role || "student",
+            role: "student",
             is_verified: dbProfile?.is_verified ?? false,
           };
 

@@ -7,7 +7,6 @@ import { Logo } from "@/components/ui/logo";
 import { useCounselingModal } from "@/components/forms/counseling-modal-context";
 import { NavUserProfile } from "@/components/layout/nav-user-profile";
 import {
-  Search,
   ChevronDown,
   ArrowUpRight,
   Menu,
@@ -92,7 +91,6 @@ export function TopNavBar() {
         { label: "Direct Admissions", href: "/#journey" },
       ],
     },
-    { name: "Counselling", href: "/#counselling" },
   ];
 
   return (
@@ -170,15 +168,6 @@ export function TopNavBar() {
 
         {/* Right Actions with Tactile Styling */}
         <div className="hidden sm:flex items-center gap-3 shrink-0">
-          {/* Search Trigger Icon */}
-          <button
-            onClick={() => openModal("Search")}
-            className="tactile-pill p-2 rounded-full text-[#687086] hover:text-[#E31E2B] transition-colors"
-            aria-label="Search"
-          >
-            <Search className="w-4 h-4 stroke-[2]" />
-          </button>
-
           {/* Student Profile / Login State */}
           <NavUserProfile />
 
