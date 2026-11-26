@@ -10,19 +10,16 @@ import { env } from "@/lib/validation/env";
 let clientInstance: ReturnType<typeof createBrowserClient<Database>> | null = null;
 
 export function createClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
   if (typeof window === "undefined") {
     // Fallback when called in SSR environment
-    return createBrowserClient<Database>(
-      env.NEXT_PUBLIC_SUPABASE_URL,
-      env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    );
+    return createBrowserClient<Database>(url, key);
   }
 
   if (!clientInstance) {
-    clientInstance = createBrowserClient<Database>(
-      env.NEXT_PUBLIC_SUPABASE_URL,
-      env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    );
+    clientInstance = createBrowserClient<Database>(url, key);
   }
 
   return clientInstance;

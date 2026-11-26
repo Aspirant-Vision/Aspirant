@@ -27,7 +27,7 @@ export function GoogleSignInButton({
         callbackUrl.searchParams.set("next", redirectUrl);
       }
 
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: callbackUrl.toString(),
@@ -35,19 +35,57 @@ export function GoogleSignInButton({
             access_type: "offline",
             prompt: "select_account",
           },
+          skipBrowserRedirect: true,
         },
       });
 
       if (error) {
         setIsLoading(false);
         const msg = error.message.includes("provider is not enabled")
-          ? "Google OAuth is not enabled in your Supabase project. Please enable Google in Supabase Dashboard > Authentication > Providers."
+          ? "Google Sign-In is not enabled yet in your Supabase project. To enable it, open your Supabase Dashboard > Authentication > Providers > Google, toggle it ON, and paste your Google OAuth Client ID & Secret."
           : error.message;
         if (onError) onError(msg);
+        return;
+      }
+
+      if (data?.url) {
+        // Pre-check if Google OAuth provider is active in Supabase
+        try {
+          const probe = await fetch(data.url, {
+            method: "GET",
+            headers: { Accept: "application/json" },
+          });
+
+          if (!probe.ok) {
+            const errJson = await probe.json().catch(() => null);
+            if (
+              errJson?.msg?.includes("provider is not enabled") ||
+              errJson?.error_code === "validation_failed" ||
+              probe.status === 400
+            ) {
+              setIsLoading(false);
+              if (onError) {
+                onError(
+                  "Google Sign-In is not activated yet in Supabase. Please go to Supabase Dashboard > Authentication > Providers > Google, enable it, and add your Google Cloud OAuth Client ID & Secret."
+                );
+              }
+              return;
+            }
+          }
+        } catch {
+          // Cross-origin redirects or network policies are expected when provider is active; proceed with navigation
+        }
+
+        // Navigate to Google account selection
+        window.location.href = data.url;
+      } else {
+        setIsLoading(false);
+        if (onError) onError("Unable to generate Google sign-in authorization link.");
       }
     } catch (err: unknown) {
       setIsLoading(false);
-      const message = err instanceof Error ? err.message : "Failed to connect to Google authentication.";
+      const message =
+        err instanceof Error ? err.message : "Failed to initiate Google authentication.";
       if (onError) onError(message);
     }
   };
@@ -57,12 +95,16 @@ export function GoogleSignInButton({
       type="button"
       onClick={handleGoogleSignIn}
       disabled={isLoading}
-      className="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 text-xs sm:text-sm font-semibold transition-all duration-200 shadow-xs hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+      className="group relative w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50/80 active:bg-slate-100/90 text-slate-700 text-sm font-semibold transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
     >
       {isLoading ? (
-        <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
+        <Loader2 className="w-4 h-4 animate-spin text-red-600" />
       ) : (
-        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+        <svg
+          className="w-4 h-4 shrink-0 transition-transform group-hover:scale-110"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
           <path
             fill="#4285F4"
             d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"
@@ -81,7 +123,7 @@ export function GoogleSignInButton({
           />
         </svg>
       )}
-      <span>{label}</span>
+      <span className="tracking-tight">{label}</span>
     </button>
   );
 }
