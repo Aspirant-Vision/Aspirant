@@ -200,10 +200,10 @@ export function HeroSection() {
           >
             <div className="flex -space-x-2 overflow-hidden">
               <div className="inline-block h-8 w-8 rounded-full ring-2 ring-white overflow-hidden bg-gray-200 relative shadow-sm">
-                <Image src="/images/ss_crops/priya_sharma.png" alt="Student" fill className="object-cover" />
+                <Image src="/images/hero-single-student.webp" alt="Student" fill className="object-cover" />
               </div>
               <div className="inline-block h-8 w-8 rounded-full ring-2 ring-white overflow-hidden bg-amber-100 relative shadow-sm">
-                <Image src="/images/hero/hero_student_wide.png" alt="Student" fill className="object-cover object-top" />
+                <Image src="/images/ss_crops/student_1_highres.jpg" alt="Student" fill className="object-cover object-top" />
               </div>
               <div className="inline-block h-8 w-8 rounded-full ring-2 ring-white overflow-hidden bg-rose-100 relative shadow-sm">
                 <Image src="/images/ss_crops/priya_sharma.png" alt="Student" fill className="object-cover" />
@@ -216,6 +216,35 @@ export function HeroSection() {
               <div className="text-[11px] font-semibold text-[#687086] mt-0.5">
                 Students Guided
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 4. FLOATING STUDENT SUCCESS SPOTLIGHT (Bottom Right) */}
+        <div className="hidden xl:block absolute bottom-12 right-12 z-20">
+          <div
+            onClick={() => openModal("Student Advisory Showcase")}
+            className="tactile-card rounded-2xl p-2.5 bg-white/95 backdrop-blur-md border border-white/80 shadow-2xl hover:scale-105 transition-all cursor-pointer flex items-center gap-3 max-w-[320px]"
+          >
+            <div className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-slate-100 shadow-xs">
+              <Image
+                src="/images/hero-single-student.webp"
+                alt="Aspirant Vision Student"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div>
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100 mb-0.5">
+                <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                Merit Allocation
+              </span>
+              <p className="text-xs font-bold text-slate-900 leading-tight">
+                Direct Admission Confirmed
+              </p>
+              <p className="text-[11px] text-slate-500 mt-0.5">
+                Top B.Tech & MBA Campuses
+              </p>
             </div>
           </div>
         </div>

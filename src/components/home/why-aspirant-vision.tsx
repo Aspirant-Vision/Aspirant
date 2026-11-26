@@ -44,11 +44,11 @@ export function WhyAspirantVision() {
     <section id="why" className="py-8 sm:py-14 lg:py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* 32px Rounded Tactile Canvas with Clearly Visible Campus Background Image */}
       <div className="relative rounded-2xl sm:rounded-[32px] overflow-hidden border border-[#E7E9F0] shadow-2xl bg-white p-5 sm:p-10 lg:p-16">
-        {/* Authentic Academic Campus Photography (Different from Hero, clearly visible) */}
+        {/* Authentic Academic Campus Photography (Why Aspirant Vision Custom Visual) */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/campuses/isb.png"
-            alt="Premier Academic University Campus"
+            src="/images/why_aspirant_vision.webp"
+            alt="Premier Academic University Campus - Why Aspirant Vision"
             fill
             sizes="100vw"
             className="object-cover object-[70%_center] lg:object-right"

@@ -38,7 +38,7 @@ export function CompareCollegesModule() {
     <section id="compare" className="py-8 sm:py-14 lg:py-16 bg-[#171B52]/[0.02] border-y border-[#E7E9F0]">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 sm:mb-10 gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 sm:mb-8 gap-4">
           <div>
             <span className="text-[#E31E2B] font-bold text-xs uppercase tracking-wider block mb-1">
               — Comparison Engine
@@ -57,6 +57,32 @@ export function CompareCollegesModule() {
             <span>Compare Now</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
+        </div>
+
+        {/* Visual Matrix Spotlight Banner */}
+        <div className="mb-6 sm:mb-8 relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#E7E9F0] shadow-sm bg-slate-900">
+          <div className="relative h-32 sm:h-44 md:h-52 w-full">
+            <Image
+              src="/images/comparision_matrix1.webp"
+              alt="College Comparison Matrix Framework - Aspirant Vision"
+              fill
+              sizes="100vw"
+              className="object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/50 to-transparent flex items-center p-6 sm:p-8">
+              <div className="max-w-md space-y-1.5">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] sm:text-[11px] font-bold backdrop-blur-xs">
+                  Side-by-Side Analytics
+                </span>
+                <h3 className="text-base sm:text-xl font-extrabold text-white leading-tight">
+                  Cutoffs • Placements • Total Fees
+                </h3>
+                <p className="text-xs text-slate-300 line-clamp-2">
+                  Select and evaluate up to 4 universities side-by-side with verified institutional metrics.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* COMPARISON MATRIX TABLE (Universal Across All Devices with smooth touch scrolling on mobile) */}

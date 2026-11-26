@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import {
   Search,
   Headphones,
@@ -91,6 +92,32 @@ export function AdmissionJourneyTimeline() {
             <span>Start Your Admission Journey</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
+        </div>
+
+        {/* Top Admission Panorama Showcase Banner */}
+        <div className="mb-8 sm:mb-10 relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#E7E9F0] shadow-sm bg-slate-900">
+          <div className="relative h-32 sm:h-44 md:h-56 w-full">
+            <Image
+              src="/images/top_admission.webp"
+              alt="Top University Admissions Process - Aspirant Vision"
+              fill
+              sizes="100vw"
+              className="object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/40 to-transparent flex items-center p-6 sm:p-10">
+              <div className="max-w-md space-y-1.5">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600 text-white text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+                  Direct Merit Admissions
+                </span>
+                <h3 className="text-base sm:text-2xl font-extrabold text-white leading-tight">
+                  Guaranteed Seat Allotment Support
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-200 line-clamp-2">
+                  Official counselling partnerships with 2,500+ premier institutions across India.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* ======================================================== */}

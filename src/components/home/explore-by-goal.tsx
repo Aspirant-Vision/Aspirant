@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import {
   Cog,
   TrendingUp,
@@ -73,6 +74,42 @@ export function ExploreByGoal() {
             </button>
           );
         })}
+      </div>
+
+      {/* Featured Goal & Stream Exploration Visual Banner */}
+      <div className="mt-6 sm:mt-8 relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#E7E9F0] shadow-sm bg-slate-900 group">
+        <div className="relative h-44 sm:h-56 md:h-64 w-full">
+          <Image
+            src="/images/explore-by-goal-v2.webp"
+            alt="Explore Colleges by Degree Goal - Aspirant Vision"
+            fill
+            sizes="100vw"
+            className="object-cover object-center group-hover:scale-[1.02] transition-transform duration-500"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/45 to-transparent flex items-center p-6 sm:p-10">
+            <div className="max-w-md space-y-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/90 text-white text-[10px] sm:text-xs font-bold uppercase tracking-wider backdrop-blur-xs">
+                Direct Academic Advisory
+              </span>
+              <h3 className="text-lg sm:text-2xl font-extrabold text-white leading-tight">
+                Not sure which stream fits your career goals?
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-200 line-clamp-2">
+                Our certified counsellors map your JEE, NEET, CUET &amp; 12th scores to top eligible colleges with guaranteed zero admission stress.
+              </p>
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={() => openModal("Career Stream Mapping Session")}
+                  className="tactile-btn-red text-white px-5 py-2 rounded-full text-xs font-bold inline-flex items-center gap-1.5 shadow-md hover:scale-105 transition-all cursor-pointer"
+                >
+                  <span>Book Free Stream Mapping</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

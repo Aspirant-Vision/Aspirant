@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import {
   Calendar as CalendarIcon,
   Bell,
@@ -161,6 +162,32 @@ export function UpcomingExams() {
             <span>Download 2026 Exam Schedule</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
+        </div>
+
+        {/* Entrance Exam & Admission Deadlines Showcase Banner */}
+        <div className="mb-6 relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#E7E9F0] shadow-sm bg-slate-900">
+          <div className="relative h-32 sm:h-44 md:h-52 w-full">
+            <Image
+              src="/images/upcoming_exam.webp"
+              alt="Upcoming Entrance Exams & Admission Calendar - Aspirant Vision"
+              fill
+              sizes="100vw"
+              className="object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/40 to-transparent flex items-center p-6 sm:p-8">
+              <div className="max-w-md space-y-1.5">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] sm:text-[11px] font-bold">
+                  Session 2026–27 Alerts
+                </span>
+                <h3 className="text-base sm:text-xl font-extrabold text-white leading-tight">
+                  Never Miss a College Cutoff or Form Date
+                </h3>
+                <p className="text-xs text-slate-200 line-clamp-2">
+                  Real-time exam tracking for JEE Main, CAT, NEET, CUET, GATE, and state entrance portals.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Category Filter Tabs */}
