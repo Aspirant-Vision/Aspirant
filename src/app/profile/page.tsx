@@ -29,6 +29,7 @@ import {
   Clock,
   ArrowUpRight,
   Headphones,
+  Compass,
 } from "lucide-react";
 
 interface StudentProfile {
@@ -74,7 +75,6 @@ export default function ProfilePage() {
           return;
         }
 
-        // Fetch profile and full student dashboard data in parallel
         const [profileRes, dashRes] = await Promise.all([
           supabase
             .from("profiles")
@@ -116,7 +116,6 @@ export default function ProfilePage() {
           setDashboardData(dashRes.data);
         }
 
-        // Prompt edit if mobile or location is missing
         if (!resolvedProfile.phone || !locParts.length) {
           setIsEditing(true);
         }
@@ -191,7 +190,7 @@ export default function ProfilePage() {
       setTimeout(() => {
         setIsEditing(false);
         setSuccessMessage(null);
-      }, 1200);
+      }, 1000);
     } catch (err: unknown) {
       console.error("Save error:", err);
       setErrorMessage("An unexpected error occurred while updating profile.");
@@ -213,8 +212,8 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center">
-        <Loader2 className="w-8 h-8 text-primary animate-spin mb-3" />
-        <p className="text-xs text-slate-500 font-medium">Loading your profile & admissions hub...</p>
+        <Loader2 className="w-7 h-7 text-red-600 animate-spin mb-3" />
+        <p className="text-xs text-slate-500 font-medium tracking-wide">Loading your admissions dashboard...</p>
       </div>
     );
   }
@@ -222,7 +221,6 @@ export default function ProfilePage() {
   if (!profile) return null;
 
   const displayName = profile.full_name || profile.email.split("@")[0];
-  const firstName = displayName.split(" ")[0];
   const initial = displayName.charAt(0).toUpperCase();
   const displayLocation = [profile.city, profile.state].filter(Boolean).join(", ");
   const isMissingDetails = !profile.phone || !displayLocation;
@@ -239,427 +237,368 @@ export default function ProfilePage() {
   const recommendedSteps = dashboardData?.recommendedSteps || [];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-6 sm:py-10">
+    <div className="min-h-screen bg-[#FAFAFA] py-8 sm:py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-6 sm:space-y-8">
-        
-        {/* Navigation Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs text-slate-400">
-          <Link href="/" className="hover:text-slate-800 transition-colors">
-            Home
-          </Link>
-          <span>/</span>
-          <span className="text-slate-800 font-medium">Student Profile</span>
-        </div>
 
-        {/* Missing Required Fields Alert */}
-        {isMissingDetails && (
-          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-3 shadow-xs">
-            <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-            <div className="flex-1 text-xs sm:text-sm">
-              <span className="font-bold">Mandatory Coordinates Required:</span> Mobile number and location are required to match you with top colleges, verified scholarship quotas, and direct admission counselling.
+        {/* ============================================================================== */}
+        {/* HEADER: CLEAN IDENTITY HERO (Zero empty banner image waste, Apple/Linear style) */}
+        {/* ============================================================================== */}
+        <div className="bg-white rounded-2xl border border-slate-200/70 shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-6 sm:p-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            
+            {/* Left: Avatar + Identity + Essential Coordinates */}
+            <div className="flex items-start sm:items-center gap-4 sm:gap-5 min-w-0">
+              {profile.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt={displayName}
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-slate-200 shadow-xs shrink-0"
+                />
+              ) : (
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-red-600 to-rose-700 text-white font-extrabold text-2xl sm:text-3xl flex items-center justify-center border border-red-200/50 shadow-xs shrink-0">
+                  {initial}
+                </div>
+              )}
+
+              <div className="min-w-0 space-y-1.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 truncate">
+                    {displayName}
+                  </h1>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-semibold border border-emerald-200/80">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    Verified Student
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-medium">
+                    <Sparkles className="w-3 h-3 text-amber-500" />
+                    Session 2026–27
+                  </span>
+                </div>
+
+                {/* Email, Phone & Location Strip */}
+                <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-xs text-slate-600 pt-0.5">
+                  <span className="flex items-center gap-1.5 text-slate-600">
+                    <Mail className="w-3.5 h-3.5 text-slate-400" />
+                    <span className="font-medium text-slate-800">{profile.email}</span>
+                  </span>
+
+                  <span className="flex items-center gap-1.5 text-slate-600">
+                    <Phone className="w-3.5 h-3.5 text-slate-400" />
+                    {profile.phone ? (
+                      <span className="font-semibold text-slate-900">{profile.phone}</span>
+                    ) : (
+                      <span className="font-semibold text-red-600 bg-red-50 px-1.5 py-0.5 rounded text-[11px]">
+                        Phone required
+                      </span>
+                    )}
+                  </span>
+
+                  <span className="flex items-center gap-1.5 text-slate-600">
+                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                    {displayLocation ? (
+                      <span className="font-semibold text-slate-900">{displayLocation}</span>
+                    ) : (
+                      <span className="font-semibold text-red-600 bg-red-50 px-1.5 py-0.5 rounded text-[11px]">
+                        Location required
+                      </span>
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Actions */}
+            <div className="flex items-center gap-2.5 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+              {!isEditing && (
+                <button
+                  onClick={() => {
+                    setIsEditing(true);
+                    setErrorMessage(null);
+                    setSuccessMessage(null);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors shadow-xs cursor-pointer"
+                >
+                  <Edit3 className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Edit Profile</span>
+                </button>
+              )}
+              <button
+                onClick={handleSignOut}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 hover:border-red-200 hover:bg-red-50/40 text-xs font-semibold text-slate-600 hover:text-red-600 transition-colors cursor-pointer"
+                title="Sign Out"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sign Out</span>
+              </button>
             </div>
           </div>
-        )}
 
-        {/* ============================================================================== */}
-        {/* SECTION 1: PROFILE DETAILS CARD (With Mandatory Mobile Number & Location)     */}
-        {/* ============================================================================== */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-          {/* Header Banner */}
-          <div className="h-24 sm:h-28 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-950 p-6 flex items-end justify-between" />
+          {/* Missing Details Notice */}
+          {isMissingDetails && !isEditing && (
+            <div className="mt-5 p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-900 flex items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                <span>
+                  <strong>Action Required:</strong> Mobile number & location are mandatory for university admissions and counselling.
+                </span>
+              </div>
+              <button
+                onClick={() => setIsEditing(true)}
+                className="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg text-xs transition-colors shrink-0 cursor-pointer"
+              >
+                Complete Now
+              </button>
+            </div>
+          )}
 
-          {/* Profile Body */}
-          <div className="px-6 pb-6 pt-0 relative">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-12 sm:-mt-14 mb-6">
-              <div className="flex items-end gap-4">
-                {profile.avatar_url ? (
-                  <img
-                    src={profile.avatar_url}
-                    alt={displayName}
-                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-4 border-white shadow-md bg-white"
+          {/* Inline Edit Form */}
+          {isEditing && (
+            <form onSubmit={handleSave} className="mt-6 pt-6 border-t border-slate-100 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                  Update Personal Information
+                </h3>
+                <span className="text-[11px] text-slate-400">
+                  <span className="text-red-500 font-bold">*</span> Mandatory fields
+                </span>
+              </div>
+
+              {errorMessage && (
+                <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+              {successMessage && (
+                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                  <span>{successMessage}</span>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1" htmlFor="editName">
+                    Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="editName"
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Full Name"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-slate-900 transition-colors bg-white"
+                    required
                   />
-                ) : (
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-red-600 text-white font-extrabold text-2xl sm:text-3xl flex items-center justify-center border-4 border-white shadow-md">
-                    {initial}
-                  </div>
-                )}
-                <div className="mb-1">
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
-                      {displayName}
-                    </h1>
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
-                      <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                      Verified Aspirant
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1.5">
-                    <Mail className="w-3.5 h-3.5 text-slate-400" />
-                    <span>{profile.email}</span>
-                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1" htmlFor="editPhone">
+                    Mobile Number <span className="text-red-500">* (10 digits)</span>
+                  </label>
+                  <input
+                    id="editPhone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="e.g. 9876543210"
+                    maxLength={14}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-slate-900 transition-colors bg-white"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 mb-1" htmlFor="editLocation">
+                    Location (City, State) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="editLocation"
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="e.g. Bhubaneswar, Odisha"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-slate-900 transition-colors bg-white"
+                    required
+                  />
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2">
-                {!isEditing && (
+              <div className="flex items-center justify-end gap-2 pt-1">
+                {!isMissingDetails && (
                   <button
-                    onClick={() => {
-                      setIsEditing(true);
-                      setErrorMessage(null);
-                      setSuccessMessage(null);
-                    }}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors shadow-xs cursor-pointer"
+                    type="button"
+                    onClick={() => setIsEditing(false)}
+                    disabled={isSaving}
+                    className="px-4 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
                   >
-                    <Edit3 className="w-3.5 h-3.5 text-slate-500" />
-                    <span>Edit Profile</span>
+                    Cancel
                   </button>
                 )}
                 <button
-                  onClick={handleSignOut}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-red-200 hover:border-red-300 bg-red-50/50 hover:bg-red-50 text-xs font-semibold text-red-700 transition-colors cursor-pointer"
-                  title="Sign Out"
+                  type="submit"
+                  disabled={isSaving}
+                  className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-xs font-semibold text-white transition-colors disabled:opacity-60 cursor-pointer shadow-xs"
                 >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span>Sign Out</span>
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Save Changes</span>
+                    </>
+                  )}
                 </button>
               </div>
-            </div>
-
-            {/* Error / Success Feedback */}
-            {errorMessage && (
-              <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-                <span>{errorMessage}</span>
-              </div>
-            )}
-            {successMessage && (
-              <div className="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-                <span>{successMessage}</span>
-              </div>
-            )}
-
-            {/* View Mode vs Edit Mode */}
-            {!isEditing ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
-                {/* Mobile Number Box */}
-                <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                      <Phone className="w-3.5 h-3.5 text-slate-400" />
-                      Mobile Number
-                    </span>
-                    <span className="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
-                      Mandatory
-                    </span>
-                  </div>
-                  {profile.phone ? (
-                    <p className="text-sm font-bold text-slate-900 tracking-wide">
-                      {profile.phone}
-                    </p>
-                  ) : (
-                    <p className="text-xs text-red-600 font-medium italic">
-                      Not set — Please enter mobile number
-                    </p>
-                  )}
-                </div>
-
-                {/* Location Box */}
-                <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                      Location
-                    </span>
-                    <span className="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
-                      Mandatory
-                    </span>
-                  </div>
-                  {displayLocation ? (
-                    <p className="text-sm font-bold text-slate-900">
-                      {displayLocation}
-                    </p>
-                  ) : (
-                    <p className="text-xs text-red-600 font-medium italic">
-                      Not set — Please enter city & state
-                    </p>
-                  )}
-                </div>
-              </div>
-            ) : (
-              /* Inline Edit Form */
-              <form onSubmit={handleSave} className="pt-4 border-t border-slate-100 space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-700 mb-1" htmlFor="profileFullName">
-                      Full Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="profileFullName"
-                      type="text"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Your Full Name"
-                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-slate-900 transition-colors bg-white"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1" htmlFor="profilePhone">
-                      Mobile Number <span className="text-red-500">* (10 Digits)</span>
-                    </label>
-                    <input
-                      id="profilePhone"
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="e.g. 9876543210"
-                      maxLength={14}
-                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-slate-900 transition-colors bg-white"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1" htmlFor="profileLocation">
-                      Location (City, State) <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="profileLocation"
-                      type="text"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      placeholder="e.g. Bhubaneswar, Odisha"
-                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-slate-900 transition-colors bg-white"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-end gap-2 pt-2">
-                  {!isMissingDetails && (
-                    <button
-                      type="button"
-                      onClick={() => setIsEditing(false)}
-                      disabled={isSaving}
-                      className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
-                    >
-                      Cancel
-                    </button>
-                  )}
-                  <button
-                    type="submit"
-                    disabled={isSaving}
-                    className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-xs font-semibold text-white transition-colors disabled:opacity-60 cursor-pointer shadow-xs"
-                  >
-                    {isSaving ? (
-                      <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span>Saving...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Check className="w-3.5 h-3.5" />
-                        <span>Save Coordinates</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
+            </form>
+          )}
         </div>
 
         {/* ============================================================================== */}
-        {/* SECTION 2: WELCOME BANNER & PROFILE READINESS (Original Sections Preserved)   */}
+        {/* SECTION 2: ADMISSION SNAPSHOT & METRICS (Airy 5-Column Clean Layout)          */}
         {/* ============================================================================== */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-red-600 via-red-700 to-[#0C102C] text-white p-6 sm:p-8 shadow-xl">
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            <div className="lg:col-span-8 space-y-3">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-white text-xs font-semibold backdrop-blur-sm">
-                <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
-                <span>Admission Session 2026-27</span>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5 sm:gap-4">
+          {/* Readiness Card */}
+          <div className="col-span-2 sm:col-span-1 bg-white rounded-2xl p-5 border border-slate-200/70 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between text-xs font-semibold text-slate-500 mb-2">
+                <span>Profile Readiness</span>
+                <span className="text-slate-900 font-bold">{profileReadiness}%</span>
               </div>
-
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                Welcome back, {firstName}!
-              </h2>
-
-              <p className="text-xs sm:text-sm text-red-100 max-w-xl leading-relaxed">
-                Your admission hub is active. Review college cutoffs, monitor enquiry updates from assigned counsellors, and track your verified scholarship applications.
-              </p>
-
-              <div className="pt-2 flex flex-wrap gap-3">
-                <Link
-                  href="/colleges"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white text-red-600 hover:bg-slate-100 text-xs font-bold shadow-md transition-colors"
-                >
-                  <Search className="w-3.5 h-3.5" />
-                  <span>Search Top Colleges</span>
-                </Link>
-                <a
-                  href="https://wa.me/919876543210?text=Hi%20Aspirant%20Vision%2C%20I%20need%20expert%20admission%20guidance."
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-white/30 text-white bg-white/10 hover:bg-white/20 text-xs font-semibold backdrop-blur-sm transition-colors"
-                >
-                  <Headphones className="w-3.5 h-3.5" />
-                  <span>Ask Counsellor</span>
-                </a>
-              </div>
-            </div>
-
-            {/* Profile Completion Dial */}
-            <div className="lg:col-span-4 bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-red-100">
-                  Profile Readiness
-                </span>
-                <span className="text-lg font-black text-white">
-                  {profileReadiness}%
-                </span>
-              </div>
-
-              <div className="w-full bg-black/20 rounded-full h-2.5 overflow-hidden">
+              <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                 <div
-                  className="bg-emerald-400 h-2.5 rounded-full transition-all duration-500"
+                  className="bg-emerald-500 h-2 rounded-full transition-all duration-500"
                   style={{ width: `${profileReadiness}%` }}
                 />
               </div>
-
-              {missingFields.length > 0 ? (
-                <p className="text-[11px] text-red-100">
-                  Complete: <span className="text-white font-semibold">{missingFields.slice(0, 2).join(", ")}</span>
-                  {missingFields.length > 2 && ` +${missingFields.length - 2} more`}
-                </p>
-              ) : (
-                <p className="text-[11px] text-emerald-200 font-semibold flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Your profile is 100% complete!</span>
-                </p>
-              )}
             </div>
+            <p className="text-[11px] text-slate-500 mt-3">
+              {profileReadiness === 100 ? (
+                <span className="text-emerald-700 font-medium">Profile 100% complete</span>
+              ) : (
+                <span>Complete for priority seats</span>
+              )}
+            </p>
           </div>
-          <div className="absolute -right-12 -bottom-16 w-64 h-64 rounded-full bg-white/5 pointer-events-none blur-2xl" />
-        </div>
 
-        {/* ============================================================================== */}
-        {/* SECTION 3: KEY METRICS ROW (4 Cards)                                          */}
-        {/* ============================================================================== */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {/* Shortlisted Colleges */}
           <Link
             href="/colleges"
-            className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-red-200 transition-all group"
+            className="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-slate-300 hover:shadow-sm transition-all group"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-500">Shortlisted Colleges</span>
-              <div className="p-2.5 rounded-xl bg-red-50 text-red-600 group-hover:scale-110 transition-transform">
-                <BookmarkCheck className="w-5 h-5" />
+              <span className="text-xs font-medium text-slate-500">Shortlisted</span>
+              <div className="w-8 h-8 rounded-xl bg-red-50 text-red-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <BookmarkCheck className="w-4 h-4" />
               </div>
             </div>
-            <div className="mt-4 flex items-baseline justify-between">
-              <span className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            <div className="mt-3">
+              <span className="text-2xl font-bold tracking-tight text-slate-900">
                 {shortlistedColleges}
               </span>
-              <span className="text-xs font-semibold text-red-600 flex items-center gap-0.5 group-hover:underline">
-                Browse <ArrowRight className="w-3 h-3" />
-              </span>
+              <p className="text-[11px] text-slate-400 mt-0.5 group-hover:text-red-600 transition-colors">
+                Colleges saved
+              </p>
             </div>
           </Link>
 
+          {/* Saved Courses */}
           <Link
             href="/courses"
-            className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-red-200 transition-all group"
+            className="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-slate-300 hover:shadow-sm transition-all group"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-500">Saved Courses</span>
-              <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600 group-hover:scale-110 transition-transform">
-                <BookOpen className="w-5 h-5" />
+              <span className="text-xs font-medium text-slate-500">Courses</span>
+              <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <BookOpen className="w-4 h-4" />
               </div>
             </div>
-            <div className="mt-4 flex items-baseline justify-between">
-              <span className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            <div className="mt-3">
+              <span className="text-2xl font-bold tracking-tight text-slate-900">
                 {shortlistedCourses}
               </span>
-              <span className="text-xs font-semibold text-blue-600 flex items-center gap-0.5 group-hover:underline">
-                Explore <ArrowRight className="w-3 h-3" />
-              </span>
+              <p className="text-[11px] text-slate-400 mt-0.5 group-hover:text-blue-600 transition-colors">
+                Degrees saved
+              </p>
             </div>
           </Link>
 
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-all group">
+          {/* Active Enquiries */}
+          <div className="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-500">Active Enquiries</span>
-              <div className="p-2.5 rounded-xl bg-purple-50 text-purple-600 group-hover:scale-110 transition-transform">
-                <MessageSquare className="w-5 h-5" />
+              <span className="text-xs font-medium text-slate-500">Enquiries</span>
+              <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                <MessageSquare className="w-4 h-4" />
               </div>
             </div>
-            <div className="mt-4 flex items-baseline justify-between">
-              <span className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            <div className="mt-3">
+              <span className="text-2xl font-bold tracking-tight text-slate-900">
                 {activeEnquiries}
               </span>
-              <span className="text-xs font-semibold text-purple-600">
-                In Review
-              </span>
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                Counsellor queries
+              </p>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-all group">
+          {/* Applications */}
+          <div className="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-500">Applications</span>
-              <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 group-hover:scale-110 transition-transform">
-                <FileText className="w-5 h-5" />
+              <span className="text-xs font-medium text-slate-500">Applications</span>
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                <FileText className="w-4 h-4" />
               </div>
             </div>
-            <div className="mt-4 flex items-baseline justify-between">
-              <span className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            <div className="mt-3">
+              <span className="text-2xl font-bold tracking-tight text-slate-900">
                 {applicationsInProgress}
               </span>
-              <span className="text-xs font-semibold text-emerald-600">
-                Processing
-              </span>
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                In progress
+              </p>
             </div>
           </div>
         </div>
 
         {/* ============================================================================== */}
-        {/* SECTION 4: RECOMMENDED ACTIONS                                                */}
+        {/* SECTION 3: RECOMMENDED ACTIONS (Minimalist Step Cards)                         */}
         {/* ============================================================================== */}
         {recommendedSteps.length > 0 && (
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-base font-bold text-slate-900 tracking-tight">
+          <div className="space-y-3.5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-bold text-slate-900 tracking-tight">
                 Recommended Actions
-              </h3>
-              <p className="text-xs text-slate-500">
-                Complete these steps to speed up direct counselling and verified seat processing
-              </p>
+              </h2>
+              <span className="text-xs text-slate-400">
+                Accelerate your verified admissions
+              </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
               {recommendedSteps.map((step, idx) => (
                 <Link
                   key={idx}
                   href="/colleges"
-                  className="bg-white rounded-2xl p-5 border border-slate-200/80 hover:border-red-600 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
+                  className="bg-white rounded-2xl p-5 border border-slate-200/70 hover:border-slate-300 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-sm transition-all flex flex-col justify-between group"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[11px] font-bold text-red-600 uppercase tracking-wider bg-red-50 px-2 py-0.5 rounded-md">
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md">
                         Step {idx + 1}
                       </span>
-                      <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-red-600 transition-colors" />
+                      <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-slate-900 transition-colors" />
                     </div>
-                    <h4 className="text-sm font-bold text-slate-900 group-hover:text-red-600 transition-colors">
+                    <h3 className="text-sm font-semibold text-slate-900 group-hover:text-red-600 transition-colors">
                       {step.title}
-                    </h4>
+                    </h3>
                     <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                       {step.description}
                     </p>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center text-xs font-semibold text-red-600">
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center text-xs font-semibold text-slate-700 group-hover:text-red-600 transition-colors">
                     <span>Take action</span>
                     <ArrowRight className="w-3.5 h-3.5 ml-1 transition-transform group-hover:translate-x-1" />
                   </div>
@@ -670,15 +609,16 @@ export default function ProfilePage() {
         )}
 
         {/* ============================================================================== */}
-        {/* SECTION 5: TWO-COLUMN RECENT APPLICATIONS & ENQUIRIES                         */}
+        {/* SECTION 4: TWO-COLUMN RECENT APPLICATIONS & ADMISSION ENQUIRIES               */}
         {/* ============================================================================== */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
+          
           {/* Applications Card */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200/70 shadow-[0_1px_3px_rgba(0,0,0,0.02)] p-6 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-red-600" />
-                <h3 className="text-sm font-bold text-slate-900">Recent Applications</h3>
+                <FileText className="w-4 h-4 text-slate-700" />
+                <h2 className="text-sm font-bold text-slate-900">Recent Applications</h2>
               </div>
               <Link href="/colleges" className="text-xs font-semibold text-red-600 hover:underline">
                 Apply to more
@@ -686,18 +626,18 @@ export default function ProfilePage() {
             </div>
 
             {recentApplications.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {recentApplications.map((app: any) => (
                   <div
                     key={app.id}
-                    className="p-3.5 rounded-xl border border-slate-100 hover:border-slate-300 transition-all flex items-start justify-between gap-3"
+                    className="p-3.5 rounded-xl border border-slate-100 hover:border-slate-200 transition-all flex items-start justify-between gap-3 bg-slate-50/40"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-bold text-slate-900 truncate">
                         {app.college?.name || "College Application"}
                       </p>
                       <p className="text-[11px] text-slate-500 truncate mt-0.5">
-                        {app.college_course?.course_name_override || "Merit Admission Stream"}
+                        {app.college_course?.course_name_override || "Direct Admission Stream"}
                       </p>
                       <span className="text-[10px] text-slate-400 mt-1 block flex items-center gap-1">
                         <Clock className="w-3 h-3" />
@@ -705,7 +645,7 @@ export default function ProfilePage() {
                       </span>
                     </div>
 
-                    <span className="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-emerald-50 text-emerald-700 capitalize shrink-0">
+                    <span className="px-2.5 py-0.5 text-[10px] font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 capitalize shrink-0">
                       {(app.status || "submitted").replace("_", " ")}
                     </span>
                   </div>
@@ -713,55 +653,55 @@ export default function ProfilePage() {
               </div>
             ) : (
               <div className="text-center py-8 space-y-2">
-                <p className="text-xs text-slate-500">You haven't submitted any admission applications yet.</p>
+                <p className="text-xs text-slate-500">No active applications in progress.</p>
                 <Link
                   href="/colleges"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 text-xs font-bold transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200 hover:border-slate-300 text-xs font-semibold text-slate-800 transition-colors"
                 >
-                  <Search className="w-3 h-3" />
-                  <span>Explore Direct Admissions</span>
+                  <Search className="w-3 h-3 text-slate-400" />
+                  <span>Browse Top Colleges</span>
                 </Link>
               </div>
             )}
           </div>
 
           {/* Enquiries Card */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200/70 shadow-[0_1px_3px_rgba(0,0,0,0.02)] p-6 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-purple-600" />
-                <h3 className="text-sm font-bold text-slate-900">Admission Enquiries</h3>
+                <MessageSquare className="w-4 h-4 text-slate-700" />
+                <h2 className="text-sm font-bold text-slate-900">Admission Enquiries</h2>
               </div>
               <a
                 href="https://wa.me/919876543210?text=Hi%20Aspirant%20Vision%2C%20I%20have%20an%20admission%20query."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-semibold text-purple-600 hover:underline"
+                className="text-xs font-semibold text-slate-700 hover:text-red-600 transition-colors"
               >
                 Ask Counsellor
               </a>
             </div>
 
             {recentEnquiries.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {recentEnquiries.map((enq: any) => (
                   <div
                     key={enq.id}
-                    className="p-3.5 rounded-xl border border-slate-100 hover:border-slate-300 transition-all flex items-start justify-between gap-3"
+                    className="p-3.5 rounded-xl border border-slate-100 hover:border-slate-200 transition-all flex items-start justify-between gap-3 bg-slate-50/40"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-bold text-slate-900 truncate">
                         {enq.college?.name || "General Admission Counselling"}
                       </p>
                       <p className="text-[11px] text-slate-500 truncate mt-0.5">
-                        {enq.course?.name || "Cutoff & Scholarship Guidance"}
+                        {enq.course?.name || "Cutoff & Seat Guidance"}
                       </p>
                       <span className="text-[10px] text-slate-400 mt-1 block">
                         Submitted on {new Date(enq.created_at).toLocaleDateString()}
                       </span>
                     </div>
 
-                    <span className="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-blue-50 text-blue-700 capitalize shrink-0">
+                    <span className="px-2.5 py-0.5 text-[10px] font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200 capitalize shrink-0">
                       {(enq.status || "pending").replace("_", " ")}
                     </span>
                   </div>
@@ -769,15 +709,15 @@ export default function ProfilePage() {
               </div>
             ) : (
               <div className="text-center py-8 space-y-2">
-                <p className="text-xs text-slate-500">You have no pending enquiries. Need cutoff or seat advice?</p>
+                <p className="text-xs text-slate-500">Have questions regarding merit cutoffs or fees?</p>
                 <a
                   href="https://wa.me/919876543210?text=Hi%20Aspirant%20Vision%2C%20I%20need%20admission%20guidance."
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 text-xs font-bold transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200 hover:border-slate-300 text-xs font-semibold text-slate-800 transition-colors"
                 >
-                  <Headphones className="w-3 h-3" />
-                  <span>Start Counselling Chat</span>
+                  <Headphones className="w-3 h-3 text-slate-400" />
+                  <span>Start Counsellor Chat</span>
                 </a>
               </div>
             )}
@@ -785,35 +725,35 @@ export default function ProfilePage() {
         </div>
 
         {/* ============================================================================== */}
-        {/* SECTION 6: SHORTLISTED COLLEGES PREVIEW                                       */}
+        {/* SECTION 5: SAVED & SHORTLISTED COLLEGES                                       */}
         {/* ============================================================================== */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
+        <div className="bg-white rounded-2xl border border-slate-200/70 shadow-[0_1px_3px_rgba(0,0,0,0.02)] p-6 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <BookmarkCheck className="w-4 h-4 text-red-600" />
-              <h3 className="text-sm font-bold text-slate-900">Saved & Shortlisted Colleges</h3>
+              <h2 className="text-sm font-bold text-slate-900">Saved Colleges</h2>
             </div>
             <Link href="/colleges" className="text-xs font-semibold text-red-600 hover:underline">
-              View all colleges
+              View all 2,500+ colleges
             </Link>
           </div>
 
           {recentShortlists.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
               {recentShortlists.map((item: any) => (
                 <div
                   key={item.id}
-                  className="p-3.5 rounded-xl border border-slate-100 flex items-center justify-between gap-3 hover:border-slate-300 transition-all bg-slate-50/50"
+                  className="p-3.5 rounded-xl border border-slate-100 hover:border-slate-200 transition-all flex items-center justify-between gap-3 bg-slate-50/40"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     {item.college?.logo_url ? (
                       <img
                         src={item.college.logo_url}
                         alt={item.college.name}
-                        className="w-10 h-10 rounded-lg object-contain border border-slate-200 p-0.5 shrink-0 bg-white"
+                        className="w-9 h-9 rounded-lg object-contain border border-slate-200 p-0.5 shrink-0 bg-white"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-red-600 font-bold text-xs shrink-0">
+                      <div className="w-9 h-9 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-red-600 font-bold text-xs shrink-0">
                         {item.college?.name?.charAt(0) || "C"}
                       </div>
                     )}
@@ -829,9 +769,9 @@ export default function ProfilePage() {
 
                   <Link
                     href={`/colleges/${item.college?.slug || ""}`}
-                    className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg transition-colors"
+                    className="p-1.5 text-slate-400 hover:text-red-600 transition-colors"
                   >
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
               ))}
@@ -841,17 +781,17 @@ export default function ProfilePage() {
               <p className="text-xs text-slate-500">You haven't saved any colleges to your shortlist yet.</p>
               <Link
                 href="/colleges"
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 text-xs font-bold transition-colors shadow-xs"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-semibold transition-colors shadow-xs"
               >
-                <Search className="w-3 h-3" />
-                <span>Discover 2,500+ Colleges</span>
+                <Compass className="w-3.5 h-3.5" />
+                <span>Explore Top Universities</span>
               </Link>
             </div>
           )}
         </div>
 
-        {/* Footer Guarantee Note */}
-        <p className="text-center text-[11px] text-slate-400 pt-4">
+        {/* Footer Guarantee */}
+        <p className="text-center text-[11px] text-slate-400 pt-2 pb-6">
           © 2026 Aspirant Vision Educational Network. Direct AICTE & UGC Recognized Admission Guidance.
         </p>
       </div>
