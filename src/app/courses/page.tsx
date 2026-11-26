@@ -18,8 +18,32 @@ export const metadata: Metadata = {
   ],
 };
 
-export default async function PublicCoursesPage() {
-  const initialData = await getPublicCoursesAction({ page: 1, pageSize: 9 });
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+interface CoursesPageProps {
+  searchParams?: Promise<{
+    category?: string;
+    stream?: string;
+    degree?: string;
+    search?: string;
+    q?: string;
+  }>;
+}
+
+export default async function PublicCoursesPage({ searchParams }: CoursesPageProps) {
+  const resolved = searchParams ? await searchParams : {};
+  const requestedCategory = resolved.category || resolved.stream || "all";
+  const requestedDegree = resolved.degree || "all";
+  const requestedSearch = resolved.search || resolved.q || "";
+
+  const initialData = await getPublicCoursesAction({
+    page: 1,
+    pageSize: 9,
+    category: requestedCategory !== "all" ? requestedCategory : undefined,
+    degreeType: requestedDegree !== "all" ? requestedDegree : undefined,
+    search: requestedSearch || undefined,
+  });
   const courses = initialData.success ? initialData.data.courses : [];
   const totalCount = initialData.success ? initialData.data.totalCount : 0;
 
@@ -62,7 +86,13 @@ export default async function PublicCoursesPage() {
 
       {/* CATALOG SECTION */}
       <section className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <PublicCourseCatalog initialCourses={courses} initialTotal={totalCount} />
+        <PublicCourseCatalog
+          initialCourses={courses}
+          initialTotal={totalCount}
+          initialCategory={requestedCategory}
+          initialDegree={requestedDegree}
+          initialSearch={requestedSearch}
+        />
       </section>
     </div>
   );

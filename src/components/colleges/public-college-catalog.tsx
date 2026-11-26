@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -45,6 +45,14 @@ export function PublicCollegeCatalog({
   const [page, setPage] = useState(1);
   const pageSize = 9;
 
+  useEffect(() => {
+    setColleges(initialColleges);
+    setTotalCount(initialTotal);
+    setSelectedType(initialType);
+    setSearch(initialSearch);
+    setPage(1);
+  }, [initialColleges, initialTotal, initialType, initialSearch]);
+
   const fetchFiltered = (newSearch = search, newType = selectedType, newPage = page) => {
     startTransition(async () => {
       const res = await getPublicCollegesAction({
@@ -72,6 +80,12 @@ export function PublicCollegeCatalog({
     fetchFiltered(search, type, 1);
   };
 
+  const handleResetFilters = () => {
+    setSelectedType("all");
+    setSearch("");
+    fetchFiltered("", "all", 1);
+  };
+
   const totalPages = Math.ceil(totalCount / pageSize) || 1;
 
   return (
@@ -97,33 +111,55 @@ export function PublicCollegeCatalog({
         </form>
 
         {/* Category Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-none">
-          <button
-            type="button"
-            onClick={() => handleTypeSelect("all")}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
-              selectedType === "all"
-                ? "bg-[#15182D] text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
-          >
-            All Categories
-          </button>
-          {COLLEGE_TYPES.map((type) => (
+        <div>
+          <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+            Explore by Stream / College Type
+          </div>
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-none">
             <button
               type="button"
-              key={type}
-              onClick={() => handleTypeSelect(type)}
+              onClick={() => handleTypeSelect("all")}
               className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
-                selectedType === type
-                  ? "bg-[#E31E2B] text-white"
+                selectedType === "all"
+                  ? "bg-[#15182D] text-white shadow-xs"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
-              {type}
+              All Categories
             </button>
-          ))}
+            {COLLEGE_TYPES.map((type) => (
+              <button
+                type="button"
+                key={type}
+                onClick={() => handleTypeSelect(type)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
+                  selectedType === type
+                    ? "bg-[#E31E2B] text-white shadow-xs"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {(selectedType !== "all" || search) && (
+          <div className="flex items-center justify-between pt-1 text-xs">
+            <span className="text-gray-500">
+              Filtered by:{" "}
+              {selectedType !== "all" && <strong className="text-gray-900">{selectedType} </strong>}
+              {search && <span className="text-gray-700 font-medium">&ldquo;{search}&rdquo;</span>}
+            </span>
+            <button
+              type="button"
+              onClick={handleResetFilters}
+              className="text-[#E31E2B] font-bold hover:underline"
+            >
+              Reset all filters
+            </button>
+          </div>
+        )}
       </div>
 
       {/* 2. RESULTS SUMMARY */}

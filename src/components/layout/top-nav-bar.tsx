@@ -26,6 +26,8 @@ export function TopNavBar() {
 
   const isMbaActive = pathname === "/mba" || pathname === "/mba-pgdm";
   const isHomeActive = pathname === "/";
+  const isCollegesActive = pathname.startsWith("/colleges");
+  const isCoursesActive = pathname.startsWith("/courses");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,26 +41,28 @@ export function TopNavBar() {
     { name: "Home", href: "/", active: isHomeActive },
     {
       name: "Colleges",
-      href: "/#colleges",
+      href: "/colleges",
+      active: isCollegesActive,
       hasDropdown: true,
       subItems: [
-        { label: "Engineering Colleges", href: "/#colleges" },
-        { label: "Management (MBA) Colleges", href: "/mba", highlight: true },
-        { label: "Medical & Dental Colleges", href: "/#colleges" },
-        { label: "Law Universities", href: "/#colleges" },
-        { label: "Compare Colleges", href: "/#compare" },
+        { label: "Engineering Colleges", href: "/colleges?type=Engineering" },
+        { label: "Management (MBA) Colleges", href: "/colleges?type=Management", highlight: true },
+        { label: "Medical & Dental Colleges", href: "/colleges?type=Medical" },
+        { label: "Law Universities", href: "/colleges?type=Law" },
+        { label: "Compare Colleges", href: "/colleges" },
       ],
     },
     {
       name: "Courses",
-      href: "/#courses",
+      href: "/courses",
+      active: isCoursesActive,
       hasDropdown: true,
       subItems: [
-        { label: "B.Tech / B.E.", href: "/#courses" },
+        { label: "B.Tech / B.E.", href: "/courses?category=Engineering&degree=B.Tech+%2F+B.E." },
         { label: "MBA / PGDM Special Portal", href: "/mba", highlight: true },
-        { label: "MBBS / BDS", href: "/#courses" },
-        { label: "BBA / BCA", href: "/#courses" },
-        { label: "All Career Paths", href: "/#courses" },
+        { label: "MBBS / BDS", href: "/courses?category=Medical+%26+Allied+Health" },
+        { label: "BBA / BCA", href: "/courses?category=Management" },
+        { label: "All Career Paths", href: "/courses" },
       ],
     },
     {

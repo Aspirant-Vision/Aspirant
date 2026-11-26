@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
 import {
   Search,
@@ -10,6 +10,7 @@ import {
   BookOpen,
   ChevronRight,
   ChevronLeft,
+  SlidersHorizontal,
 } from "lucide-react";
 import { CourseRow, getPublicCoursesAction } from "@/lib/course/actions";
 import { COURSE_CATEGORIES, DEGREE_TYPES } from "@/lib/validation/course";
@@ -19,11 +20,17 @@ import { Button } from "@/components/ui/button";
 interface PublicCourseCatalogProps {
   initialCourses: (CourseRow & { college_courses?: { count: number }[] })[];
   initialTotal: number;
+  initialCategory?: string;
+  initialDegree?: string;
+  initialSearch?: string;
 }
 
 export function PublicCourseCatalog({
   initialCourses,
   initialTotal,
+  initialCategory = "all",
+  initialDegree = "all",
+  initialSearch = "",
 }: PublicCourseCatalogProps) {
   const { openModal } = useCounselingModal();
   const [isPending, startTransition] = useTransition();
@@ -31,11 +38,20 @@ export function PublicCourseCatalog({
   const [courses, setCourses] = useState<any[]>(initialCourses);
   const [totalCount, setTotalCount] = useState<number>(initialTotal);
 
-  const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedDegree, setSelectedDegree] = useState("all");
+  const [search, setSearch] = useState(initialSearch);
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const [selectedDegree, setSelectedDegree] = useState(initialDegree);
   const [page, setPage] = useState(1);
   const pageSize = 9;
+
+  useEffect(() => {
+    setCourses(initialCourses);
+    setTotalCount(initialTotal);
+    setSelectedCategory(initialCategory);
+    setSelectedDegree(initialDegree);
+    setSearch(initialSearch);
+    setPage(1);
+  }, [initialCourses, initialTotal, initialCategory, initialDegree, initialSearch]);
 
   const fetchFiltered = (
     newSearch = search,
@@ -70,7 +86,32 @@ export function PublicCourseCatalog({
     fetchFiltered(search, cat, selectedDegree, 1);
   };
 
+  const handleDegreeSelect = (deg: string) => {
+    setSelectedDegree(deg);
+    fetchFiltered(search, selectedCategory, deg, 1);
+  };
+
+  const handleResetFilters = () => {
+    setSelectedCategory("all");
+    setSelectedDegree("all");
+    setSearch("");
+    fetchFiltered("", "all", "all", 1);
+  };
+
   const totalPages = Math.ceil(totalCount / pageSize) || 1;
+
+  const popularDegrees = [
+    "all",
+    "B.Tech / B.E.",
+    "MBA / PGDM",
+    "MBBS",
+    "BBA",
+    "BCA",
+    "M.Tech / M.E.",
+    "MCA",
+    "B.Sc",
+    "LLB",
+  ];
 
   return (
     <div className="space-y-8">
@@ -93,34 +134,79 @@ export function PublicCourseCatalog({
           </Button>
         </form>
 
-        {/* Category Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-none">
-          <button
-            type="button"
-            onClick={() => handleCategorySelect("all")}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
-              selectedCategory === "all"
-                ? "bg-[#15182D] text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
-          >
-            All Disciplines
-          </button>
-          {COURSE_CATEGORIES.map((cat) => (
+        {/* Category / Discipline Pills */}
+        <div>
+          <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+            Filter by Discipline
+          </div>
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-none">
             <button
               type="button"
-              key={cat}
-              onClick={() => handleCategorySelect(cat)}
+              onClick={() => handleCategorySelect("all")}
               className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
-                selectedCategory === cat
-                  ? "bg-[#E31E2B] text-white"
+                selectedCategory === "all"
+                  ? "bg-[#15182D] text-white shadow-xs"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
-              {cat}
+              All Disciplines
             </button>
-          ))}
+            {COURSE_CATEGORIES.map((cat) => (
+              <button
+                type="button"
+                key={cat}
+                onClick={() => handleCategorySelect(cat)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
+                  selectedCategory === cat
+                    ? "bg-[#E31E2B] text-white shadow-xs"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {/* Degree Filter Pills */}
+        <div className="pt-2 border-t border-gray-100">
+          <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+            Target Degree Level
+          </div>
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-none">
+            {popularDegrees.map((deg) => (
+              <button
+                type="button"
+                key={deg}
+                onClick={() => handleDegreeSelect(deg)}
+                className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+                  selectedDegree === deg
+                    ? "bg-[#171B52] text-white shadow-xs"
+                    : "bg-gray-50 text-gray-600 border border-gray-200/80 hover:bg-gray-100"
+                }`}
+              >
+                {deg === "all" ? "All Degree Levels" : deg}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {(selectedCategory !== "all" || selectedDegree !== "all" || search) && (
+          <div className="flex items-center justify-between pt-1 text-xs">
+            <span className="text-gray-500">
+              Filters active:{" "}
+              {selectedCategory !== "all" && <strong className="text-gray-900">{selectedCategory} </strong>}
+              {selectedDegree !== "all" && <strong className="text-gray-900">({selectedDegree}) </strong>}
+            </span>
+            <button
+              type="button"
+              onClick={handleResetFilters}
+              className="text-[#E31E2B] font-bold hover:underline"
+            >
+              Reset all filters
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Summary */}

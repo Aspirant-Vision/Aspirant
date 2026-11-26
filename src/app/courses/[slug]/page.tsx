@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { getCourseBySlugPublicAction } from "@/lib/course/actions";
+import { createClient } from "@/lib/supabase/server";
 import { CounselingTriggerButton } from "@/components/colleges/counseling-trigger-button";
 import {
   GraduationCap,
@@ -70,6 +71,21 @@ export default async function PublicCourseDetailPage({
   const offeringColleges = (course.college_courses || []).filter(
     (cc: any) => cc.colleges && cc.colleges.publication_status === "published"
   );
+
+  // Fetch related courses
+  const supabase = await createClient();
+  const { data: candidates } = await supabase
+    .from("courses")
+    .select("id, name, slug, code, category, degree_type, duration, duration_unit, min_percentage, short_description")
+    .eq("publication_status", "published")
+    .neq("id", course.id)
+    .is("deleted_at", null)
+    .limit(8);
+
+  const allCandidates = candidates || [];
+  const sameCategory = allCandidates.filter((c) => c.category === course.category);
+  const remaining = allCandidates.filter((c) => c.category !== course.category);
+  const relatedCourses = [...sameCategory, ...remaining].slice(0, 4);
 
   return (
     <div className="min-h-screen bg-[#F7F8FC] pb-24">
@@ -275,6 +291,89 @@ export default async function PublicCourseDetailPage({
           </div>
         </div>
       </div>
+
+      {/* 4. RELATED ACADEMIC PROGRAMS & ALTERNATIVE DEGREES */}
+      {relatedCourses.length > 0 && (
+        <section className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-16">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-xs font-bold text-[#E31E2B] mb-2">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Curriculum Alternatives</span>
+              </div>
+              <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-[#15182D] tracking-tight">
+                Related Programs &amp; Degrees
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                Explore related degree tracks in {course.category || "this discipline"} offering similar career outcomes and top campus intakes.
+              </p>
+            </div>
+            <Link
+              href={`/courses?category=${encodeURIComponent(course.category || "Engineering")}`}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#E31E2B] hover:text-[#B5121B] transition-colors self-start sm:self-auto"
+            >
+              <span>View All {course.category || "Discipline"} Courses</span>
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {relatedCourses.map((rel) => (
+              <div
+                key={rel.id}
+                className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
+              >
+                <div className="space-y-3">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-[#E31E2B] border border-red-200">
+                      {rel.degree_type}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-700">
+                      {rel.category}
+                    </span>
+                  </div>
+
+                  <h3 className="font-bold text-sm text-gray-900 line-clamp-2 group-hover:text-[#E31E2B] transition-colors leading-snug">
+                    {rel.name}
+                  </h3>
+
+                  {rel.short_description ? (
+                    <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                      {rel.short_description}
+                    </p>
+                  ) : null}
+
+                  <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-[#E31E2B]" />
+                      {rel.duration} {rel.duration_unit}
+                    </span>
+                    <span>
+                      {rel.min_percentage ? `Min ${rel.min_percentage}%` : "10+2 / Grad"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="pt-4 flex items-center gap-2">
+                  <Link
+                    href={`/courses/${rel.slug}`}
+                    className="flex-1 py-2 rounded-xl text-center text-xs font-bold bg-[#15182D] hover:bg-[#E31E2B] text-white transition-colors"
+                  >
+                    View Details
+                  </Link>
+                  <CounselingTriggerButton
+                    collegeName={`Related Program: ${rel.name}`}
+                    variant="outline"
+                    size="sm"
+                    label="Guidance"
+                    className="px-3 py-2 text-xs font-bold border-gray-200 hover:border-[#E31E2B]"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

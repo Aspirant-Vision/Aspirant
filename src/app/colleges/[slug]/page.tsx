@@ -85,9 +85,9 @@ export default async function PublicCollegeDetailPage({
   const highlights = Array.isArray(college.highlights) ? (college.highlights as string[]) : [];
   const gallery = Array.isArray(college.gallery_images) ? (college.gallery_images as string[]) : [];
 
-  // Fetch offered courses and scholarships
+  // Fetch offered courses, scholarships, and related colleges
   const supabase = await createClient();
-  const [coursesRes, scholarshipsRes] = await Promise.all([
+  const [coursesRes, scholarshipsRes, relatedCollegesRes] = await Promise.all([
     getCoursesForCollegeAction(college.id),
     supabase
       .from("scholarships")
@@ -96,10 +96,27 @@ export default async function PublicCollegeDetailPage({
       .eq("publication_status", "published")
       .is("deleted_at", null)
       .limit(6),
+    supabase
+      .from("colleges")
+      .select("*")
+      .eq("publication_status", "published")
+      .neq("id", college.id)
+      .is("deleted_at", null)
+      .limit(8),
   ]);
 
   const offeredCourses: any[] = (coursesRes.success && coursesRes.data ? coursesRes.data : []) || [];
   const scholarships = scholarshipsRes.data || [];
+
+  // Prioritize matching college_type or state for related colleges
+  const allCandidates = relatedCollegesRes.data || [];
+  const sameTypeOrState = allCandidates.filter(
+    (c) => c.college_type === college.college_type || c.state === college.state
+  );
+  const remainingCandidates = allCandidates.filter(
+    (c) => c.college_type !== college.college_type && c.state !== college.state
+  );
+  const relatedColleges = [...sameTypeOrState, ...remainingCandidates].slice(0, 4);
 
   return (
     <div className="min-h-screen bg-[#F7F8FC] pb-24">
@@ -590,6 +607,126 @@ export default async function PublicCollegeDetailPage({
           </div>
         </div>
       </div>
+
+      {/* 4. RELATED & SIMILAR INSTITUTIONS */}
+      {relatedColleges.length > 0 && (
+        <section className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-16">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-xs font-bold text-[#E31E2B] mb-2">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Alternative Campus Options</span>
+              </div>
+              <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-[#15182D] tracking-tight">
+                Similar &amp; Partner Colleges
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                Explore comparable {college.college_type} institutions with verified accreditations, placement track records, and open admissions.
+              </p>
+            </div>
+            <Link
+              href={`/colleges?type=${encodeURIComponent(college.college_type || "Engineering")}`}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#E31E2B] hover:text-[#B5121B] transition-colors self-start sm:self-auto"
+            >
+              <span>View All {college.college_type || "Engineering"} Colleges</span>
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {relatedColleges.map((rel) => (
+              <div
+                key={rel.id}
+                className="bg-white rounded-2xl border border-gray-200/80 overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 flex flex-col group"
+              >
+                {/* Cover Image */}
+                <div className="relative h-40 w-full bg-slate-900 overflow-hidden">
+                  {rel.cover_image_url ? (
+                    <Image
+                      src={rel.cover_image_url}
+                      alt={rel.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 25vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-linear-to-tr from-slate-900 to-slate-800 flex items-center justify-center text-slate-500 text-xs font-medium">
+                      Campus View
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+
+                  {/* Badges */}
+                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-1 text-[10px] font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-md text-[#15182D] shadow-xs">
+                      {rel.college_type}
+                    </span>
+                    {rel.nirf_rank ? (
+                      <span className="px-2 py-0.5 rounded-full bg-[#E31E2B] text-white shadow-xs font-extrabold">
+                        NIRF #{rel.nirf_rank}
+                      </span>
+                    ) : rel.naac_grade ? (
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white shadow-xs">
+                        NAAC {rel.naac_grade}
+                      </span>
+                    ) : null}
+                  </div>
+
+                  <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
+                    <div className="flex items-center gap-1 text-[11px] text-gray-200 font-medium">
+                      <MapPin className="w-3 h-3 text-red-400 shrink-0" />
+                      <span className="truncate">{rel.city}, {rel.state}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Body Content */}
+                <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <div>
+                    <h3 className="font-bold text-sm text-gray-900 line-clamp-2 group-hover:text-[#E31E2B] transition-colors leading-snug">
+                      {rel.name}
+                    </h3>
+                    <p className="text-[11px] text-gray-500 mt-1">
+                      {rel.ownership_type || "Private / Approved"}
+                    </p>
+                  </div>
+
+                  <div className="pt-2 border-t border-gray-100 grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <span className="text-[10px] text-gray-400 font-semibold block uppercase">Avg Package</span>
+                      <span className="font-extrabold text-emerald-600">
+                        {rel.average_placement ? `₹${rel.average_placement} LPA` : "₹5.5 - 12 LPA"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-gray-400 font-semibold block uppercase">Highest Package</span>
+                      <span className="font-bold text-gray-800">
+                        {rel.highest_placement ? `₹${rel.highest_placement} LPA` : "Verified Placements"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 flex items-center gap-2">
+                    <Link
+                      href={`/colleges/${rel.slug}`}
+                      className="flex-1 py-2 rounded-xl text-center text-xs font-bold bg-[#15182D] hover:bg-[#E31E2B] text-white transition-colors"
+                    >
+                      View College
+                    </Link>
+                    <CounselingTriggerButton
+                      collegeName={rel.name}
+                      variant="outline"
+                      size="sm"
+                      label="Enquire"
+                      className="px-3 py-2 text-xs font-bold border-gray-200 hover:border-[#E31E2B]"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

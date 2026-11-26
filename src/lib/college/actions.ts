@@ -569,9 +569,9 @@ export async function getCollegesListingAction(
         (t) => t.toLowerCase() === collegeType.toLowerCase()
       );
       if (standardType) {
-        query = query.eq("college_type", standardType);
+        query = query.or(`college_type.eq.${standardType},college_type.ilike.%${standardType}%`);
       } else {
-        query = query.ilike("college_type", collegeType);
+        query = query.ilike("college_type", `%${collegeType}%`);
       }
     }
 
@@ -724,9 +724,9 @@ export async function getPublicCollegesAction(params: {
         (t) => t.toLowerCase() === collegeType.toLowerCase()
       );
       if (standardType) {
-        query = query.eq("college_type", standardType);
+        query = query.or(`college_type.eq.${standardType},college_type.ilike.%${standardType}%`);
       } else {
-        query = query.ilike("college_type", collegeType);
+        query = query.ilike("college_type", `%${collegeType}%`);
       }
     }
 
