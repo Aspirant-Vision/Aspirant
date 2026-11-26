@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserRole } from "@/types/auth.types";
@@ -58,6 +58,19 @@ export function CrmSidebar({
   onToggleCollapse,
 }: CrmSidebarProps) {
   const pathname = usePathname();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Preserve and restore scroll position on route transitions so sidebar never jumps
+  useEffect(() => {
+    const saved = sessionStorage.getItem("crm-sidebar-scroll");
+    if (saved && scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = Number(saved);
+    }
+  }, [pathname]);
+
+  const handleSidebarScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    sessionStorage.setItem("crm-sidebar-scroll", String(e.currentTarget.scrollTop));
+  };
 
   const navGroups: NavGroup[] = [
     {
@@ -256,7 +269,11 @@ export function CrmSidebar({
       </div>
 
       {/* 2. Scrollable Navigation Area */}
-      <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3 space-y-4 scrollbar-thin scrollbar-thumb-gray-200 hover:scrollbar-thumb-gray-300">
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleSidebarScroll}
+        className="flex-1 min-h-0 overflow-y-auto px-3 py-2.5 space-y-3 scrollbar-thin scrollbar-thumb-gray-200 hover:scrollbar-thumb-gray-300"
+      >
         {navGroups.map((group, groupIdx) => {
           const visibleItems = group.items.filter((item) => item.allowed);
           if (visibleItems.length === 0) return null;
@@ -265,9 +282,9 @@ export function CrmSidebar({
           const allAllowedItems = navGroups.flatMap((g) => g.items.filter((i) => i.allowed));
 
           return (
-            <div key={groupIdx} className="space-y-1">
+            <div key={groupIdx} className="space-y-0.5">
               {!isCollapsed && (
-                <div className="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">
                   {group.label}
                 </div>
               )}
@@ -291,31 +308,27 @@ export function CrmSidebar({
                       key={item.href}
                       href={item.href}
                       prefetch={true}
+                      scroll={false}
                       title={isCollapsed ? item.title : undefined}
                       className={cn(
-                        "group relative flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 select-none",
+                        "group relative flex items-center gap-3 px-3 h-9 rounded-xl text-xs font-semibold select-none transition-colors duration-150 border",
                         isActive
-                          ? "bg-red-50 text-[#E31E2B] border border-red-200/80 shadow-2xs font-bold"
-                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/80",
-                        isCollapsed && "justify-center px-0 py-2.5"
+                          ? "bg-[#E31E2B] text-white border-[#E31E2B] shadow-xs"
+                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/90 border-transparent",
+                        isCollapsed && "justify-center px-0"
                       )}
                     >
                       <Icon
                         className={cn(
                           "w-4 h-4 shrink-0 transition-colors",
                           isActive
-                            ? "text-[#E31E2B]"
+                            ? "text-white"
                             : "text-gray-400 group-hover:text-gray-600"
                         )}
                       />
 
                       {!isCollapsed && (
                         <span className="truncate flex-1">{item.title}</span>
-                      )}
-
-                      {/* Active Indicator Pip */}
-                      {isActive && !isCollapsed && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#E31E2B] shrink-0" />
                       )}
 
                       {/* Tooltip Flyout for Collapsed Sidebar */}
