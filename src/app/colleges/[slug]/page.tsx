@@ -140,20 +140,14 @@ export default async function PublicCollegeDetailPage({
       {/* 2. COVER BANNER */}
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
         <div className="relative w-full h-56 sm:h-80 lg:h-96 rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900 shadow-md">
-          {college.cover_image_url ? (
-            <Image
-              src={college.cover_image_url}
-              alt={college.name}
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
-          ) : (
-            <div className="w-full h-full bg-linear-to-tr from-slate-950 via-slate-900 to-slate-800 flex items-center justify-center text-slate-500 text-sm">
-              Campus Overview
-            </div>
-          )}
+          <Image
+            src={college.cover_image_url || "/images/auth/auth_campus_highres.jpg"}
+            alt={college.name}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         </div>
 

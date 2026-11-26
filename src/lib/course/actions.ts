@@ -478,6 +478,8 @@ export async function getPublicCoursesAction(params: {
   category?: string;
   degreeType?: string;
   level?: string;
+  duration?: number;
+  sortBy?: "featured" | "name" | "duration";
   page?: number;
   pageSize?: number;
 } = {}): Promise<
@@ -490,7 +492,16 @@ export async function getPublicCoursesAction(params: {
   }>
 > {
   try {
-    const { search, category, degreeType, level, page = 1, pageSize = 12 } = params;
+    const {
+      search,
+      category,
+      degreeType,
+      level,
+      duration,
+      sortBy = "featured",
+      page = 1,
+      pageSize = 12,
+    } = params;
     const supabase = await createClient();
 
     let query = supabase
@@ -511,12 +522,22 @@ export async function getPublicCoursesAction(params: {
       query = query.eq("level", level);
     }
 
+    if (duration && duration > 0) {
+      query = query.eq("duration", duration);
+    }
+
     if (search && search.trim().length > 0) {
       const trimmed = search.trim();
       query = query.or(`name.ilike.%${trimmed}%,stream.ilike.%${trimmed}%`);
     }
 
-    query = query.order("is_featured", { ascending: false }).order("name", { ascending: true });
+    if (sortBy === "duration") {
+      query = query.order("duration", { ascending: true, nullsFirst: false });
+    } else if (sortBy === "name") {
+      query = query.order("name", { ascending: true });
+    } else {
+      query = query.order("is_featured", { ascending: false }).order("name", { ascending: true });
+    }
 
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;

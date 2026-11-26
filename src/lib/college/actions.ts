@@ -698,7 +698,9 @@ export async function getPublicCollegesAction(params: {
   search?: string;
   collegeType?: string;
   state?: string;
+  ownershipType?: string;
   isFeatured?: boolean;
+  sortBy?: "featured" | "placement" | "name";
   page?: number;
   pageSize?: number;
 } = {}): Promise<ApiResponse<{ colleges: CollegeRow[]; totalCount: number }>> {
@@ -707,7 +709,9 @@ export async function getPublicCollegesAction(params: {
       search,
       collegeType,
       state,
+      ownershipType,
       isFeatured,
+      sortBy = "featured",
       page = 1,
       pageSize = 12,
     } = params;
@@ -731,7 +735,11 @@ export async function getPublicCollegesAction(params: {
     }
 
     if (state && state !== "all") {
-      query = query.eq("state", state);
+      query = query.ilike("state", `%${state}%`);
+    }
+
+    if (ownershipType && ownershipType !== "all") {
+      query = query.ilike("ownership_type", `%${ownershipType}%`);
     }
 
     if (isFeatured) {
@@ -743,9 +751,15 @@ export async function getPublicCollegesAction(params: {
       query = query.or(`name.ilike.%${trimmed}%,city.ilike.%${trimmed}%,state.ilike.%${trimmed}%`);
     }
 
-    query = query
-      .order("is_featured", { ascending: false })
-      .order("name", { ascending: true });
+    if (sortBy === "placement") {
+      query = query.order("highest_placement", { ascending: false, nullsFirst: false });
+    } else if (sortBy === "name") {
+      query = query.order("name", { ascending: true });
+    } else {
+      query = query
+        .order("is_featured", { ascending: false })
+        .order("name", { ascending: true });
+    }
 
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;

@@ -46,7 +46,7 @@ export function TopNavBar() {
       hasDropdown: true,
       subItems: [
         { label: "Engineering Colleges", href: "/colleges?type=Engineering" },
-        { label: "Management (MBA) Colleges", href: "/colleges?type=Management", highlight: true },
+        { label: "Management (MBA) Colleges", href: "/colleges?type=Management" },
         { label: "Medical & Dental Colleges", href: "/colleges?type=Medical" },
         { label: "Law Universities", href: "/colleges?type=Law" },
         { label: "Compare Colleges", href: "/colleges" },
@@ -59,7 +59,7 @@ export function TopNavBar() {
       hasDropdown: true,
       subItems: [
         { label: "B.Tech / B.E.", href: "/courses?category=Engineering&degree=B.Tech+%2F+B.E." },
-        { label: "MBA / PGDM Special Portal", href: "/mba", highlight: true },
+        { label: "MBA / PGDM Special Portal", href: "/mba" },
         { label: "MBBS / BDS", href: "/courses?category=Medical+%26+Allied+Health" },
         { label: "BBA / BCA", href: "/courses?category=Management" },
         { label: "All Career Paths", href: "/courses" },
