@@ -11,9 +11,9 @@ export default async function AdminSettingsPage() {
   return (
     <div className="max-w-5xl space-y-8">
       <PageHeader
-        breadcrumbs={[{ label: "Staff & Settings" }]}
-        title="Staff Governance & Access Control"
-        description="Manage authorized staff invitations, cryptographic access policies, and role-based permissions."
+        breadcrumbs={[{ label: "Admin & Settings" }]}
+        title="Admin Governance & Access Control"
+        description="Manage administrator invitations, cryptographic access policies, and role-based permissions."
       />
 
       {/* Staff Invitation Component */}

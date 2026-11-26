@@ -26,14 +26,14 @@ export default async function AdminCounsellorsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        breadcrumbs={[{ label: "Counsellors & Staff" }]}
-        title="Staff & Counsellor Directory"
+        breadcrumbs={[{ label: "Admins & Counsellors" }]}
+        title="Admins & Counsellor Directory"
         description="Authorized admission counsellors, regional academic advisors, and platform administrators."
       >
         <Link href="/admin/settings">
           <Button variant="primary" size="sm" className="text-xs">
             <UserPlus className="w-3.5 h-3.5 mr-1.5" />
-            <span>Invite Staff Member</span>
+            <span>Invite Admin / Counsellor</span>
           </Button>
         </Link>
       </PageHeader>
@@ -42,11 +42,11 @@ export default async function AdminCounsellorsPage() {
         <EmptyState
           icon={UserCheck}
           title="No Counsellors Registered Yet"
-          description="No counsellor or staff accounts have completed registration. Send an invitation to onboard your first admission counsellor."
+          description="No counsellor or administrator accounts have completed registration. Send an invitation to onboard your first team member."
           action={
             <Link href="/admin/settings">
               <Button variant="primary" size="sm" className="text-xs">
-                Send Staff Invitation
+                Send Admin Invitation
               </Button>
             </Link>
           }

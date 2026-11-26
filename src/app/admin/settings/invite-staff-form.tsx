@@ -70,7 +70,7 @@ export function InviteStaffForm() {
           <UserPlus className="w-5 h-5" />
         </div>
         <div>
-          <h3 className="font-bold text-gray-900 text-sm sm:text-base">Invite Staff Member</h3>
+          <h3 className="font-bold text-gray-900 text-sm sm:text-base">Invite Admin / Counsellor</h3>
           <p className="text-xs text-gray-500">
             Generate a secure, single-use 48-hour invitation link to onboard an Administrator or Admission Counsellor.
           </p>
@@ -118,7 +118,7 @@ export function InviteStaffForm() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1.5" htmlFor="inviteEmail">
-              Official Staff Email <span className="text-red-500">*</span>
+              Official Administrator / Counsellor Email <span className="text-red-500">*</span>
             </label>
             <input
               id="inviteEmail"
@@ -167,7 +167,7 @@ export function InviteStaffForm() {
             ) : (
               <>
                 <Send className="w-3.5 h-3.5 mr-2" />
-                <span>Send Staff Invitation</span>
+                <span>Send Admin Invitation</span>
               </>
             )}
           </Button>

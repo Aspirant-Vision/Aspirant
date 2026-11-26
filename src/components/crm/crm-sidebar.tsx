@@ -179,7 +179,7 @@ export function CrmSidebar({
       label: "MANAGEMENT",
       items: [
         {
-          title: "Counsellors & Staff",
+          title: "Admins & Counsellors",
           href: "/admin/counsellors",
           icon: UserCheck,
           allowed:
