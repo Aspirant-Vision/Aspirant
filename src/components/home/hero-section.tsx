@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   ShieldCheck,
   Search,
@@ -11,6 +12,7 @@ import {
   GraduationCap,
   FileText,
   Play,
+  Sparkles,
 } from "lucide-react";
 import { useCounselingModal } from "@/components/forms/counseling-modal-context";
 import { cn } from "@/lib/utils";
@@ -175,6 +177,13 @@ export function HeroSection() {
             {/* Popular Searches Tactile Chips */}
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-2 sm:pt-3 px-0.5 text-xs">
               <span className="text-[#15182D] font-bold text-[10px] sm:text-[11px]">Popular:</span>
+              <Link
+                href="/mba"
+                className="tactile-pill px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md sm:rounded-lg text-[#E31E2B] bg-red-50 font-bold text-[10px] sm:text-[11px] transition-colors flex items-center gap-1 hover:bg-red-100 border border-red-200/60"
+              >
+                <Sparkles className="w-3 h-3" />
+                <span>MBA | PGDM Special</span>
+              </Link>
               {popularSearches.map((term) => (
                 <button
                   key={term}

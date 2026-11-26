@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Logo } from "@/components/ui/logo";
 import { useCounselingModal } from "@/components/forms/counseling-modal-context";
 import { NavUserProfile } from "@/components/layout/nav-user-profile";
@@ -13,14 +14,19 @@ import {
   X,
   User,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function TopNavBar() {
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const { openModal } = useCounselingModal();
+
+  const isMbaActive = pathname === "/mba" || pathname === "/mba-pgdm";
+  const isHomeActive = pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,55 +37,62 @@ export function TopNavBar() {
   }, []);
 
   const navItems = [
-    { name: "Home", href: "/", active: true },
+    { name: "Home", href: "/", active: isHomeActive },
     {
       name: "Colleges",
-      href: "#colleges",
+      href: "/#colleges",
       hasDropdown: true,
       subItems: [
-        { label: "Engineering Colleges", href: "#colleges" },
-        { label: "Management (MBA) Colleges", href: "#colleges" },
-        { label: "Medical & Dental Colleges", href: "#colleges" },
-        { label: "Law Universities", href: "#colleges" },
-        { label: "Compare Colleges", href: "#compare" },
+        { label: "Engineering Colleges", href: "/#colleges" },
+        { label: "Management (MBA) Colleges", href: "/mba", highlight: true },
+        { label: "Medical & Dental Colleges", href: "/#colleges" },
+        { label: "Law Universities", href: "/#colleges" },
+        { label: "Compare Colleges", href: "/#compare" },
       ],
     },
     {
       name: "Courses",
-      href: "#courses",
+      href: "/#courses",
       hasDropdown: true,
       subItems: [
-        { label: "B.Tech / B.E.", href: "#courses" },
-        { label: "MBA / PGDM", href: "#courses" },
-        { label: "MBBS / BDS", href: "#courses" },
-        { label: "BBA / BCA", href: "#courses" },
-        { label: "All Career Paths", href: "#courses" },
+        { label: "B.Tech / B.E.", href: "/#courses" },
+        { label: "MBA / PGDM Special Portal", href: "/mba", highlight: true },
+        { label: "MBBS / BDS", href: "/#courses" },
+        { label: "BBA / BCA", href: "/#courses" },
+        { label: "All Career Paths", href: "/#courses" },
       ],
     },
     {
+      name: "MBA | PGDM",
+      href: "/mba",
+      active: isMbaActive,
+      badge: "2026",
+      special: true,
+    },
+    {
       name: "Exams",
-      href: "#exams",
+      href: "/#exams",
       hasDropdown: true,
       subItems: [
-        { label: "JEE Main 2026", href: "#exams" },
-        { label: "CAT 2025", href: "#exams" },
-        { label: "NEET UG", href: "#exams" },
-        { label: "OJEE / WBJEE", href: "#exams" },
-        { label: "BITSAT", href: "#exams" },
+        { label: "JEE Main 2026", href: "/#exams" },
+        { label: "CAT 2025 / 2026", href: "/mba" },
+        { label: "NEET UG", href: "/#exams" },
+        { label: "OJEE / WBJEE", href: "/#exams" },
+        { label: "BITSAT", href: "/#exams" },
       ],
     },
     {
       name: "Admissions",
-      href: "#journey",
+      href: "/#journey",
       hasDropdown: true,
       subItems: [
-        { label: "Admission Journey", href: "#journey" },
-        { label: "Eligibility Calculator", href: "#finder" },
-        { label: "Scholarship Guidance", href: "#finder" },
-        { label: "Direct Admissions", href: "#journey" },
+        { label: "Admission Journey", href: "/#journey" },
+        { label: "Eligibility Calculator", href: "/#finder" },
+        { label: "Scholarship Guidance", href: "/#finder" },
+        { label: "Direct Admissions", href: "/#journey" },
       ],
     },
-    { name: "Counselling", href: "#counselling" },
+    { name: "Counselling", href: "/#counselling" },
   ];
 
   return (
@@ -107,13 +120,20 @@ export function TopNavBar() {
               <Link
                 href={item.href}
                 className={cn(
-                  "inline-flex items-center gap-1 text-[13.5px] font-semibold tracking-tight transition-colors py-1 relative",
+                  "inline-flex items-center gap-1.5 text-[13.5px] font-semibold tracking-tight transition-colors py-1 relative",
                   item.active
                     ? "text-[#E31E2B] font-bold"
+                    : item.special
+                    ? "text-[#E31E2B] font-bold hover:text-[#B5121B]"
                     : "text-[#15182D] hover:text-[#E31E2B]"
                 )}
               >
                 <span>{item.name}</span>
+                {item.badge && (
+                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-extrabold bg-[#E31E2B] text-white uppercase tracking-wider shadow-xs">
+                    {item.badge}
+                  </span>
+                )}
                 {item.hasDropdown && (
                   <ChevronDown className="w-3.5 h-3.5 text-[#687086] transition-transform duration-200 mt-0.5" />
                 )}
@@ -124,14 +144,19 @@ export function TopNavBar() {
 
               {/* Submenu Dropdown */}
               {item.hasDropdown && activeDropdown === item.name && (
-                <div className="absolute top-full left-0 w-56 pt-2 z-50 animate-fade-in">
+                <div className="absolute top-full left-0 w-60 pt-2 z-50 animate-fade-in">
                   <div className="tactile-card rounded-2xl p-2 space-y-1">
-                    {item.subItems?.map((sub) => (
+                    {item.subItems?.map((sub: any) => (
                       <Link
                         key={sub.label}
                         href={sub.href}
                         onClick={() => setActiveDropdown(null)}
-                        className="block px-3 py-2 text-xs font-semibold text-[#15182D] hover:text-[#E31E2B] hover:bg-red-50/70 rounded-xl transition-colors"
+                        className={cn(
+                          "block px-3 py-2 text-xs font-semibold rounded-xl transition-colors",
+                          sub.highlight
+                            ? "text-[#E31E2B] bg-red-50 font-bold hover:bg-red-100/80"
+                            : "text-[#15182D] hover:text-[#E31E2B] hover:bg-red-50/70"
+                        )}
                       >
                         {sub.label}
                       </Link>
@@ -189,6 +214,26 @@ export function TopNavBar() {
       {/* Mobile Drawer */}
       {isMobileMenuOpen && (
         <div className="lg:hidden bg-white border-b border-[#E7E9F0] px-6 py-6 shadow-2xl space-y-4 animate-fade-in max-h-[85vh] overflow-y-auto">
+          {/* Featured Mobile MBA Special Shortcut */}
+          <Link
+            href="/mba"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="block p-3.5 rounded-2xl bg-gradient-to-r from-red-500/10 via-red-500/5 to-[#171B52]/10 border border-red-200 shadow-xs"
+          >
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-extrabold text-[#E31E2B] flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                Looking for MBA | PGDM?
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-[#E31E2B] text-white text-[9px] font-extrabold uppercase tracking-wider">
+                Special Hub
+              </span>
+            </div>
+            <p className="text-[11px] text-[#475569] font-medium leading-tight">
+              Direct merit counselling, IIM &amp; premier B-School cutoffs &amp; seat allocation.
+            </p>
+          </Link>
+
           <nav className="flex flex-col gap-2">
             {navItems.map((item) => (
               <div key={item.name} className="border-b border-gray-50 pb-1.5">
