@@ -15,10 +15,8 @@ import { FindIdealCollege } from "@/components/home/find-ideal-college";
 import { BlogsMagazine } from "@/components/home/blogs-magazine";
 import { FinalCounsellingCta } from "@/components/home/final-counselling-cta";
 
-// High-converting inline inquiry & lead capture forms
-import { CutoffEligibilityForm } from "@/components/home/cutoff-eligibility-form";
-import { ScholarshipCalculatorForm } from "@/components/home/scholarship-calculator-form";
-import { ExamStrategyForm } from "@/components/home/exam-strategy-form";
+// High-converting minimalist lead capture form
+import { MinimalLeadForm } from "@/components/home/minimal-lead-form";
 
 import { getPublicCollegesAction } from "@/lib/college/actions";
 
@@ -45,8 +43,15 @@ export default async function HomePage() {
       {/* SECTION 05: Explore India's Top Institutions (Featured Colleges) */}
       <FeaturedColleges dbColleges={liveFeaturedColleges} />
 
-      {/* RELEVANT FORM 01: Instant Cutoff & Eligibility Predictor Form */}
-      <CutoffEligibilityForm />
+      {/* MINIMALIST FORM 01: Instant Cutoff & Eligibility Predictor */}
+      <MinimalLeadForm
+        badge="Instant Cutoff & Eligibility Predictor"
+        title="Find Your Eligible College & 2026 Cutoff"
+        subtitle="Official admission cutoffs, fee structures, and verified seat allotments across 2,500+ campuses."
+        buttonLabel="Check Eligibility"
+        source="home_cutoff_predictor"
+        defaultCourse="Engineering (B.Tech / B.E.)"
+      />
 
       {/* SECTION 06: NEW RELEVANT — Top Education Hubs Across India (Regional Discovery) */}
       <EducationHubs />
@@ -57,8 +62,15 @@ export default async function HomePage() {
       {/* SECTION 08: Popular Degree Courses & Verified Career Paths */}
       <PopularCourses />
 
-      {/* RELEVANT FORM 02: Merit Scholarship & Fee Structure Calculator */}
-      <ScholarshipCalculatorForm />
+      {/* MINIMALIST FORM 02: Merit Scholarship & Fee Concession Desk */}
+      <MinimalLeadForm
+        badge="Tuition Aid & Scholarship Desk"
+        title="Apply for Up to ₹5 Lakhs Merit Scholarship"
+        subtitle="Verify institutional tuition fee concessions, early applicant aid, and 0% advance loans."
+        buttonLabel="Claim Scholarship"
+        source="home_scholarship_desk"
+        defaultCourse="Management (MBA / PGDM)"
+      />
 
       {/* SECTION 09: Admission Journey (Curved Road with Milestone Markers) */}
       <AdmissionJourneyTimeline />
@@ -69,8 +81,15 @@ export default async function HomePage() {
       {/* SECTION 11: Upcoming Entrance Exams & Application Deadlines */}
       <UpcomingExams />
 
-      {/* RELEVANT FORM 03: 1-on-1 Exam Cutoff Strategy & Backup Planning Form */}
-      <ExamStrategyForm />
+      {/* MINIMALIST FORM 03: 1-on-1 Exam Strategy & Backup Admission */}
+      <MinimalLeadForm
+        badge="1-on-1 Academic Mentorship"
+        title="Worried About Exam Cutoffs? Secure Safety Backup"
+        subtitle="Free 15-minute 1-on-1 strategic consultation with senior advisors to lock in accredited safety colleges."
+        buttonLabel="Schedule Free Call"
+        source="home_exam_strategy"
+        defaultCourse="Engineering (B.Tech / B.E.)"
+      />
 
       {/* SECTION 12: Real Students. Real Journeys. Real Success. (Editorial Storytelling) */}
       <StudentSuccessStories />
