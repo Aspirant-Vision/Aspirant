@@ -19,6 +19,9 @@ import {
   LayoutDashboard,
   Loader2,
   ShieldCheck,
+  Building2,
+  UserCheck,
+  ArrowRight,
 } from "lucide-react";
 
 interface StudentProfile {
@@ -290,10 +293,27 @@ export function NavUserProfile() {
                       <span className="truncate">{profile.email}</span>
                     </p>
                     <div className="mt-1 flex items-center gap-1.5">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-50 text-red-700 text-[10px] font-bold uppercase tracking-wider">
-                        <ShieldCheck className="w-3 h-3 text-[#E31E2B]" />
-                        Student Aspirant
-                      </span>
+                      {profile.role === "super_admin" ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[10px] font-bold uppercase tracking-wider border border-purple-200/60">
+                          <ShieldCheck className="w-3 h-3 text-purple-600" />
+                          Super Admin
+                        </span>
+                      ) : profile.role === "admin" ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-50 text-red-700 text-[10px] font-bold uppercase tracking-wider border border-red-200/60">
+                          <ShieldCheck className="w-3 h-3 text-red-600" />
+                          Administrator
+                        </span>
+                      ) : profile.role === "counsellor" ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold uppercase tracking-wider border border-blue-200/60">
+                          <UserCheck className="w-3 h-3 text-blue-600" />
+                          Admission Counsellor
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider border border-emerald-200/60">
+                          <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                          Student Aspirant
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -335,32 +355,68 @@ export function NavUserProfile() {
 
               {/* Quick Actions / Shortcuts */}
               <div className="py-2.5 space-y-1">
-                <Link
-                  href="/profile"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-                >
-                  <User className="w-3.5 h-3.5 text-primary" />
-                  <span>My Profile</span>
-                </Link>
+                {profile.role === "super_admin" || profile.role === "admin" || profile.role === "counsellor" ? (
+                  <>
+                    <Link
+                      href="/admin/dashboard"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold bg-[#171B52] text-white hover:bg-[#0E1238] shadow-sm transition-all mb-2"
+                    >
+                      <span className="flex items-center gap-2">
+                        <LayoutDashboard className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Open Admin Console</span>
+                      </span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
 
-                <Link
-                  href="/colleges"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-                >
-                  <Bookmark className="w-3.5 h-3.5 text-gray-400" />
-                  <span>Explore Colleges</span>
-                </Link>
+                    <Link
+                      href="/admin/colleges"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                    >
+                      <Building2 className="w-3.5 h-3.5 text-gray-400" />
+                      <span>Colleges Directory</span>
+                    </Link>
 
-                <Link
-                  href="/student/shortlist/colleges"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-                >
-                  <Bookmark className="w-3.5 h-3.5 text-gray-400" />
-                  <span>Saved Shortlists</span>
-                </Link>
+                    <Link
+                      href="/admin/leads"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                    >
+                      <FileCheck2 className="w-3.5 h-3.5 text-gray-400" />
+                      <span>Leads CRM</span>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/profile"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                    >
+                      <User className="w-3.5 h-3.5 text-primary" />
+                      <span>My Profile</span>
+                    </Link>
+
+                    <Link
+                      href="/colleges"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                    >
+                      <Bookmark className="w-3.5 h-3.5 text-gray-400" />
+                      <span>Explore Colleges</span>
+                    </Link>
+
+                    <Link
+                      href="/student/shortlist/colleges"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                    >
+                      <Bookmark className="w-3.5 h-3.5 text-gray-400" />
+                      <span>Saved Shortlists</span>
+                    </Link>
+                  </>
+                )}
               </div>
 
               {/* Footer Actions */}

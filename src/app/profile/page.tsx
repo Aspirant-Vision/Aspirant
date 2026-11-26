@@ -105,6 +105,16 @@ export default function ProfilePage() {
           created_at: dbProfile?.created_at,
         };
 
+        // If an administrator or counsellor visits the student profile, route them to Admin Dashboard
+        if (
+          resolvedProfile.role === "super_admin" ||
+          resolvedProfile.role === "admin" ||
+          resolvedProfile.role === "counsellor"
+        ) {
+          router.replace("/admin/dashboard");
+          return;
+        }
+
         setProfile(resolvedProfile);
         setFullName(resolvedProfile.full_name || "");
         setPhone(resolvedProfile.phone || "");

@@ -222,10 +222,10 @@ export async function loginAction(
       };
     }
 
-    // Verify account status from PostgreSQL
+    // Verify account status and role from PostgreSQL
     const { data: profile } = await supabase
       .from("profiles")
-      .select("account_status")
+      .select("account_status, role")
       .eq("id", authData.user.id)
       .maybeSingle();
 
@@ -240,10 +240,17 @@ export async function loginAction(
       };
     }
 
+    // If an administrator or counsellor logs in, route them directly to the Admin Dashboard
+    const isAdminUser =
+      profile?.role === "super_admin" ||
+      profile?.role === "admin" ||
+      profile?.role === "counsellor";
+    const defaultDestination = isAdminUser ? "/admin/dashboard" : "/profile";
+
     // Determine safe redirect
     const safeDestination = getSafeRedirectUrl(
       parsed.data.redirectUrl,
-      "/profile"
+      defaultDestination
     );
 
     return {
