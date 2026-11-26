@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { DateRangePreset, DATE_RANGE_PRESETS } from "@/lib/analytics/types";
 import { Calendar } from "lucide-react";
@@ -9,13 +9,13 @@ interface DateRangeFilterProps {
   currentPreset?: DateRangePreset;
 }
 
-export function DateRangeFilter({ currentPreset = "30d" }: DateRangeFilterProps) {
+function DateRangeFilterInner({ currentPreset = "30d" }: DateRangeFilterProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const handleSelect = (preset: DateRangePreset) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() || "");
     params.set("preset", preset);
     router.push(`${pathname}?${params.toString()}`);
   };
@@ -50,5 +50,17 @@ export function DateRangeFilter({ currentPreset = "30d" }: DateRangeFilterProps)
         <span className="pointer-events-none absolute right-3 text-[10px] text-gray-400">▼</span>
       </div>
     </div>
+  );
+}
+
+export function DateRangeFilter(props: DateRangeFilterProps) {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-8 w-28 bg-gray-100 rounded-xl animate-pulse" />
+      }
+    >
+      <DateRangeFilterInner {...props} />
+    </Suspense>
   );
 }

@@ -73,7 +73,23 @@ export function AdminNotificationsClientView({
     }
   };
 
-  const filteredNotifications = notifications.filter((n) => {
+  const formatNotificationDate = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return "";
+      return d.toLocaleDateString("en-IN", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return "";
+    }
+  };
+
+  const safeNotifications = Array.isArray(notifications) ? notifications : [];
+  const filteredNotifications = safeNotifications.filter((n) => {
     if (unreadOnly && n.is_read) return false;
     if (selectedCategory === "all") return true;
     return n.category === selectedCategory;
@@ -237,13 +253,8 @@ export function AdminNotificationsClientView({
                     </span>
                   </div>
 
-                  <span className="text-[10px] text-gray-400 shrink-0">
-                    {new Date(n.created_at).toLocaleDateString("en-IN", {
-                      month: "short",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                  <span className="text-[10px] text-gray-400 shrink-0" suppressHydrationWarning>
+                    {formatNotificationDate(n.created_at)}
                   </span>
                 </div>
 

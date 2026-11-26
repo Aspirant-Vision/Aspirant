@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   ResponsiveContainer,
   PieChart,
@@ -24,10 +24,32 @@ export function DistributionDonutChart({
   title,
   description,
 }: DistributionDonutChartProps) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   if (!data || data.length === 0) {
     return (
       <div className="bg-white rounded-2xl border border-gray-200/80 p-6 text-center text-gray-400 text-xs">
         No distribution data for this period.
+      </div>
+    );
+  }
+
+  if (!isMounted) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-200/80 p-5 sm:p-6 shadow-xs space-y-4">
+        {(title || description) && (
+          <div>
+            {title && <h3 className="text-sm font-bold text-gray-900">{title}</h3>}
+            {description && <p className="text-xs text-gray-500 mt-0.5">{description}</p>}
+          </div>
+        )}
+        <div className="h-64 w-full flex items-center justify-center bg-gray-50/70 rounded-xl animate-pulse">
+          <span className="text-xs text-gray-400">Loading distribution...</span>
+        </div>
       </div>
     );
   }
@@ -59,17 +81,18 @@ export function DistributionDonutChart({
               ))}
             </Pie>
             <Tooltip
+              formatter={(value: any, name: any) => [`${value} items`, name]}
               contentStyle={{
-                backgroundColor: "#ffffff",
+                backgroundColor: "#0f172a",
                 borderRadius: "12px",
-                border: "1px solid #e2e8f0",
+                border: "none",
                 fontSize: "12px",
+                color: "#fff",
               }}
             />
             <Legend
-              layout="horizontal"
               verticalAlign="bottom"
-              align="center"
+              iconType="circle"
               wrapperStyle={{ fontSize: "11px", paddingTop: "8px" }}
             />
           </PieChart>

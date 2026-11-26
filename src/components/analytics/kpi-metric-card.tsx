@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { MetricComparison } from "@/lib/analytics/types";
 import { TrendingUp, TrendingDown, Minus, Info } from "lucide-react";
@@ -11,7 +9,7 @@ interface KpiMetricCardProps {
   definition?: string;
   prefix?: string;
   suffix?: string;
-  icon?: React.ElementType;
+  icon?: React.ElementType | React.ReactNode;
   color?: "blue" | "emerald" | "amber" | "purple" | "rose";
 }
 
@@ -22,7 +20,7 @@ export function KpiMetricCard({
   definition,
   prefix = "",
   suffix = "",
-  icon: Icon,
+  icon,
   color = "blue",
 }: KpiMetricCardProps) {
   const isPositive = (metric.diff ?? 0) > 0;
@@ -36,15 +34,22 @@ export function KpiMetricCard({
     rose: "bg-rose-50 text-rose-700 border-rose-200",
   }[color];
 
+  const renderIcon = () => {
+    if (!icon) return null;
+    if (React.isValidElement(icon)) return icon;
+    const IconComp = icon as React.ElementType;
+    return <IconComp className="w-4 h-4" />;
+  };
+
   return (
     <div className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-xs hover:border-gray-300 transition-all">
       <div className="flex items-center justify-between gap-2 mb-2">
         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider truncate">
           {title}
         </span>
-        {Icon && (
+        {icon && (
           <div className={`p-2 rounded-xl border ${colorStyles}`}>
-            <Icon className="w-4 h-4" />
+            {renderIcon()}
           </div>
         )}
       </div>

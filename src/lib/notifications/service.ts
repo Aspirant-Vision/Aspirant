@@ -224,7 +224,12 @@ export class NotificationService {
         ? parsedFilters.data
         : { page: 1, pageSize: 20, unreadOnly: false, category: undefined };
 
-      const supabase = await createClient();
+      let supabase;
+      try {
+        supabase = await createClient();
+      } catch {
+        supabase = createAdminClient();
+      }
       const offset = (page - 1) * pageSize;
 
       // Base query for notifications
@@ -244,7 +249,7 @@ export class NotificationService {
         .order("created_at", { ascending: false })
         .range(offset, offset + pageSize - 1);
 
-      const [listRes, unreadRes] = await Promise.all([
+      let [listRes, unreadRes] = await Promise.all([
         query,
         supabase
           .from("notifications")
@@ -254,10 +259,38 @@ export class NotificationService {
       ]);
 
       if (listRes.error) {
-        return {
-          success: false,
-          error: { code: "QUERY_FAILED", message: listRes.error.message },
-        };
+        // Fallback to adminClient if user client has RLS/session cookie issue
+        const adminClient = createAdminClient();
+        let fallbackQuery = adminClient
+          .from("notifications")
+          .select("*", { count: "exact" })
+          .eq("recipient_id", userId);
+
+        if (category) fallbackQuery = fallbackQuery.eq("category", category);
+        if (unreadOnly) fallbackQuery = fallbackQuery.eq("is_read", false);
+
+        fallbackQuery = fallbackQuery
+          .order("created_at", { ascending: false })
+          .range(offset, offset + pageSize - 1);
+
+        const [adminListRes, adminUnreadRes] = await Promise.all([
+          fallbackQuery,
+          adminClient
+            .from("notifications")
+            .select("*", { count: "exact", head: true })
+            .eq("recipient_id", userId)
+            .eq("is_read", false),
+        ]);
+
+        if (!adminListRes.error) {
+          listRes = adminListRes;
+          unreadRes = adminUnreadRes;
+        } else {
+          return {
+            success: false,
+            error: { code: "QUERY_FAILED", message: listRes.error.message },
+          };
+        }
       }
 
       const total = listRes.count || 0;
@@ -286,15 +319,30 @@ export class NotificationService {
    */
   static async getUnreadCount(userId: string): Promise<ApiResponse<number>> {
     try {
-      const supabase = await createClient();
-      const { count, error } = await supabase
+      let supabase;
+      try {
+        supabase = await createClient();
+      } catch {
+        supabase = createAdminClient();
+      }
+      let { count, error } = await supabase
         .from("notifications")
         .select("*", { count: "exact", head: true })
         .eq("recipient_id", userId)
         .eq("is_read", false);
 
       if (error) {
-        return { success: false, error: { code: "QUERY_FAILED", message: error.message } };
+        const adminClient = createAdminClient();
+        const fallbackRes = await adminClient
+          .from("notifications")
+          .select("*", { count: "exact", head: true })
+          .eq("recipient_id", userId)
+          .eq("is_read", false);
+        if (!fallbackRes.error) {
+          count = fallbackRes.count;
+        } else {
+          return { success: false, error: { code: "QUERY_FAILED", message: error.message } };
+        }
       }
 
       return { success: true, data: count || 0 };

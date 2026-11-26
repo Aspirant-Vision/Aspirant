@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -20,10 +20,32 @@ interface TrendLineChartProps {
 }
 
 export function TrendLineChart({ data, title, description }: TrendLineChartProps) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   if (!data || data.length === 0) {
     return (
       <div className="bg-white rounded-2xl border border-gray-200/80 p-6 text-center text-gray-400 text-xs">
         No trend activity recorded for this period.
+      </div>
+    );
+  }
+
+  if (!isMounted) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-200/80 p-5 sm:p-6 shadow-xs space-y-4">
+        {(title || description) && (
+          <div>
+            {title && <h3 className="text-sm font-bold text-gray-900">{title}</h3>}
+            {description && <p className="text-xs text-gray-500 mt-0.5">{description}</p>}
+          </div>
+        )}
+        <div className="h-72 w-full flex items-center justify-center bg-gray-50/70 rounded-xl animate-pulse">
+          <span className="text-xs text-gray-400">Loading trend visualization...</span>
+        </div>
       </div>
     );
   }
@@ -65,43 +87,48 @@ export function TrendLineChart({ data, title, description }: TrendLineChartProps
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#ffffff",
+                backgroundColor: "#0f172a",
                 borderRadius: "12px",
-                border: "1px solid #e2e8f0",
-                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+                border: "none",
                 fontSize: "12px",
+                color: "#fff",
+                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
               }}
+              labelStyle={{ fontWeight: 600, color: "#94a3b8", marginBottom: "4px" }}
+              itemStyle={{ padding: "2px 0" }}
             />
             <Legend
-              wrapperStyle={{ paddingTop: "12px", fontSize: "11px", fontWeight: 600 }}
+              verticalAlign="top"
+              align="right"
               iconType="circle"
+              wrapperStyle={{ fontSize: "11px", paddingBottom: "12px" }}
             />
             <Line
               type="monotone"
               dataKey="leads"
-              name="Leads Received"
+              name="Enquiries"
               stroke="#E31E2B"
               strokeWidth={2.5}
-              dot={{ r: 3, fill: "#E31E2B" }}
-              activeDot={{ r: 5 }}
+              dot={false}
+              activeDot={{ r: 5, strokeWidth: 0 }}
             />
             <Line
               type="monotone"
               dataKey="applications"
               name="Applications"
-              stroke="#2563eb"
+              stroke="#3b82f6"
               strokeWidth={2}
-              dot={{ r: 2.5, fill: "#2563eb" }}
-              activeDot={{ r: 4 }}
+              dot={false}
+              activeDot={{ r: 4, strokeWidth: 0 }}
             />
             <Line
               type="monotone"
               dataKey="admissions"
-              name="Confirmed Admissions"
-              stroke="#059669"
+              name="Confirmed Seats"
+              stroke="#10b981"
               strokeWidth={2}
-              dot={{ r: 2.5, fill: "#059669" }}
-              activeDot={{ r: 4 }}
+              dot={false}
+              activeDot={{ r: 4, strokeWidth: 0 }}
             />
           </LineChart>
         </ResponsiveContainer>

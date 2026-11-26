@@ -107,82 +107,94 @@ export function useNotifications({
 
     // Set up channel with user-specific isolation
     const channelName = `notifications:user:${userId}`;
-    const channel = supabase
-      .channel(channelName)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "notifications",
-          filter: `recipient_id=eq.${userId}`,
-        },
-        (payload) => {
-          const newNotification = payload.new as NotificationItem;
-          if (!newNotification || !newNotification.id) return;
+    let channel: any = null;
 
-          // Check if matches category filter if specified
-          if (category && newNotification.category !== category) {
-            return;
+    try {
+      channel = supabase
+        .channel(channelName)
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "notifications",
+            filter: `recipient_id=eq.${userId}`,
+          },
+          (payload) => {
+            const newNotification = payload.new as NotificationItem;
+            if (!newNotification || !newNotification.id) return;
+
+            // Check if matches category filter if specified
+            if (category && newNotification.category !== category) {
+              return;
+            }
+
+            // Deduplicate and append to top of list
+            setNotifications((prev) => {
+              const safePrev = Array.isArray(prev) ? prev : [];
+              const exists = safePrev.some((n) => n.id === newNotification.id);
+              if (exists) return safePrev;
+              return [newNotification, ...safePrev];
+            });
+
+            if (!newNotification.is_read) {
+              setUnreadCount((prev) => prev + 1);
+            }
+
+            // Trigger realtime toast notification banner
+            setToastNotification(newNotification);
           }
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "notifications",
+            filter: `recipient_id=eq.${userId}`,
+          },
+          (payload) => {
+            const updated = payload.new as NotificationItem;
+            if (!updated || !updated.id) return;
 
-          // Deduplicate and append to top of list
-          setNotifications((prev) => {
-            const exists = prev.some((n) => n.id === newNotification.id);
-            if (exists) return prev;
-            return [newNotification, ...prev];
-          });
+            setNotifications((prev) => {
+              const safePrev = Array.isArray(prev) ? prev : [];
+              return safePrev.map((n) => (n.id === updated.id ? { ...n, ...updated } : n));
+            });
 
-          if (!newNotification.is_read) {
-            setUnreadCount((prev) => prev + 1);
+            // Update unread count
+            setNotifications((latest) => {
+              const safeLatest = Array.isArray(latest) ? latest : [];
+              const count = safeLatest.filter((n) => !n.is_read).length;
+              setUnreadCount(count);
+              return safeLatest;
+            });
           }
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "DELETE",
+            schema: "public",
+            table: "notifications",
+            filter: `recipient_id=eq.${userId}`,
+          },
+          (payload) => {
+            const deleted = payload.old as { id: string };
+            if (!deleted || !deleted.id) return;
 
-          // Trigger realtime toast notification banner
-          setToastNotification(newNotification);
-        }
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "notifications",
-          filter: `recipient_id=eq.${userId}`,
-        },
-        (payload) => {
-          const updated = payload.new as NotificationItem;
-          if (!updated || !updated.id) return;
-
-          setNotifications((prev) =>
-            prev.map((n) => (n.id === updated.id ? { ...n, ...updated } : n))
-          );
-
-          // Update unread count
-          setNotifications((latest) => {
-            const count = latest.filter((n) => !n.is_read).length;
-            setUnreadCount(count);
-            return latest;
-          });
-        }
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "DELETE",
-          schema: "public",
-          table: "notifications",
-          filter: `recipient_id=eq.${userId}`,
-        },
-        (payload) => {
-          const deleted = payload.old as { id: string };
-          if (!deleted || !deleted.id) return;
-
-          setNotifications((prev) => prev.filter((n) => n.id !== deleted.id));
-        }
-      )
-      .subscribe((status) => {
-        setIsConnected(status === "SUBSCRIBED");
-      });
+            setNotifications((prev) => {
+              const safePrev = Array.isArray(prev) ? prev : [];
+              return safePrev.filter((n) => n.id !== deleted.id);
+            });
+          }
+        )
+        .subscribe((status) => {
+          setIsConnected(status === "SUBSCRIBED");
+        });
+    } catch (err) {
+      console.warn("[useNotifications] Realtime subscribe error:", err);
+    }
 
     // Reconnection & window focus handler for resilience
     const handleFocus = () => {
@@ -192,7 +204,13 @@ export function useNotifications({
 
     return () => {
       window.removeEventListener("focus", handleFocus);
-      supabase.removeChannel(channel);
+      if (channel) {
+        try {
+          supabase.removeChannel(channel);
+        } catch (e) {
+          console.warn("[useNotifications] removeChannel error:", e);
+        }
+      }
     };
   }, [userId, category, supabase, refresh]);
 
