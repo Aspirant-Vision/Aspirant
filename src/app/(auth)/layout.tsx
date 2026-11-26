@@ -14,12 +14,13 @@ export default function AuthLayout({
           LEFT PANEL: Full-Bleed Architectural Campus Photography & Minimalist Editorial
           ========================================================================= */}
       <div className="relative hidden lg:flex lg:w-1/2 h-full overflow-hidden">
-        {/* Background Campus Photograph */}
+        {/* Ultra-High-Resolution Architectural Campus Photograph */}
         <Image
-          src="/images/hero/hero_bg_clean.jpg"
+          src="/images/auth/auth_campus_highres.jpg"
           alt="University Academic Campus"
           fill
           priority
+          quality={90}
           sizes="50vw"
           className="object-cover object-center"
         />
