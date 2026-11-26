@@ -51,29 +51,27 @@ export function WhyAspirantVision() {
             alt="Premier Academic University Campus - Why Aspirant Vision"
             fill
             sizes="100vw"
-            className="object-cover object-[70%_center] lg:object-right"
+            className="object-cover object-center"
           />
-
-          {/* Targeted Fade Strictly on the Left for Text Contrast - Right half remains vividly visible */}
-          <div className="absolute inset-y-0 left-0 w-full lg:w-[48%] bg-gradient-to-r from-white via-white/92 to-transparent pointer-events-none" />
-          <div className="absolute inset-0 bg-white/40 lg:hidden pointer-events-none" />
+          {/* Subtle gradient to enhance depth */}
+          <div className="absolute inset-0 bg-white/40 lg:bg-white/20 pointer-events-none" />
         </div>
 
         {/* Foreground Content */}
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* Left Column (5 cols) */}
-          <div className="lg:col-span-5 space-y-5">
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Left Column (5 cols) wrapped in high-contrast tactile card */}
+          <div className="lg:col-span-5 bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-white/90 shadow-xl space-y-5">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-100 text-[#E31E2B] text-xs font-bold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Why Aspirant Vision</span>
             </div>
 
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-extrabold text-[#15182D] leading-[1.15] tracking-tight">
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-[34px] font-extrabold text-[#15182D] leading-[1.2] tracking-tight">
               More Than a Platform — <br />
               Your <span className="text-[#E31E2B]">Admission Partner</span>
             </h2>
 
-            <p className="font-body text-sm sm:text-base text-[#4B5563] leading-relaxed font-normal">
+            <p className="font-body text-xs sm:text-sm text-[#4B5563] leading-relaxed font-normal">
               Navigating university admissions can be stressful. We provide authenticated college data, cutoff predictability, and personal mentorship so students make informed choices with complete clarity.
             </p>
 
@@ -97,7 +95,7 @@ export function WhyAspirantVision() {
               <button
                 type="button"
                 onClick={() => openModal("Why Aspirant Vision - Expert Guidance")}
-                className="tactile-btn-red text-white px-7 py-3.5 rounded-full text-xs sm:text-sm font-bold inline-flex items-center gap-2 shadow-lg hover:scale-105 active:scale-95 transition-all group"
+                className="tactile-btn-red text-white px-7 py-3 rounded-full text-xs sm:text-sm font-bold inline-flex items-center gap-2 shadow-lg hover:scale-105 active:scale-95 transition-all group cursor-pointer"
               >
                 <span>Get Expert Guidance</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

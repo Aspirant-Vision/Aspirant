@@ -81,7 +81,7 @@ export function ExploreByGoal() {
   ];
 
   return (
-    <section id="courses" className="py-8 sm:py-14 lg:py-16 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="courses" className="scroll-mt-24 py-8 sm:py-14 lg:py-16 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 sm:mb-8 gap-3 border-b border-[#E7E9F0] pb-4 sm:pb-5">
         <div>
@@ -185,11 +185,11 @@ export function ExploreByGoal() {
 
                 <Link
                   href="/mba"
-                  className="tactile-pill text-white bg-white/20 hover:bg-white/30 backdrop-blur-md px-4 py-2 rounded-full text-xs font-bold inline-flex items-center gap-1.5 shadow-sm transition-all"
+                  className="bg-white hover:bg-slate-100 text-[#15182D] px-4 py-2 rounded-full text-xs font-bold inline-flex items-center gap-1.5 shadow-md hover:scale-105 transition-all border border-slate-200 cursor-pointer"
                 >
-                  <Sparkles className="w-3 h-3 text-red-300" />
-                  <span>Looking for MBA | PGDM? Explore Special Hub</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#E31E2B]" />
+                  <span className="text-[#15182D] font-extrabold">Looking for MBA | PGDM? Explore Special Hub</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#E31E2B]" />
                 </Link>
               </div>
             </div>
