@@ -21,7 +21,13 @@ export function ExploreByGoal() {
   const { openModal } = useCounselingModal();
 
   const streams = [
-    { name: "Engineering", icon: Cog, color: "text-[#E31E2B]", colleges: "850+ Colleges" },
+    {
+      name: "Engineering",
+      icon: Cog,
+      color: "text-[#E31E2B]",
+      colleges: "Top B.Tech Campuses",
+      href: "/colleges?type=Engineering",
+    },
     {
       name: "Management",
       icon: TrendingUp,
@@ -30,12 +36,48 @@ export function ExploreByGoal() {
       href: "/mba",
       badge: "MBA | PGDM",
     },
-    { name: "Medical", icon: PlusSquare, color: "text-[#E31E2B]", colleges: "340+ Colleges" },
-    { name: "Law", icon: Scale, color: "text-[#E31E2B]", colleges: "180+ Colleges" },
-    { name: "Design", icon: PenTool, color: "text-[#E31E2B]", colleges: "120+ Colleges" },
-    { name: "Commerce", icon: Layers, color: "text-amber-600", colleges: "410+ Colleges" },
-    { name: "Arts", icon: Palette, color: "text-[#E31E2B]", colleges: "290+ Colleges" },
-    { name: "More", icon: LayoutGrid, color: "text-[#171B52]", colleges: "All Streams" },
+    {
+      name: "Medical",
+      icon: PlusSquare,
+      color: "text-[#E31E2B]",
+      colleges: "340+ Colleges",
+      href: "/colleges?type=Medical",
+    },
+    {
+      name: "Law",
+      icon: Scale,
+      color: "text-[#E31E2B]",
+      colleges: "180+ Colleges",
+      href: "/colleges?type=Law",
+    },
+    {
+      name: "Design",
+      icon: PenTool,
+      color: "text-[#E31E2B]",
+      colleges: "120+ Colleges",
+      href: "/colleges?type=Design+%26+Media",
+    },
+    {
+      name: "Commerce",
+      icon: Layers,
+      color: "text-amber-600",
+      colleges: "410+ Colleges",
+      href: "/colleges?type=Arts+%26+Science",
+    },
+    {
+      name: "Arts & Science",
+      icon: Palette,
+      color: "text-[#E31E2B]",
+      colleges: "290+ Colleges",
+      href: "/colleges?type=Arts+%26+Science",
+    },
+    {
+      name: "More",
+      icon: LayoutGrid,
+      color: "text-[#171B52]",
+      colleges: "All Streams",
+      href: "/colleges",
+    },
   ];
 
   return (

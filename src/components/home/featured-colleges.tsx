@@ -12,9 +12,12 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { useCounselingModal } from "@/components/forms/counseling-modal-context";
+import { CollegeRow } from "@/lib/college/actions";
+import Link from "next/link";
 
 export interface CollegeShowcase {
   id: string;
+  slug?: string;
   name: string;
   location: string;
   type: string;
@@ -65,6 +68,7 @@ export const FEATURED_COLLEGES: CollegeShowcase[] = [
   },
   {
     id: "kiit-university",
+    slug: "kiit-university-bhubaneswar",
     name: "KIIT University - Kalinga Institute of Industrial Tech",
     location: "Bhubaneswar, Odisha",
     type: "Institute of Eminence / NAAC A++",
@@ -89,10 +93,39 @@ export const FEATURED_COLLEGES: CollegeShowcase[] = [
   },
 ];
 
-export function FeaturedColleges() {
+interface FeaturedCollegesProps {
+  dbColleges?: CollegeRow[];
+}
+
+export function FeaturedColleges({ dbColleges = [] }: FeaturedCollegesProps) {
   const { openModal } = useCounselingModal();
   const [shortlisted, setShortlisted] = useState<Record<string, boolean>>({});
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Map dynamic DB colleges into showcase cards
+  const dynamicCards: CollegeShowcase[] = dbColleges.map((c) => ({
+    id: c.id,
+    slug: c.slug,
+    name: c.name,
+    location: c.city && c.state ? `${c.city}, ${c.state}` : c.state || c.country || "India",
+    type: `${c.college_type}${c.ownership_type ? ` • ${c.ownership_type}` : ""}`,
+    image: c.cover_image_url || "/images/campuses/kiit.png",
+    rating: "4.8",
+    reviewCount: "Verified",
+    fees: c.admission_status === "open" ? "Admission Open" : "Direct Advisory",
+    avgCtc: c.average_placement ? `₹${c.average_placement} LPA` : "₹6.5 - 12 LPA",
+    nirfRank: c.nirf_rank ? `#${c.nirf_rank} NIRF` : (c.naac_grade ? `NAAC ${c.naac_grade}` : "AICTE Approved"),
+  }));
+
+  // Merge dynamic colleges first, followed by static showcases (avoiding duplicate names)
+  const allColleges: CollegeShowcase[] = [
+    ...dynamicCards,
+    ...FEATURED_COLLEGES.filter(
+      (fc) => !dynamicCards.some((dc) => dc.name.toLowerCase().includes(fc.name.toLowerCase().split(" ")[0]))
+    ),
+  ];
+
+  const maxIndex = Math.max(0, allColleges.length - 3);
 
   const toggleShortlist = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -100,11 +133,11 @@ export function FeaturedColleges() {
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % (FEATURED_COLLEGES.length - 2));
+    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? FEATURED_COLLEGES.length - 3 : prev - 1));
+    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
   };
 
   return (
@@ -125,13 +158,13 @@ export function FeaturedColleges() {
 
         {/* Action Button & Carousel Controls */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => openModal("All Featured Colleges")}
+          <Link
+            href="/colleges"
             className="tactile-pill inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[#E31E2B] text-xs font-bold transition-all"
           >
             <span>Explore All Colleges</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
-          </button>
+          </Link>
           <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-[#E7E9F0]">
             <button
               onClick={handlePrev}
@@ -151,9 +184,9 @@ export function FeaturedColleges() {
         </div>
       </div>
 
-      {/* 3 Rich Institutional Cards (Original 1st Version Preserved) */}
+      {/* 3 Rich Institutional Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-        {FEATURED_COLLEGES.slice(currentIndex, currentIndex + 3).map((college) => (
+        {allColleges.slice(currentIndex, currentIndex + 3).map((college) => (
           <div
             key={college.id}
             onClick={() => openModal(college.name)}
@@ -224,15 +257,25 @@ export function FeaturedColleges() {
 
             {/* Bottom Actions */}
             <div className="px-5 pb-5 pt-1 grid grid-cols-2 gap-2 border-t border-gray-100">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openModal(`View College: ${college.name}`);
-                }}
-                className="py-2.5 px-3 rounded-xl bg-[#171B52] hover:bg-[#0E1238] text-white text-xs font-bold transition-all text-center shadow-xs"
-              >
-                View College
-              </button>
+              {college.slug ? (
+                <Link
+                  href={`/colleges/${college.slug}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="py-2.5 px-3 rounded-xl bg-[#171B52] hover:bg-[#0E1238] text-white text-xs font-bold transition-all text-center shadow-xs block"
+                >
+                  View College
+                </Link>
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openModal(`View College: ${college.name}`);
+                  }}
+                  className="py-2.5 px-3 rounded-xl bg-[#171B52] hover:bg-[#0E1238] text-white text-xs font-bold transition-all text-center shadow-xs"
+                >
+                  View College
+                </button>
+              )}
               <button
                 onClick={(e) => {
                   e.stopPropagation();

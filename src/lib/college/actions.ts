@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdmin, requireAuth, getCurrentUser } from "@/lib/auth/session";
-import { collegeSchema, CollegeInput, generateSlug } from "@/lib/validation/college";
+import { collegeSchema, CollegeInput, generateSlug, COLLEGE_TYPES } from "@/lib/validation/college";
 import { ApiResponse } from "@/types/api.types";
 import { Database, CollegePublicationStatus } from "@/types/database.types";
 
@@ -565,7 +565,14 @@ export async function getCollegesListingAction(
 
     // Type filter
     if (collegeType && collegeType !== "all") {
-      query = query.eq("college_type", collegeType);
+      const standardType = COLLEGE_TYPES.find(
+        (t) => t.toLowerCase() === collegeType.toLowerCase()
+      );
+      if (standardType) {
+        query = query.eq("college_type", standardType);
+      } else {
+        query = query.ilike("college_type", collegeType);
+      }
     }
 
     // State filter
@@ -713,7 +720,14 @@ export async function getPublicCollegesAction(params: {
       .is("deleted_at", null);
 
     if (collegeType && collegeType !== "all") {
-      query = query.eq("college_type", collegeType);
+      const standardType = COLLEGE_TYPES.find(
+        (t) => t.toLowerCase() === collegeType.toLowerCase()
+      );
+      if (standardType) {
+        query = query.eq("college_type", standardType);
+      } else {
+        query = query.ilike("college_type", collegeType);
+      }
     }
 
     if (state && state !== "all") {

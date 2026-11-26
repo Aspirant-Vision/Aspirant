@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { UserProfile, UserRole } from "@/types/auth.types";
@@ -6,8 +7,9 @@ import { UnauthorizedError } from "@/lib/database/error";
 
 /**
  * Retrieves the currently authenticated Supabase user on the server.
+ * Wrapped in React cache() so it only executes once per request/navigation.
  */
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async () => {
   try {
     const supabase = await createClient();
     const {
@@ -20,12 +22,13 @@ export async function getCurrentUser() {
   } catch (error) {
     return null;
   }
-}
+});
 
 /**
  * Retrieves all assigned roles for a given user from public.user_roles.
+ * Cached per-request to prevent redundant DB round trips during layout & page rendering.
  */
-export async function getUserRoles(userId: string): Promise<UserRole[]> {
+export const getUserRoles = cache(async (userId: string): Promise<UserRole[]> => {
   try {
     const supabase = await createClient();
     const { data: roleRecords, error } = await supabase
@@ -41,13 +44,14 @@ export async function getUserRoles(userId: string): Promise<UserRole[]> {
   } catch {
     return ["student"];
   }
-}
+});
 
 /**
  * Retrieves the profile of the currently authenticated user from PostgreSQL.
  * Cross-references public.user_roles for authoritative RBAC.
+ * Wrapped in React cache() to guarantee zero-overhead layout and subpage authentication.
  */
-export async function getCurrentProfile(): Promise<UserProfile | null> {
+export const getCurrentProfile = cache(async (): Promise<UserProfile | null> => {
   try {
     const user = await getCurrentUser();
     if (!user) return null;
@@ -109,7 +113,7 @@ export async function getCurrentProfile(): Promise<UserProfile | null> {
   } catch (error) {
     return null;
   }
-}
+});
 
 /**
  * Requires an authenticated user session. Redirects to /login if unauthenticated.

@@ -281,6 +281,7 @@ export function CrmSidebar({
                     <Link
                       key={item.href}
                       href={item.href}
+                      prefetch={true}
                       title={isCollapsed ? item.title : undefined}
                       className={cn(
                         "group relative flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 select-none",

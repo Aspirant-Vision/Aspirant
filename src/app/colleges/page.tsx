@@ -19,8 +19,29 @@ export const metadata: Metadata = {
   ],
 };
 
-export default async function CollegesPage() {
-  const initialData = await getPublicCollegesAction({ page: 1, pageSize: 9 });
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+interface CollegesPageProps {
+  searchParams?: Promise<{
+    type?: string;
+    category?: string;
+    search?: string;
+    q?: string;
+  }>;
+}
+
+export default async function CollegesPage({ searchParams }: CollegesPageProps) {
+  const resolved = searchParams ? await searchParams : {};
+  const requestedType = resolved.type || resolved.category || "all";
+  const requestedSearch = resolved.search || resolved.q || "";
+
+  const initialData = await getPublicCollegesAction({
+    page: 1,
+    pageSize: 9,
+    collegeType: requestedType !== "all" ? requestedType : undefined,
+    search: requestedSearch || undefined,
+  });
   const colleges = initialData.success ? initialData.data.colleges : [];
   const totalCount = initialData.success ? initialData.data.totalCount : 0;
 
@@ -68,7 +89,12 @@ export default async function CollegesPage() {
 
       {/* 2. CATALOG SECTION */}
       <section className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <PublicCollegeCatalog initialColleges={colleges} initialTotal={totalCount} />
+        <PublicCollegeCatalog
+          initialColleges={colleges}
+          initialTotal={totalCount}
+          initialType={requestedType}
+          initialSearch={requestedSearch}
+        />
       </section>
     </div>
   );

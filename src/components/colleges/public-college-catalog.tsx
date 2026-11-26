@@ -24,11 +24,15 @@ import { Button } from "@/components/ui/button";
 interface PublicCollegeCatalogProps {
   initialColleges: CollegeRow[];
   initialTotal: number;
+  initialType?: string;
+  initialSearch?: string;
 }
 
 export function PublicCollegeCatalog({
   initialColleges,
   initialTotal,
+  initialType = "all",
+  initialSearch = "",
 }: PublicCollegeCatalogProps) {
   const { openModal } = useCounselingModal();
   const [isPending, startTransition] = useTransition();
@@ -36,8 +40,8 @@ export function PublicCollegeCatalog({
   const [colleges, setColleges] = useState<CollegeRow[]>(initialColleges);
   const [totalCount, setTotalCount] = useState<number>(initialTotal);
 
-  const [search, setSearch] = useState("");
-  const [selectedType, setSelectedType] = useState("all");
+  const [search, setSearch] = useState(initialSearch);
+  const [selectedType, setSelectedType] = useState(initialType);
   const [page, setPage] = useState(1);
   const pageSize = 9;
 

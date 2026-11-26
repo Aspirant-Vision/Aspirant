@@ -15,7 +15,15 @@ import { FindIdealCollege } from "@/components/home/find-ideal-college";
 import { BlogsMagazine } from "@/components/home/blogs-magazine";
 import { FinalCounsellingCta } from "@/components/home/final-counselling-cta";
 
-export default function HomePage() {
+import { getPublicCollegesAction } from "@/lib/college/actions";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function HomePage() {
+  const featuredRes = await getPublicCollegesAction({ isFeatured: true, pageSize: 8 });
+  const liveFeaturedColleges = featuredRes.success ? featuredRes.data.colleges : [];
+
   return (
     <div className="flex flex-col min-h-screen bg-[#F7F8FC] overflow-x-hidden w-full">
       {/* SECTION 01: Sticky Navigation Bar rendered in RootLayout */}
@@ -30,7 +38,7 @@ export default function HomePage() {
       <ExploreByGoal />
 
       {/* SECTION 05: Explore India's Top Institutions (Featured Colleges) */}
-      <FeaturedColleges />
+      <FeaturedColleges dbColleges={liveFeaturedColleges} />
 
       {/* SECTION 06: NEW RELEVANT — Top Education Hubs Across India (Regional Discovery) */}
       <EducationHubs />
