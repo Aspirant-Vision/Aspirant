@@ -18,6 +18,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { NotificationItem } from "@/lib/notifications/types";
+import { cn } from "@/lib/utils";
 
 interface HeaderNotificationDropdownProps {
   userId: string;
@@ -116,20 +117,17 @@ export function HeaderNotificationDropdown({
           aria-label="View notifications"
           aria-expanded={isOpen}
         >
-          <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
+          <Bell
+            className={cn(
+              "w-4 h-4 sm:w-5 sm:h-5 transition-transform",
+              unreadCount > 0 && "animate-bell-ring text-[#E31E2B]"
+            )}
+          />
 
           {unreadCount > 0 && (
-            <span className="absolute top-1 right-1 flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white ring-2 ring-white animate-pulse">
+            <span className="absolute top-1 right-1 flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white ring-2 ring-white shadow-xs">
               {unreadCount > 9 ? "9+" : unreadCount}
             </span>
-          )}
-
-          {/* Subdued Realtime Live Status Dot */}
-          {isConnected && unreadCount === 0 && (
-            <span
-              className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 ring-2 ring-white"
-              title="Realtime connected"
-            />
           )}
         </button>
 
