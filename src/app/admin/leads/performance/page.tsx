@@ -32,7 +32,7 @@ export default async function CounsellorPerformancePage() {
     <div className="space-y-6">
       <PageHeader
         breadcrumbs={[
-          { label: "Leads CRM", href: "/admin/leads" },
+          { label: "Management", href: "/admin/counsellors" },
           { label: "Counsellor Performance" },
         ]}
         title="Counsellor Workload & Conversion Analytics"

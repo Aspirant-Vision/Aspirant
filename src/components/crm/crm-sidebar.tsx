@@ -104,15 +104,6 @@ export function CrmSidebar({
           icon: CalendarClock,
           allowed: hasPermission(primaryRole, "canManageLeads"),
         },
-        {
-          title: "Counsellor Performance",
-          href: "/admin/leads/performance",
-          icon: TrendingUp,
-          allowed:
-            hasPermission(primaryRole, "canManageUsers") ||
-            primaryRole === "admin" ||
-            primaryRole === "super_admin",
-        },
       ],
     },
     {
@@ -184,6 +175,15 @@ export function CrmSidebar({
           icon: UserCheck,
           allowed:
             hasPermission(primaryRole, "canManageUsers") || primaryRole === "admin",
+        },
+        {
+          title: "Counsellor Performance",
+          href: "/admin/leads/performance",
+          icon: TrendingUp,
+          allowed:
+            hasPermission(primaryRole, "canManageUsers") ||
+            primaryRole === "admin" ||
+            primaryRole === "super_admin",
         },
         {
           title: "Reports",
@@ -261,6 +261,9 @@ export function CrmSidebar({
           const visibleItems = group.items.filter((item) => item.allowed);
           if (visibleItems.length === 0) return null;
 
+          // All allowed items across all groups for global specificity resolution
+          const allAllowedItems = navGroups.flatMap((g) => g.items.filter((i) => i.allowed));
+
           return (
             <div key={groupIdx} className="space-y-1">
               {!isCollapsed && (
@@ -272,10 +275,16 @@ export function CrmSidebar({
               <nav className="space-y-0.5">
                 {visibleItems.map((item) => {
                   const Icon = item.icon;
-                  const isActive =
-                    item.href === "/admin/dashboard"
-                      ? pathname === "/admin/dashboard"
-                      : pathname.startsWith(item.href);
+                  // Compute exact / most-specific route match to prevent parent prefix collision
+                  const isExact = pathname === item.href;
+                  const isSubPath = pathname.startsWith(item.href + "/");
+                  const hasMoreSpecific = allAllowedItems.some(
+                    (other) =>
+                      other.href !== item.href &&
+                      other.href.length > item.href.length &&
+                      (pathname === other.href || pathname.startsWith(other.href + "/"))
+                  );
+                  const isActive = isExact || (isSubPath && !hasMoreSpecific);
 
                   return (
                     <Link
