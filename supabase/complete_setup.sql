@@ -1333,6 +1333,7 @@ ON CONFLICT (id) DO UPDATE SET
 
 -- Storage RLS Policies for college-assets
 -- Allow public reading of college logos, banners and galleries
+DROP POLICY IF EXISTS "Public Read College Assets" ON storage.objects;
 DO $$ BEGIN
     CREATE POLICY "Public Read College Assets"
         ON storage.objects FOR SELECT
@@ -1342,6 +1343,7 @@ EXCEPTION
 END $$;
 
 -- Allow authenticated staff to upload college assets
+DROP POLICY IF EXISTS "Staff Upload College Assets" ON storage.objects;
 DO $$ BEGIN
     CREATE POLICY "Staff Upload College Assets"
         ON storage.objects FOR INSERT
@@ -1355,6 +1357,7 @@ EXCEPTION
 END $$;
 
 -- Allow authenticated staff to update/replace college assets
+DROP POLICY IF EXISTS "Staff Update College Assets" ON storage.objects;
 DO $$ BEGIN
     CREATE POLICY "Staff Update College Assets"
         ON storage.objects FOR UPDATE
@@ -1368,6 +1371,7 @@ EXCEPTION
 END $$;
 
 -- Allow authenticated staff to delete college assets
+DROP POLICY IF EXISTS "Staff Delete College Assets" ON storage.objects;
 DO $$ BEGIN
     CREATE POLICY "Staff Delete College Assets"
         ON storage.objects FOR DELETE
@@ -1946,12 +1950,14 @@ CREATE POLICY "Staff can view reminder logs"
 -- and admins/counsellors or triggers to insert notifications
 DROP POLICY IF EXISTS "Users manage their own notifications" ON public.notifications;
 
+DROP POLICY IF EXISTS "Users can select own notifications" ON public.notifications;
 CREATE POLICY "Users can select own notifications"
     ON public.notifications
     FOR SELECT
     TO authenticated
     USING (recipient_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can update own notifications" ON public.notifications;
 CREATE POLICY "Users can update own notifications"
     ON public.notifications
     FOR UPDATE
@@ -1959,12 +1965,14 @@ CREATE POLICY "Users can update own notifications"
     USING (recipient_id = auth.uid())
     WITH CHECK (recipient_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can delete own notifications" ON public.notifications;
 CREATE POLICY "Users can delete own notifications"
     ON public.notifications
     FOR DELETE
     TO authenticated
     USING (recipient_id = auth.uid());
 
+DROP POLICY IF EXISTS "Staff and users can insert notifications" ON public.notifications;
 CREATE POLICY "Staff and users can insert notifications"
     ON public.notifications
     FOR INSERT

@@ -51,6 +51,7 @@ ON CONFLICT (id) DO UPDATE SET
 
 -- Storage RLS Policies for college-assets
 -- Allow public reading of college logos, banners and galleries
+DROP POLICY IF EXISTS "Public Read College Assets" ON storage.objects;
 DO $$ BEGIN
     CREATE POLICY "Public Read College Assets"
         ON storage.objects FOR SELECT
@@ -60,6 +61,7 @@ EXCEPTION
 END $$;
 
 -- Allow authenticated staff to upload college assets
+DROP POLICY IF EXISTS "Staff Upload College Assets" ON storage.objects;
 DO $$ BEGIN
     CREATE POLICY "Staff Upload College Assets"
         ON storage.objects FOR INSERT
@@ -73,6 +75,7 @@ EXCEPTION
 END $$;
 
 -- Allow authenticated staff to update/replace college assets
+DROP POLICY IF EXISTS "Staff Update College Assets" ON storage.objects;
 DO $$ BEGIN
     CREATE POLICY "Staff Update College Assets"
         ON storage.objects FOR UPDATE
@@ -86,6 +89,7 @@ EXCEPTION
 END $$;
 
 -- Allow authenticated staff to delete college assets
+DROP POLICY IF EXISTS "Staff Delete College Assets" ON storage.objects;
 DO $$ BEGIN
     CREATE POLICY "Staff Delete College Assets"
         ON storage.objects FOR DELETE
