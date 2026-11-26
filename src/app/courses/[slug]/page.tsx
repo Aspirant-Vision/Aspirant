@@ -107,49 +107,49 @@ export default async function PublicCourseDetailPage({
         </div>
       </div>
 
-      {/* 2. HERO HEADER */}
-      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
-        <div className="relative rounded-2xl sm:rounded-3xl border border-[#0F143A] p-6 sm:p-10 shadow-xl overflow-hidden bg-[#0A0D28] text-white">
+      {/* 2. PRESTIGIOUS EDITORIAL HERO HEADER */}
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
+        <div className="relative rounded-2xl sm:rounded-3xl border border-gray-200/90 p-6 sm:p-10 shadow-xs overflow-hidden bg-white">
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/auth/campus_library.jpg"
               alt={course.name}
               fill
               priority
-              className="object-cover object-center opacity-25 mix-blend-luminosity scale-105"
+              className="object-cover object-[80%_center] opacity-15"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#080B22]/95 via-[#0C1133]/90 to-[#080B22]/95" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-600/15 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/80" />
+            <div className="absolute inset-y-0 right-0 w-1/3 bg-radial from-red-500/5 to-transparent pointer-events-none" />
           </div>
 
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-3.5 max-w-3xl">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-600 text-white shadow-xs">
+                <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#E31E2B] text-white shadow-xs">
                   {course.degree_type}
                 </span>
-                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 border border-white/20 text-slate-200">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-200">
                   {course.category}
                 </span>
-                <span className="px-3 py-1 rounded-full text-xs font-medium bg-white/10 border border-white/20 text-blue-300">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
                   {course.study_mode?.replace("_", " ").toUpperCase()}
                 </span>
               </div>
 
-              <h1 className="font-display text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+              <h1 className="font-display text-2xl sm:text-4xl font-extrabold text-[#15182D] tracking-tight leading-tight">
                 {course.name}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300 font-medium pt-1">
-                <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-full border border-white/10">
-                  <Clock className="w-3.5 h-3.5 text-red-400" />
+              <div className="flex flex-wrap items-center gap-3 text-xs text-gray-700 font-semibold pt-1">
+                <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200">
+                  <Clock className="w-3.5 h-3.5 text-[#E31E2B]" />
                   <span>Duration: {course.duration} {course.duration_unit}</span>
                 </span>
-                <span className="bg-white/10 px-3 py-1 rounded-full border border-white/10">
+                <span className="bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200">
                   Level: {course.level?.toUpperCase()}
                 </span>
                 {course.language && (
-                  <span className="bg-white/10 px-3 py-1 rounded-full border border-white/10">
+                  <span className="bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200">
                     Medium: {course.language}
                   </span>
                 )}
@@ -161,7 +161,7 @@ export default async function PublicCourseDetailPage({
                 collegeName={`Course Enquiry: ${course.name}`}
                 size="lg"
                 label="Apply for Admission"
-                className="text-sm px-8 w-full md:w-auto shadow-lg"
+                className="text-sm px-8 w-full md:w-auto shadow-md bg-[#E31E2B] hover:bg-[#c91824] text-white font-bold cursor-pointer"
               />
             </div>
           </div>

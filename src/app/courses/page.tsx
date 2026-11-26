@@ -51,95 +51,69 @@ export default async function PublicCoursesPage({ searchParams }: CoursesPagePro
 
   return (
     <div className="min-h-screen bg-[#F7F8FC]">
-      {/* 1. CINEMATIC HERO BANNER WITH ACADEMIC LIBRARY BACKGROUND */}
-      <section className="relative pt-8 sm:pt-12 pb-14 sm:pb-20 overflow-hidden border-b border-[#0F143A] bg-[#0A0D28]">
-        {/* Background Image with dark luxury overlay */}
+      {/* 1. PRESTIGIOUS EDITORIAL HERO (Bright, inspiring, academic campus library backdrop) */}
+      <section className="relative pt-6 sm:pt-10 pb-12 sm:pb-16 overflow-hidden border-b border-[#E7E9F0] bg-white">
+        {/* Subtle Academic Library / Campus Architectural Photography in Background */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/images/auth/campus_library.jpg"
-            alt="Premier Academic Programs & Degrees"
+            alt="Premier Academic Programs & Degrees in India"
             fill
             priority
-            className="object-cover object-center opacity-25 mix-blend-luminosity scale-105"
+            className="object-cover object-[80%_center] opacity-15"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#080B22]/95 via-[#0C1133]/90 to-[#080B22]/95" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-600/15 via-transparent to-transparent pointer-events-none" />
-          <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.04] pointer-events-none" />
+          {/* Ambient luminous white-to-soft-slate gradient for crystal-clear readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/75" />
+          <div className="absolute inset-y-0 right-0 w-1/3 bg-radial from-red-500/5 to-transparent pointer-events-none" />
         </div>
 
         <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Breadcrumb & Live Session Chip */}
+          {/* Breadcrumb Navigation & Live Status Pill */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
-              <Link href="/" className="hover:text-white transition-colors">
+            <nav className="flex items-center gap-1.5 text-xs font-semibold text-gray-500">
+              <Link href="/" className="hover:text-[#E31E2B] transition-colors">
                 Home
               </Link>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
-              <span className="text-slate-200">Academic Programs</span>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
-              <span className="text-red-400 font-bold">Courses &amp; Degrees</span>
-            </div>
+              <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+              <span className="text-gray-600">Curricula</span>
+              <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+              <span className="text-[#E31E2B] font-bold">Courses &amp; Degrees</span>
+            </nav>
 
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-500/15 border border-red-500/30 text-red-300 text-xs font-bold backdrop-blur-md shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-              <span>Session 2026–27 Curriculum &amp; Intake Live</span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 border border-red-200 text-[#E31E2B] text-xs font-bold shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-[#E31E2B] animate-pulse" />
+              <span>Session 2026–27 Syllabi &amp; Cutoffs Live</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Left Content */}
-            <div className="lg:col-span-8 space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold uppercase tracking-wider backdrop-blur-md">
-                <Sparkles className="w-3.5 h-3.5 text-red-400" />
-                <span>Verified Academic Degree &amp; Specialization Catalog</span>
-              </div>
-
-              <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.15]">
-                Explore Academic Programs &amp; <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-red-500 to-rose-400">Top Specializations</span>
-              </h1>
-
-              <p className="font-body text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
-                Find the right career path with comprehensive curriculum blueprints, UGC/AICTE compliance, eligibility benchmarks, duration requirements, and affiliated top college intake data.
-              </p>
-
-              {/* Trust Badges */}
-              <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-2 text-xs text-slate-300 font-medium">
-                <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3.5 py-1.5">
-                  <Award className="w-4 h-4 text-amber-400" />
-                  <span>AICTE / UGC Compliant Curricula</span>
-                </div>
-                <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3.5 py-1.5">
-                  <Layers className="w-4 h-4 text-blue-400" />
-                  <span>Multi-Campus Intakes</span>
-                </div>
-                <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3.5 py-1.5">
-                  <GraduationCap className="w-4 h-4 text-emerald-400" />
-                  <span>Free Admission Counselling</span>
-                </div>
-              </div>
+          {/* Editorial Title & Overview */}
+          <div className="max-w-3xl space-y-3 sm:space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-[11px] font-bold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-[#E31E2B]" />
+              <span>Verified Degree &amp; Specialization Catalog</span>
             </div>
 
-            {/* Right Quick Metric Highlights */}
-            <div className="lg:col-span-4 grid grid-cols-2 gap-3 sm:gap-4">
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 text-white">
-                <div className="text-2xl sm:text-3xl font-extrabold text-red-400 font-display">500+</div>
-                <div className="text-xs font-semibold text-slate-300 mt-1">Degree Programs</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">UG, PG &amp; Diplomas</div>
+            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#15182D] tracking-tight leading-[1.12]">
+              Explore India&apos;s <span className="text-[#E31E2B]">Flagship Programs</span> &amp; Specializations
+            </h1>
+
+            <p className="font-body text-sm sm:text-base text-gray-600 leading-relaxed max-w-2xl">
+              Discover accredited degree programs with verified UGC &amp; AICTE compliant syllabi, entrance exam requirements, duration benchmarks, and participating campus intakes.
+            </p>
+
+            {/* Trust Highlights Row */}
+            <div className="flex flex-wrap items-center gap-3 sm:gap-5 pt-1 text-xs text-gray-700 font-semibold">
+              <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1">
+                <Award className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>AICTE &amp; UGC Compliant Curricula</span>
               </div>
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 text-white">
-                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-display">100%</div>
-                <div className="text-xs font-semibold text-slate-300 mt-1">Verified Eligibility</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">Cutoffs &amp; Syllabi</div>
+              <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1">
+                <Layers className="w-4 h-4 text-blue-600 shrink-0" />
+                <span>Multi-Campus Verified Intakes</span>
               </div>
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 text-white">
-                <div className="text-2xl sm:text-3xl font-extrabold text-blue-400 font-display">35+</div>
-                <div className="text-xs font-semibold text-slate-300 mt-1">Disciplines</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">Engineering to Law</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 text-white">
-                <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 font-display">Fast-Track</div>
-                <div className="text-xs font-semibold text-slate-300 mt-1">Direct Counselling</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">Session 2026–27</div>
+              <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1">
+                <ShieldCheck className="w-4 h-4 text-[#E31E2B] shrink-0" />
+                <span>Free Academic Advisory</span>
               </div>
             </div>
           </div>
@@ -147,7 +121,7 @@ export default async function PublicCoursesPage({ searchParams }: CoursesPagePro
       </section>
 
       {/* 2. CATALOG SECTION */}
-      <section className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <section className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         <PublicCourseCatalog
           initialCourses={courses}
           initialTotal={totalCount}

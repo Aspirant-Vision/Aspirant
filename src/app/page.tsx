@@ -15,6 +15,11 @@ import { FindIdealCollege } from "@/components/home/find-ideal-college";
 import { BlogsMagazine } from "@/components/home/blogs-magazine";
 import { FinalCounsellingCta } from "@/components/home/final-counselling-cta";
 
+// High-converting inline inquiry & lead capture forms
+import { CutoffEligibilityForm } from "@/components/home/cutoff-eligibility-form";
+import { ScholarshipCalculatorForm } from "@/components/home/scholarship-calculator-form";
+import { ExamStrategyForm } from "@/components/home/exam-strategy-form";
+
 import { getPublicCollegesAction } from "@/lib/college/actions";
 
 export const dynamic = "force-dynamic";
@@ -40,6 +45,9 @@ export default async function HomePage() {
       {/* SECTION 05: Explore India's Top Institutions (Featured Colleges) */}
       <FeaturedColleges dbColleges={liveFeaturedColleges} />
 
+      {/* RELEVANT FORM 01: Instant Cutoff & Eligibility Predictor Form */}
+      <CutoffEligibilityForm />
+
       {/* SECTION 06: NEW RELEVANT — Top Education Hubs Across India (Regional Discovery) */}
       <EducationHubs />
 
@@ -49,6 +57,9 @@ export default async function HomePage() {
       {/* SECTION 08: Popular Degree Courses & Verified Career Paths */}
       <PopularCourses />
 
+      {/* RELEVANT FORM 02: Merit Scholarship & Fee Structure Calculator */}
+      <ScholarshipCalculatorForm />
+
       {/* SECTION 09: Admission Journey (Curved Road with Milestone Markers) */}
       <AdmissionJourneyTimeline />
 
@@ -57,6 +68,9 @@ export default async function HomePage() {
 
       {/* SECTION 11: Upcoming Entrance Exams & Application Deadlines */}
       <UpcomingExams />
+
+      {/* RELEVANT FORM 03: 1-on-1 Exam Cutoff Strategy & Backup Planning Form */}
+      <ExamStrategyForm />
 
       {/* SECTION 12: Real Students. Real Journeys. Real Success. (Editorial Storytelling) */}
       <StudentSuccessStories />
