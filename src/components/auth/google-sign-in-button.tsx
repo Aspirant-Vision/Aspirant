@@ -95,13 +95,13 @@ export function GoogleSignInButton({
       type="button"
       onClick={handleGoogleSignIn}
       disabled={isLoading}
-      className="group relative w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50/80 active:bg-slate-100/90 text-slate-700 text-sm font-semibold transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+      className="w-full flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-medium transition-colors focus:outline-none focus:ring-1 focus:ring-slate-400 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
     >
       {isLoading ? (
-        <Loader2 className="w-4 h-4 animate-spin text-red-600" />
+        <Loader2 className="w-4 h-4 animate-spin text-slate-600" />
       ) : (
         <svg
-          className="w-4 h-4 shrink-0 transition-transform group-hover:scale-110"
+          className="w-4 h-4 shrink-0"
           viewBox="0 0 24 24"
           aria-hidden="true"
         >
@@ -123,7 +123,7 @@ export function GoogleSignInButton({
           />
         </svg>
       )}
-      <span className="tracking-tight">{label}</span>
+      <span>{label}</span>
     </button>
   );
 }
