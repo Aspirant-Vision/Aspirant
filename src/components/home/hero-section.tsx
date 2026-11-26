@@ -164,9 +164,10 @@ export function HeroSection() {
               {/* Red Tactile Search Button */}
               <button
                 type="submit"
-                className="tactile-btn-red text-white p-2.5 sm:p-3 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0"
+                className="tactile-btn-red text-white py-2.5 px-4 sm:p-3 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 shrink-0 font-bold text-xs sm:text-sm"
                 aria-label="Search"
               >
+                <span className="sm:hidden">Search Colleges</span>
                 <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
               </button>
             </form>

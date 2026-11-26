@@ -1,11 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { TopAnnouncementBar } from "@/components/layout/top-announcement-bar";
-import { TopNavBar } from "@/components/layout/top-nav-bar";
-import { Footer } from "@/components/layout/footer";
-import { FloatingWhatsApp } from "@/components/layout/floating-whatsapp";
-import { StickyConsultationTab } from "@/components/layout/sticky-consultation-tab";
-import { CounselingModalProvider } from "@/components/forms/counseling-modal-context";
+import { PublicShell } from "@/components/layout/public-shell";
 
 export const viewport: Viewport = {
   themeColor: "#0B2240",
@@ -109,13 +104,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-[#F7F8FC] text-[#15182D] antialiased flex flex-col selection:bg-red-100 selection:text-red-700" suppressHydrationWarning>
-        <CounselingModalProvider>
-          <TopNavBar />
-          <main className="flex-grow pt-[64px] sm:pt-[72px] overflow-x-hidden w-full">{children}</main>
-          <Footer />
-          <FloatingWhatsApp />
-          <StickyConsultationTab />
-        </CounselingModalProvider>
+        <PublicShell>{children}</PublicShell>
       </body>
     </html>
   );

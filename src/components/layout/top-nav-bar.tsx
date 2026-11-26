@@ -4,12 +4,15 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { useCounselingModal } from "@/components/forms/counseling-modal-context";
+import { NavUserProfile } from "@/components/layout/nav-user-profile";
 import {
   Search,
   ChevronDown,
   ArrowUpRight,
   Menu,
   X,
+  User,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -151,13 +154,8 @@ export function TopNavBar() {
             <Search className="w-4 h-4 stroke-[2]" />
           </button>
 
-          {/* Login Button with Tactile White Pill */}
-          <button
-            onClick={() => openModal("Login")}
-            className="tactile-btn-white px-5 py-2 rounded-full text-xs font-bold text-[#15182D] transition-all"
-          >
-            Login
-          </button>
+          {/* Student Profile / Login State */}
+          <NavUserProfile />
 
           {/* Apply Now CTA with Tactile Red Pill */}
           <button
@@ -223,15 +221,14 @@ export function TopNavBar() {
           </nav>
 
           <div className="pt-2 flex flex-col gap-2.5">
-            <button
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                openModal("Login");
-              }}
-              className="tactile-btn-white w-full py-2.5 rounded-xl text-xs font-bold text-[#15182D]"
+            <Link
+              href="/login"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="tactile-btn-white w-full py-2.5 rounded-xl text-xs font-bold text-[#15182D] flex items-center justify-center gap-2"
             >
-              Login
-            </button>
+              <User className="w-4 h-4 text-[#E31E2B]" />
+              <span>Login</span>
+            </Link>
             <button
               onClick={() => {
                 setIsMobileMenuOpen(false);
@@ -239,7 +236,7 @@ export function TopNavBar() {
               }}
               className="tactile-btn-red w-full py-2.5 rounded-xl text-white text-xs font-bold flex items-center justify-center gap-1.5"
             >
-              <span>Apply Now</span>
+              <span>Get Free Guidance</span>
               <ArrowUpRight className="w-4 h-4" />
             </button>
           </div>

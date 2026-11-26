@@ -8,7 +8,7 @@ export function StickyConsultationTab() {
   const { openModal } = useCounselingModal();
 
   return (
-    <div className="fixed right-0 top-1/2 -translate-y-1/2 z-50 pointer-events-auto">
+    <div className="hidden md:flex fixed right-0 top-1/2 -translate-y-1/2 z-50 pointer-events-auto">
       <button
         type="button"
         onClick={() => openModal("Sticky Vertical Consultation Tab")}
