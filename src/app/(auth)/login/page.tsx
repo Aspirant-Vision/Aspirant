@@ -30,7 +30,7 @@ function LoginForm() {
       email: "",
       password: "",
       rememberMe: false,
-      redirectUrl: nextParam ? getSafeRedirectUrl(nextParam) : "/student/dashboard",
+      redirectUrl: nextParam ? getSafeRedirectUrl(nextParam) : "/profile",
     },
   });
 
@@ -47,7 +47,7 @@ function LoginForm() {
         return;
       }
 
-      const target = result.data.redirectTo || "/student/dashboard";
+      const target = result.data.redirectTo || "/profile";
       window.location.href = target;
     } catch (err: unknown) {
       console.error("Login unexpected error:", err);
@@ -80,7 +80,7 @@ function LoginForm() {
       <div className="mb-4">
         <GoogleSignInButton
           label="Continue with Google"
-          redirectUrl={nextParam ? getSafeRedirectUrl(nextParam) : "/student/dashboard"}
+          redirectUrl={nextParam ? getSafeRedirectUrl(nextParam) : "/profile"}
           onError={(msg) => setServerError(msg)}
         />
         <div className="relative my-4">

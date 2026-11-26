@@ -336,21 +336,21 @@ export function NavUserProfile() {
               {/* Quick Actions / Shortcuts */}
               <div className="py-2.5 space-y-1">
                 <Link
-                  href="/student/dashboard"
+                  href="/profile"
                   onClick={() => setIsOpen(false)}
                   className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors"
                 >
-                  <LayoutDashboard className="w-3.5 h-3.5 text-gray-400" />
-                  <span>Student Dashboard</span>
+                  <User className="w-3.5 h-3.5 text-primary" />
+                  <span>My Profile</span>
                 </Link>
 
                 <Link
-                  href="/student/applications"
+                  href="/colleges"
                   onClick={() => setIsOpen(false)}
                   className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors"
                 >
-                  <FileCheck2 className="w-3.5 h-3.5 text-gray-400" />
-                  <span>My Applications</span>
+                  <Bookmark className="w-3.5 h-3.5 text-gray-400" />
+                  <span>Explore Colleges</span>
                 </Link>
 
                 <Link

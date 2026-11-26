@@ -57,11 +57,11 @@ export async function GET(request: NextRequest) {
       if (isStaff(role)) {
         targetUrl = "/admin/dashboard";
       } else {
-        targetUrl = "/student/dashboard";
+        targetUrl = "/profile";
       }
     }
 
-    return NextResponse.redirect(new URL(targetUrl || "/student/dashboard", origin));
+    return NextResponse.redirect(new URL(targetUrl || "/profile", origin));
   }
 
   // Fallback if no code present

@@ -18,6 +18,8 @@ import {
   ResetPasswordInput,
   StaffInviteInput,
   AcceptStaffInviteInput,
+  profileUpdateSchema,
+  ProfileUpdateInput,
 } from "@/lib/validation/auth";
 import { sanitizeEmail, sanitizePhone, sanitizeString } from "@/lib/security/sanitize";
 import { ApiResponse } from "@/types/api.types";
@@ -61,6 +63,16 @@ export async function registerStudentAction(
     const email = sanitizeEmail(parsed.data.email);
     const phone = sanitizePhone(parsed.data.phone);
     const fullName = sanitizeString(parsed.data.fullName);
+    const location = sanitizeString(parsed.data.location);
+
+    // Parse city and state from location string (e.g., "Bhubaneswar, Odisha")
+    let city = location;
+    let state = location;
+    if (location.includes(",")) {
+      const parts = location.split(",").map((p) => p.trim());
+      city = parts[0] || location;
+      state = parts.slice(1).join(", ") || location;
+    }
 
     const supabase = await createClient();
 
@@ -73,9 +85,12 @@ export async function registerStudentAction(
         data: {
           full_name: fullName,
           phone,
+          city,
+          state,
+          location,
           role: "student" as UserRole, // Strictly enforced on server
         },
-        emailRedirectTo: `${siteUrl}/auth/callback?next=/student/dashboard`,
+        emailRedirectTo: `${siteUrl}/auth/callback?next=/profile`,
       },
     });
 
@@ -100,6 +115,27 @@ export async function registerStudentAction(
     }
 
     const userId = authData.user?.id || "";
+
+    // Sync profile directly to PostgreSQL via privileged admin client
+    if (userId) {
+      try {
+        const admin = createAdminClient();
+        await admin.from("profiles").upsert({
+          id: userId,
+          email,
+          full_name: fullName,
+          phone,
+          city,
+          state,
+          role: "student",
+          account_status: "active",
+          updated_at: new Date().toISOString(),
+        });
+      } catch (upsertErr) {
+        console.error("Failed to sync student profile record:", upsertErr);
+      }
+    }
+
     // If Supabase has email confirmations enabled, user.identities might be empty or session null
     const requiresVerification = !authData.session;
 
@@ -207,7 +243,7 @@ export async function loginAction(
     // Determine safe redirect
     const safeDestination = getSafeRedirectUrl(
       parsed.data.redirectUrl,
-      "/student/dashboard"
+      "/profile"
     );
 
     return {
@@ -646,6 +682,103 @@ export async function acceptStaffInviteAction(
       error: {
         code: "INTERNAL_ERROR",
         message: "An unexpected error occurred while accepting staff invitation.",
+      },
+    };
+  }
+}
+
+// ------------------------------------------------------------------------------
+// 8. UPDATE STUDENT PROFILE ACTION (Minimal Profile on Public Site)
+// ------------------------------------------------------------------------------
+export async function updateStudentProfileAction(
+  data: ProfileUpdateInput
+): Promise<ApiResponse<{ message: string }>> {
+  try {
+    const parsed = profileUpdateSchema.safeParse(data);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: {
+          code: "VALIDATION_ERROR",
+          message: parsed.error.issues[0]?.message || "Invalid profile data",
+        },
+      };
+    }
+
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return {
+        success: false,
+        error: {
+          code: "UNAUTHORIZED",
+          message: "You must be signed in to update your profile.",
+        },
+      };
+    }
+
+    const fullName = sanitizeString(parsed.data.fullName);
+    const phone = sanitizePhone(parsed.data.phone);
+    const location = sanitizeString(parsed.data.location);
+
+    let city = location;
+    let state = location;
+    if (location.includes(",")) {
+      const parts = location.split(",").map((p) => p.trim());
+      city = parts[0] || location;
+      state = parts.slice(1).join(", ") || location;
+    }
+
+    // Update profiles table
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({
+        full_name: fullName,
+        phone,
+        city,
+        state,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", user.id);
+
+    if (updateError) {
+      return {
+        success: false,
+        error: {
+          code: "UPDATE_FAILED",
+          message: updateError.message || "Failed to update profile.",
+        },
+      };
+    }
+
+    // Also update auth user metadata
+    await supabase.auth.updateUser({
+      data: {
+        full_name: fullName,
+        phone,
+        city,
+        state,
+        location,
+      },
+    });
+
+    return {
+      success: true,
+      data: {
+        message: "Profile updated successfully.",
+      },
+    };
+  } catch (err) {
+    console.error("[updateStudentProfileAction Exception]:", err);
+    return {
+      success: false,
+      error: {
+        code: "INTERNAL_ERROR",
+        message: "An unexpected error occurred while saving profile.",
       },
     };
   }

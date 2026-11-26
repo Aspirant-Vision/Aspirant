@@ -41,6 +41,11 @@ export const studentRegisterSchema = z
       .toLowerCase()
       .trim(),
     phone: phoneSchema,
+    location: z
+      .string()
+      .min(2, "Location (City/State) is required")
+      .max(100, "Location cannot exceed 100 characters")
+      .trim(),
     password: passwordSchema,
     confirmPassword: z.string().min(1, "Please confirm your password"),
     termsConsent: z.boolean().refine((val) => val === true, {
@@ -53,6 +58,24 @@ export const studentRegisterSchema = z
   });
 
 export type StudentRegisterInput = z.infer<typeof studentRegisterSchema>;
+
+// Profile Update Schema (Used on /profile page)
+export const profileUpdateSchema = z.object({
+  fullName: z
+    .string()
+    .min(2, "Full name must be at least 2 characters")
+    .max(100, "Full name cannot exceed 100 characters")
+    .trim(),
+  phone: phoneSchema,
+  location: z
+    .string()
+    .min(2, "Location (City/State) is required")
+    .max(100, "Location cannot exceed 100 characters")
+    .trim(),
+  targetCourse: z.string().optional(),
+});
+
+export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>;
 
 // ------------------------------------------------------------------------------
 // 2. STUDENT LOGIN SCHEMA

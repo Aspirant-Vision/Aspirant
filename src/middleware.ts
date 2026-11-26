@@ -15,15 +15,23 @@ export async function middleware(request: NextRequest) {
   // Set current pathname header for server layouts
   supabaseResponse.headers.set("x-pathname", pathname);
 
-  // 2. Student Route Protection (/student/*)
+  // 2. Student Route Redirect (/student/* -> /profile on public site)
   if (pathname.startsWith("/student")) {
     if (!user) {
-      const returnUrl = encodeURIComponent(getSafeRedirectUrl(`${pathname}${search}`, "/student/dashboard"));
-      return NextResponse.redirect(new URL(`/login?next=${returnUrl}`, request.url));
+      return NextResponse.redirect(new URL("/login?next=%2Fprofile", request.url));
+    }
+    // Students stay on clean minimal profile on public site
+    return NextResponse.redirect(new URL("/profile", request.url));
+  }
+
+  // 3. Profile Route Protection (/profile)
+  if (pathname === "/profile" || pathname.startsWith("/profile/")) {
+    if (!user) {
+      return NextResponse.redirect(new URL("/login?next=%2Fprofile", request.url));
     }
   }
 
-  // 3. Admin / Staff Route Protection (/admin/*)
+  // 4. Admin / Staff Route Protection (/admin/*)
   if (pathname.startsWith("/admin")) {
     // Exclude /admin/login from authentication gate
     if (pathname !== "/admin/login") {
@@ -34,14 +42,14 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 4. Authenticated redirect for public auth pages
+  // 5. Authenticated redirect for public auth pages
   // If already logged in, prevent accessing login/register repeatedly
   if (user) {
     const userRole = (user.user_metadata?.role as string) || "student";
     const isStaffUser = userRole === "admin" || userRole === "super_admin" || userRole === "counsellor";
 
     if (pathname === "/login" || pathname === "/register") {
-      const redirectTarget = isStaffUser ? "/admin/dashboard" : "/student/dashboard";
+      const redirectTarget = isStaffUser ? "/admin/dashboard" : "/profile";
       return NextResponse.redirect(new URL(redirectTarget, request.url));
     }
 
