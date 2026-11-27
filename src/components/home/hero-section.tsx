@@ -70,16 +70,16 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Main Headline - crystal clear contrast over light campus background with ambient halo */}
-          <h1 className="font-display text-[29px] sm:text-5xl lg:text-[56px] font-extrabold text-[#15182D] leading-[1.14] tracking-tight [text-shadow:_0_1px_3px_rgba(255,255,255,0.95),_0_2px_12px_rgba(255,255,255,0.9),_0_0_24px_rgba(255,255,255,0.85)]">
+          {/* Main Headline - crystal clear contrast over light campus background */}
+          <h1 className="font-display text-[29px] sm:text-5xl lg:text-[56px] font-extrabold text-[#15182D] leading-[1.14] tracking-tight">
             Discover. Compare. Apply. <br />
-            <span className="text-[#E31E2B] [text-shadow:_0_1px_3px_rgba(255,255,255,0.95),_0_2px_12px_rgba(255,255,255,0.9),_0_0_24px_rgba(255,255,255,0.85)]">
+            <span className="text-[#E31E2B]">
               Get Admitted.
             </span>
           </h1>
 
           {/* Supporting Copy - bold, crisp, completely readable without any enclosing card */}
-          <p className="font-body text-xs sm:text-lg text-[#15182D] font-bold leading-relaxed max-w-xl [text-shadow:_0_1px_2px_rgba(255,255,255,0.95),_0_1px_8px_rgba(255,255,255,0.9),_0_0_16px_rgba(255,255,255,0.8)]">
+          <p className="font-body text-xs sm:text-lg text-[#15182D] font-bold leading-relaxed max-w-xl">
             Find the right college, explore top courses, and get expert counselling to complete your admission journey — all in one place.
           </p>
 

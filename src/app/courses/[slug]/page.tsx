@@ -110,18 +110,6 @@ export default async function PublicCourseDetailPage({
       {/* 2. PRESTIGIOUS EDITORIAL HERO HEADER */}
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
         <div className="relative rounded-2xl sm:rounded-3xl border border-gray-200/90 p-6 sm:p-10 overflow-hidden bg-white">
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/images/auth/campus_library.jpg"
-              alt={course.name}
-              fill
-              priority
-              className="object-cover object-[80%_center] opacity-15"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/80" />
-            <div className="absolute inset-y-0 right-0 w-1/3 bg-radial from-red-500/5 to-transparent pointer-events-none" />
-          </div>
-
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-3.5 max-w-3xl">
               <div className="flex flex-wrap items-center gap-2">

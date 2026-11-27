@@ -513,19 +513,6 @@ export default function MbaLandingPage() {
       {/* 1. HERO SECTION: LOOKING FOR MBA | PGDM INTO TOP COLLEGES */}
       {/* ======================================================== */}
       <section className="relative pt-6 sm:pt-10 pb-12 sm:pb-16 overflow-hidden border-b border-[#E7E9F0] bg-white">
-        {/* Premier Campus Architectural Background Image */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/auth/auth_campus_highres.jpg"
-            alt="Premier MBA Campuses in India"
-            fill
-            priority
-            className="object-cover object-[75%_center] opacity-15"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/70" />
-          <div className="absolute inset-y-0 right-0 w-1/3 bg-radial from-red-500/5 to-transparent pointer-events-none" />
-        </div>
-
         <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Breadcrumb & Live Admission Status */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6 sm:mb-8">

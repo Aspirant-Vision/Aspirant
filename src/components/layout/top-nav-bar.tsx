@@ -45,10 +45,12 @@ export function TopNavBar() {
       active: isCollegesActive,
       hasDropdown: true,
       subItems: [
-        { label: "Engineering Colleges", href: "/colleges?type=Engineering" },
-        { label: "Management (MBA) Colleges", href: "/colleges?type=Management" },
-        { label: "Medical & Dental Colleges", href: "/colleges?type=Medical" },
-        { label: "Law Universities", href: "/colleges?type=Law" },
+        { label: "All Colleges & Universities", href: "/colleges" },
+        { label: "Engineering & Technology", href: "/colleges?type=Engineering" },
+        { label: "Medical & Healthcare", href: "/colleges?type=Medical" },
+        { label: "Management & Business", href: "/colleges?type=Management" },
+        { label: "Law & Legal Studies", href: "/colleges?type=Law" },
+        { label: "Arts, Science & Commerce", href: "/colleges?type=Arts+%26+Science" },
         { label: "Compare Colleges", href: "/colleges" },
       ],
     },
@@ -58,11 +60,12 @@ export function TopNavBar() {
       active: isCoursesActive,
       hasDropdown: true,
       subItems: [
-        { label: "B.Tech / B.E.", href: "/courses?category=Engineering&degree=B.Tech+%2F+B.E." },
-        { label: "MBA / PGDM Special Portal", href: "/mba" },
-        { label: "MBBS / BDS", href: "/courses?category=Medical+%26+Allied+Health" },
-        { label: "BBA / BCA", href: "/courses?category=Management" },
-        { label: "All Career Paths", href: "/courses" },
+        { label: "Explore All Programs", href: "/courses" },
+        { label: "Engineering (B.Tech / M.Tech)", href: "/courses?category=Engineering&degree=B.Tech+%2F+B.E." },
+        { label: "Medical & Allied Health (MBBS / BDS)", href: "/courses?category=Medical+%26+Allied+Health" },
+        { label: "Management & Business (BBA / MBA)", href: "/courses?category=Management" },
+        { label: "Computer Applications (BCA / MCA)", href: "/courses?category=Management" },
+        { label: "Design, Media & Humanities", href: "/courses?category=Design" },
       ],
     },
     {
@@ -91,7 +94,7 @@ export function TopNavBar() {
       subItems: [
         { label: "Admission Journey", href: "/#journey" },
         { label: "Eligibility Calculator", href: "/#finder" },
-        { label: "Scholarship Guidance", href: "/#finder" },
+        { label: "Financial Aid & Concessions", href: "/#finder" },
         { label: "Direct Admissions", href: "/#journey" },
       ],
     },
@@ -146,17 +149,17 @@ export function TopNavBar() {
 
               {/* Submenu Dropdown */}
               {item.hasDropdown && activeDropdown === item.name && (
-                <div className="absolute top-full left-0 w-60 pt-2 z-50 animate-fade-in">
-                  <div className="tactile-card rounded-2xl p-2 space-y-1">
+                <div className="absolute top-full left-0 w-72 pt-2.5 z-50 animate-fade-in">
+                  <div className="bg-white rounded-2xl border border-gray-200/90 p-2 space-y-1 shadow-lg">
                     {item.subItems?.map((sub: any) => (
                       <Link
                         key={sub.label}
                         href={sub.href}
                         onClick={() => setActiveDropdown(null)}
                         className={cn(
-                          "block px-3 py-2 text-xs font-semibold rounded-xl transition-colors",
-                          sub.highlight
-                            ? "text-[#E31E2B] bg-red-50 font-bold hover:bg-red-100/80"
+                          "block px-3.5 py-2 text-xs font-semibold rounded-xl transition-colors",
+                          pathname === sub.href
+                            ? "text-[#E31E2B] bg-red-50 font-bold"
                             : "text-[#15182D] hover:text-[#E31E2B] hover:bg-red-50/70"
                         )}
                       >

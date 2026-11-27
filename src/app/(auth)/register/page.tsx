@@ -77,7 +77,7 @@ export default function RegisterPage() {
           Create Student Account
         </h2>
         <p className="text-xs text-slate-500 mt-0.5">
-          Join 50,000+ students discovering verified admissions & scholarships.
+          Join 50,000+ students discovering verified admissions & merit fee concessions.
         </p>
       </div>
 

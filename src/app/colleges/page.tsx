@@ -49,22 +49,8 @@ export default async function CollegesPage({ searchParams }: CollegesPageProps) 
 
   return (
     <div className="min-h-screen bg-[#F7F8FC]">
-      {/* 1. PRESTIGIOUS EDITORIAL HERO (Bright, inspiring, authentic campus architectural backdrop) */}
-      <section className="relative pt-6 sm:pt-10 pb-12 sm:pb-16 overflow-hidden border-b border-[#E7E9F0] bg-white">
-        {/* Subtle Campus Architectural Photography in Background */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/auth/auth_campus_highres.jpg"
-            alt="Premier University Campuses in India"
-            fill
-            priority
-            className="object-cover object-[80%_center] opacity-15"
-          />
-          {/* Ambient luminous white-to-soft-slate gradient for crystal-clear readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/70" />
-          <div className="absolute inset-y-0 right-0 w-1/3 bg-radial from-red-500/5 to-transparent pointer-events-none" />
-        </div>
-
+      {/* 1. PRESTIGIOUS EDITORIAL HERO (Bright, inspiring, crisp authentic campus architectural showcase) */}
+      <section className="relative pt-6 sm:pt-10 pb-10 sm:pb-14 overflow-hidden border-b border-[#E7E9F0] bg-white">
         <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Breadcrumb Navigation & Live Status Pill */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
@@ -84,33 +70,88 @@ export default async function CollegesPage({ searchParams }: CollegesPageProps) 
             </div>
           </div>
 
-          <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#15182D] text-white text-xs font-bold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-red-400" />
-              <span>Verified Institutional Directory</span>
+          {/* Hero Grid: Narrative (Left) + Crisp Architectural Campus Visual (Right) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            {/* Left Column: Headlines, Trust Marks & Quick Metrics */}
+            <div className="lg:col-span-7 space-y-4 sm:space-y-5">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#15182D] text-white text-xs font-bold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-red-400" />
+                <span>Verified Institutional Directory</span>
+              </div>
+
+              <h1 className="font-display text-3xl sm:text-4xl lg:text-[46px] font-extrabold text-[#15182D] tracking-tight leading-[1.14]">
+                Discover India&apos;s <span className="text-[#E31E2B]">Premier Colleges</span> &amp; Universities
+              </h1>
+
+              <p className="font-body text-sm sm:text-base text-gray-600 leading-relaxed max-w-2xl">
+                Explore accredited institutions with verified NIRF rankings, NAAC A++ grades, verified placement packages, and ethical direct merit counselling assistance.
+              </p>
+
+              {/* Trust Highlights Row */}
+              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-1 text-xs text-gray-700 font-semibold">
+                <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Govt &amp; AICTE Approved</span>
+                </div>
+                <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1">
+                  <Award className="w-4 h-4 text-amber-500 shrink-0" />
+                  <span>Audited Placement Records</span>
+                </div>
+                <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1">
+                  <ShieldCheck className="w-4 h-4 text-[#E31E2B] shrink-0" />
+                  <span>Zero Hidden Fees</span>
+                </div>
+              </div>
+
+              {/* Quick Metrics Bar */}
+              <div className="grid grid-cols-3 gap-2.5 sm:gap-4 pt-2 max-w-xl">
+                <div className="p-3 rounded-xl bg-[#FAFBFD] border border-gray-200/80">
+                  <span className="block font-display font-extrabold text-lg sm:text-2xl text-[#15182D]">2,500+</span>
+                  <span className="block text-[11px] text-gray-500 font-medium leading-tight">Verified Colleges Pan-India</span>
+                </div>
+                <div className="p-3 rounded-xl bg-[#FAFBFD] border border-gray-200/80">
+                  <span className="block font-display font-extrabold text-lg sm:text-2xl text-[#E31E2B]">₹1.15 Cr</span>
+                  <span className="block text-[11px] text-gray-500 font-medium leading-tight">Highest CTC Top Placement</span>
+                </div>
+                <div className="p-3 rounded-xl bg-[#FAFBFD] border border-gray-200/80">
+                  <span className="block font-display font-extrabold text-lg sm:text-2xl text-emerald-600">100%</span>
+                  <span className="block text-[11px] text-gray-500 font-medium leading-tight">Direct Merit Assistance</span>
+                </div>
+              </div>
             </div>
 
-            <h1 className="font-display text-3xl sm:text-4xl lg:text-[46px] font-extrabold text-[#15182D] tracking-tight leading-[1.14]">
-              Discover India&apos;s <span className="text-[#E31E2B]">Premier Colleges</span> &amp; Universities
-            </h1>
+            {/* Right Column: Crisp High-Resolution Campus Photography Showcase (No white fog, no shadows) */}
+            <div className="lg:col-span-5">
+              <div className="relative rounded-2xl sm:rounded-3xl border border-gray-200/90 overflow-hidden bg-slate-100 aspect-[16/11] sm:aspect-[4/3] lg:aspect-[16/12]">
+                <Image
+                  src="/images/auth/auth_campus_highres.jpg"
+                  alt="Premier University Campuses in India"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 42vw"
+                  className="object-cover object-center"
+                />
+                {/* Crisp Dark Scrim at bottom for crystal clear caption contrast */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-            <p className="font-body text-sm sm:text-base text-gray-600 leading-relaxed max-w-2xl">
-              Explore accredited institutions with verified NIRF rankings, NAAC A++ grades, verified placement packages, and ethical direct merit counselling assistance.
-            </p>
+                {/* Floating Tags */}
+                <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between gap-2">
+                  <span className="px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#15182D] text-[11px] font-extrabold border border-white/60">
+                    🏛️ Verified Campuses
+                  </span>
+                  <span className="px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold tracking-wide">
+                    NIRF &amp; NAAC A++
+                  </span>
+                </div>
 
-            {/* Trust Highlights Row */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-5 pt-1 text-xs text-gray-700 font-semibold">
-              <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Govt &amp; AICTE Approved</span>
-              </div>
-              <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1">
-                <Award className="w-4 h-4 text-amber-500 shrink-0" />
-                <span>Audited Placement Records</span>
-              </div>
-              <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1">
-                <ShieldCheck className="w-4 h-4 text-[#E31E2B] shrink-0" />
-                <span>Zero Hidden Fees</span>
+                <div className="absolute bottom-3.5 left-3.5 right-3.5 text-white">
+                  <p className="text-xs sm:text-sm font-extrabold leading-tight">
+                    IITs, IIMs, BITS, AIIMS &amp; Top Autonomous Campuses
+                  </p>
+                  <p className="text-[11px] text-gray-200 mt-0.5">
+                    Audited cutoffs, genuine placement packages &amp; direct counselling
+                  </p>
+                </div>
               </div>
             </div>
           </div>
