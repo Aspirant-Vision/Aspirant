@@ -164,9 +164,8 @@ export function CounselingModal({
         email: formData.email.trim(),
         phone: cleanPhone,
         preferredLocation: formData.city.trim() || "India",
-        enquiryMessage: `College: ${formData.interestedCollege || "Not specified / Open to counseling"} | Course: ${
-          formData.interestedCourse
-        }${formData.score ? ` | Score/Rank: ${formData.score}` : ""}`,
+        enquiryMessage: `College: ${formData.interestedCollege || "Not specified / Open to counseling"} | Course: ${formData.interestedCourse
+          }${formData.score ? ` | Score/Rank: ${formData.score}` : ""}`,
         consentStatus: formData.consent,
         source: initialCollege ? `modal_${initialCollege.slice(0, 30)}` : "website_modal",
         landingPage,
@@ -180,7 +179,7 @@ export function CounselingModal({
       if (!res.success) {
         setErrorMessage(
           res.error?.message ||
-            "Unable to register your enquiry right now. Please message our admissions desk directly on WhatsApp."
+          "Unable to register your enquiry right now. Please message our admissions desk directly on WhatsApp."
         );
       } else {
         setSubmitted(true);
@@ -428,21 +427,19 @@ export function CounselingModal({
                         key={rec.name}
                         type="button"
                         onClick={() => setFormData({ ...formData, interestedCollege: rec.name })}
-                        className={`text-xs px-2.5 py-1 rounded-lg border font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                          isSelected
-                            ? "bg-[#15182D] text-white border-[#15182D] shadow-2xs"
-                            : "bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:text-black"
-                        }`}
+                        className={`text-xs px-2.5 py-1 rounded-lg border font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${isSelected
+                          ? "bg-[#15182D] text-white border-[#15182D] shadow-2xs"
+                          : "bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:text-black"
+                          }`}
                       >
                         {isSelected && <CheckCircle2 className="w-3 h-3 text-emerald-400" />}
                         <span>{rec.name}</span>
                         {rec.nirf && (
                           <span
-                            className={`text-[9px] px-1 rounded font-extrabold ${
-                              isSelected
-                                ? "bg-white/20 text-white"
-                                : "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-                            }`}
+                            className={`text-[9px] px-1 rounded font-extrabold ${isSelected
+                              ? "bg-white/20 text-white"
+                              : "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                              }`}
                           >
                             NIRF {rec.nirf}
                           </span>
