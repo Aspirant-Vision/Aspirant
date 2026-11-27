@@ -62,7 +62,6 @@ export function TopNavBar() {
         { label: "Management & Business", href: "/colleges?type=Management" },
         { label: "Law & Legal Studies", href: "/colleges?type=Law" },
         { label: "Arts, Science & Commerce", href: "/colleges?type=Arts+%26+Science" },
-        { label: "Compare Colleges", href: "/colleges" },
       ],
     },
     {
