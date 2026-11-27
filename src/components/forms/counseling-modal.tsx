@@ -1,9 +1,24 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, CheckCircle2, Send, GraduationCap, Sparkles, Loader2, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { SITE_CONFIG } from "@/lib/constants";
+import {
+  X,
+  CheckCircle2,
+  GraduationCap,
+  Sparkles,
+  Loader2,
+  AlertCircle,
+  Building2,
+  MapPin,
+  User,
+  Phone,
+  Mail,
+  Award,
+  ShieldCheck,
+  Clock,
+  ArrowRight,
+  MessageCircle,
+} from "lucide-react";
 import { submitPublicEnquiryAction } from "@/lib/crm/actions";
 import {
   getRecommendedCollegesForDiscipline,
@@ -16,6 +31,70 @@ interface CounselingModalProps {
   initialCollege?: string;
 }
 
+/**
+ * Sanitizes triggers like "Apply Now", "Free Consultation", "Course Guidance: ...", etc.
+ * so generic button labels never populate the "Preferred College" field.
+ */
+function sanitizeTriggerContext(raw?: string): { college: string; course?: string; intent?: string } {
+  if (!raw) return { college: "" };
+  const trimmed = raw.trim();
+
+  const genericPhrases = [
+    "apply now",
+    "apply",
+    "free consultation",
+    "sticky vertical consultation tab",
+    "admission journey banner",
+    "ready to start your journey cta banner",
+    "50,000+ guided students showcase",
+    "admission roadmap guide",
+    "placement report download",
+    "directory sidebar direct evaluation",
+    "all courses & streams",
+    "all educational articles",
+    "blogs",
+    "why aspirant vision - expert guidance",
+    "college comparison",
+    "detailed comparison tool",
+    "add custom college to compare",
+    "full entrance exam calendar",
+    "placement & recruiters report",
+    "career & placement strategy call",
+    "1-on-1 mba direct admission call",
+    "mba fast-track application 2026",
+    "mba entrance exam guidance",
+    "mba colleges shortlisting assistance",
+  ];
+
+  if (genericPhrases.includes(trimmed.toLowerCase())) {
+    return { college: "", intent: trimmed };
+  }
+
+  // Course triggers, e.g. "Course Guidance: B.Tech Computer Science (CSE)"
+  if (/^Course Guidance:\s*/i.test(trimmed)) {
+    const course = trimmed.replace(/^Course Guidance:\s*/i, "").trim();
+    return { college: "", course, intent: "course_guidance" };
+  }
+  if (/^Stream:\s*/i.test(trimmed)) {
+    return { college: "", intent: trimmed };
+  }
+
+  // Specific college action triggers
+  let cleanName = trimmed
+    .replace(
+      /^(Admission Guidance:\s*|Admission Enquiry:\s*|Apply for Seat:\s*|Apply:\s*|View College:\s*|Compare:\s*|Apply for MBA \/ PGDM:\s*|MBA Cutoff Inquiry:\s*|MBA Specialization Counselling:\s*|Exam Advisory:\s*|Claim Scholarship:\s*|Success Story:\s*|Recruiter Details:\s*|Article:\s*)/i,
+      ""
+    )
+    .trim();
+
+  if (cleanName.includes(" - ")) {
+    const parts = cleanName.split(" - ");
+    return { college: parts[0].trim(), course: parts[1]?.trim() };
+  }
+
+  return { college: cleanName };
+}
+
 export function CounselingModal({
   isOpen,
   onClose,
@@ -25,13 +104,15 @@ export function CounselingModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const parsedTrigger = sanitizeTriggerContext(initialCollege);
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
     city: "",
-    interestedCollege: initialCollege || "KIIT University",
-    interestedCourse: "B.Tech Computer Science (CSE)",
+    interestedCollege: parsedTrigger.college || "",
+    interestedCourse: parsedTrigger.course || "B.Tech Computer Science (CSE)",
     score: "",
     consent: true,
     honeypot: "",
@@ -39,9 +120,12 @@ export function CounselingModal({
 
   // Keep preferred college in sync when initialCollege prop changes
   useEffect(() => {
-    if (initialCollege) {
-      setFormData((prev) => ({ ...prev, interestedCollege: initialCollege }));
-    }
+    const parsed = sanitizeTriggerContext(initialCollege);
+    setFormData((prev) => ({
+      ...prev,
+      interestedCollege: parsed.college || prev.interestedCollege,
+      interestedCourse: parsed.course || prev.interestedCourse,
+    }));
   }, [initialCollege]);
 
   const recommendedColleges = getRecommendedCollegesForDiscipline(formData.interestedCourse);
@@ -52,10 +136,21 @@ export function CounselingModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
+
+    const cleanPhone = formData.phone.replace(/[^\d+]/g, "").trim();
+    if (cleanPhone.length < 10) {
+      setErrorMessage("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+
+    if (!formData.name.trim()) {
+      setErrorMessage("Please enter your official full name.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // Capture UTM parameters from URL if present
       const urlParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
       const utmSource = urlParams?.get("utm_source") || null;
       const utmMedium = urlParams?.get("utm_medium") || null;
@@ -64,13 +159,13 @@ export function CounselingModal({
       const referringPage = typeof document !== "undefined" ? document.referrer : null;
 
       const res = await submitPublicEnquiryAction({
-        fullName: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        preferredLocation: formData.city,
-        enquiryMessage: `College: ${formData.interestedCollege} | Course: ${formData.interestedCourse}${
-          formData.score ? ` | Score/Scorecard: ${formData.score}` : ""
-        }`,
+        fullName: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: cleanPhone,
+        preferredLocation: formData.city.trim() || "India",
+        enquiryMessage: `College: ${formData.interestedCollege || "Not specified / Open to counseling"} | Course: ${
+          formData.interestedCourse
+        }${formData.score ? ` | Score/Rank: ${formData.score}` : ""}`,
         consentStatus: formData.consent,
         source: initialCollege ? `modal_${initialCollege.slice(0, 30)}` : "website_modal",
         landingPage,
@@ -82,84 +177,155 @@ export function CounselingModal({
       });
 
       if (!res.success) {
-        setErrorMessage(res.error?.message || "Failed to submit enquiry. Please try again.");
+        setErrorMessage(
+          res.error?.message ||
+            "Unable to register your enquiry right now. Please message our admissions desk directly on WhatsApp."
+        );
       } else {
         setSubmitted(true);
       }
     } catch (err: unknown) {
-      setErrorMessage((err as Error).message || "An unexpected error occurred. Please try again.");
+      console.error("[CounselingModal] Submission caught error:", err);
+      setErrorMessage("An unexpected error occurred. Please chat with our counselor on WhatsApp directly.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0C102C]/75 backdrop-blur-sm animate-fade-in overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in overflow-y-auto"
+      onClick={onClose}
+    >
       <div
-        className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden my-8"
+        className="relative w-full max-w-xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-100 overflow-hidden my-6 sm:my-8 text-[#15182D]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header Ribbon */}
-        <div className="bg-[#E31E2B] px-6 py-5 text-white flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white">
-              <GraduationCap className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="font-display font-bold text-lg leading-tight">
-                Free Academic Counseling
-              </h3>
-              <p className="text-xs text-white/80">
-                Personalized guidance from verified admission counsellors
+        {/* Top Brand Accent Line */}
+        <div className="h-1.5 w-full bg-gradient-to-r from-[#E31E2B] via-red-500 to-[#15182D]" />
+
+        {/* Modal Header — Prestigious, Human & Official */}
+        <div className="px-6 sm:px-8 pt-5 pb-4 bg-gradient-to-b from-slate-50/90 to-white border-b border-gray-100">
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200/80 text-[#E31E2B] text-[11px] font-bold tracking-wide">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E31E2B] animate-pulse" />
+                <span>Official Admissions Desk • Session 2026–27</span>
+              </div>
+              <h2 className="font-display text-xl sm:text-2xl font-extrabold text-[#15182D] tracking-tight">
+                Direct Admission &amp; Merit Guidance
+              </h2>
+              <p className="text-xs text-gray-600 leading-relaxed max-w-md">
+                1-on-1 verified admission counselling, cutoff analytics, and institutional seat allotment support.
               </p>
             </div>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-900 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+              aria-label="Close dialog"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
-            aria-label="Close modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
+
+          {/* Pre-selected Target Context Chip */}
+          {parsedTrigger.college && (
+            <div className="mt-3 px-3 py-1.5 rounded-xl bg-slate-900 text-white flex items-center justify-between text-xs font-medium">
+              <div className="flex items-center gap-2 truncate">
+                <Building2 className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                <span className="text-gray-300">Selected Institute:</span>
+                <span className="font-bold text-white truncate">{parsedTrigger.college}</span>
+              </div>
+              <span className="text-[10px] bg-[#E31E2B] text-white font-extrabold px-2 py-0.5 rounded shrink-0">
+                Verified Campus
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Body Content */}
-        <div className="p-6 md:p-8">
+        {/* Modal Body */}
+        <div className="p-6 sm:p-8">
           {submitted ? (
-            <div className="text-center py-6 space-y-4">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
-                <CheckCircle2 className="w-10 h-10" />
+            <div className="text-center py-6 sm:py-8 space-y-4 animate-fade-in">
+              <div className="w-16 h-16 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto shadow-2xs">
+                <CheckCircle2 className="w-9 h-9" />
               </div>
-              <h4 className="font-display font-bold text-2xl text-[#15182D]">
-                Enquiry Registered!
-              </h4>
-              <p className="text-sm text-gray-600 max-w-sm mx-auto">
-                Thank you <strong className="text-gray-900">{formData.name}</strong>. Your enquiry has been received and assigned to a senior academic counsellor. We will connect with you at{" "}
-                <strong className="text-gray-900">{formData.phone}</strong> shortly.
+              <div className="space-y-1">
+                <h3 className="font-display font-extrabold text-2xl text-[#15182D]">
+                  Application Guidance Registered
+                </h3>
+                <p className="text-xs text-gray-500">
+                  Ref ID: <span className="font-mono font-bold text-gray-800">AV-{Date.now().toString().slice(-6)}</span>
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-50 border border-gray-200/80 max-w-md mx-auto text-left space-y-2 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500 font-medium">Student Name:</span>
+                  <span className="font-bold text-gray-900">{formData.name}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500 font-medium">Target Program:</span>
+                  <span className="font-bold text-gray-900">{formData.interestedCourse}</span>
+                </div>
+                {formData.interestedCollege && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-500 font-medium">Preferred Institute:</span>
+                    <span className="font-bold text-[#E31E2B]">{formData.interestedCollege}</span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between pt-1 border-t border-gray-200/60">
+                  <span className="text-gray-500 font-medium">Allotment Status:</span>
+                  <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    Senior Counsellor Assigned
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-xs text-gray-600 max-w-sm mx-auto leading-relaxed">
+                Our academic counsellor will connect with you on WhatsApp / Phone at{" "}
+                <strong className="text-gray-900">{formData.phone}</strong> within 15 minutes.
               </p>
-              <div className="pt-4">
-                <Button
+
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <a
+                  href={`https://wa.me/919876543210?text=Hello%20Aspirant%20Vision,%20I%20just%20submitted%20my%20enquiry%20for%20${encodeURIComponent(
+                    formData.interestedCollege || formData.interestedCourse
+                  )}.`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>Connect on WhatsApp Now</span>
+                </a>
+                <button
+                  type="button"
                   onClick={() => {
                     setSubmitted(false);
                     onClose();
                   }}
-                  variant="primary"
-                  className="rounded-xl px-8"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-100 text-xs font-bold text-gray-700 transition-colors cursor-pointer"
                 >
-                  Done
-                </Button>
+                  Close Window
+                </button>
               </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               {errorMessage && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-xs text-red-700">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-                  <span>{errorMessage}</span>
+                <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-xs text-[#E31E2B] animate-shake">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <div className="space-y-0.5">
+                    <span className="font-bold block">Admissions Desk Notice</span>
+                    <span>{errorMessage}</span>
+                  </div>
                 </div>
               )}
 
-              {/* Honeypot field (hidden from real users, trips bots) */}
+              {/* Anti-spam Honeypot */}
               <input
                 type="text"
                 name="user_note"
@@ -170,122 +336,142 @@ export function CounselingModal({
                 autoComplete="off"
               />
 
-              <div>
-                <label className="block text-xs font-bold text-[#15182D] uppercase tracking-wider mb-1.5">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Rahul Sharma"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B] focus:border-[#E31E2B] text-sm outline-none transition-all"
-                />
-              </div>
+              {/* Personal Details */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                {/* Full Name */}
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                    Student Full Name <span className="text-[#E31E2B]">*</span>
+                  </label>
+                  <div className="relative">
+                    <User className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Rahul Sharma"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-sm outline-none transition-all bg-white"
+                    />
+                  </div>
+                </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* WhatsApp Phone */}
                 <div>
-                  <label className="block text-xs font-bold text-[#15182D] uppercase tracking-wider mb-1.5">
-                    WhatsApp Phone *
+                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                    WhatsApp Mobile Number <span className="text-[#E31E2B]">*</span>
                   </label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="e.g. 9876543210"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B] focus:border-[#E31E2B] text-sm outline-none transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-[#15182D] uppercase tracking-wider mb-1.5">
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="e.g. rahul@gmail.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B] focus:border-[#E31E2B] text-sm outline-none transition-all"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-[#15182D] uppercase tracking-wider mb-1.5">
-                    Your City / State *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Bhubaneswar / Patna"
-                    value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B] focus:border-[#E31E2B] text-sm outline-none transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-[#15182D] uppercase tracking-wider mb-1.5">
-                    Preferred College
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. KIIT University"
-                    value={formData.interestedCollege}
-                    onChange={(e) =>
-                      setFormData({ ...formData, interestedCollege: e.target.value })
-                    }
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B] focus:border-[#E31E2B] text-sm outline-none transition-all bg-white"
-                  />
+                  <div className="relative">
+                    <span className="text-xs font-bold text-gray-500 absolute left-3 top-1/2 -translate-y-1/2 select-none">
+                      +91
+                    </span>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="98765 43210"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="w-full pl-11 pr-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-sm outline-none transition-all bg-white font-medium"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                {/* Email Address */}
                 <div>
-                  <label className="block text-xs font-bold text-[#15182D] uppercase tracking-wider mb-1.5">
-                    Target Course
+                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                    Email Address <span className="text-[#E31E2B]">*</span>
                   </label>
-                  <select
-                    value={formData.interestedCourse}
-                    onChange={(e) =>
-                      setFormData({ ...formData, interestedCourse: e.target.value })
-                    }
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B] focus:border-[#E31E2B] text-sm outline-none transition-all bg-white"
-                  >
-                    <option value="B.Tech Computer Science (CSE)">B.Tech CSE</option>
-                    <option value="B.Tech AI & Data Science">B.Tech AI & Data Science</option>
-                    <option value="MBA (Marketing / Finance / HR)">MBA</option>
-                    <option value="BCA / MCA">BCA / MCA</option>
-                    <option value="B.Tech Core (Mechanical / Civil / Electrical)">B.Tech Core</option>
-                    <option value="Medical / MBBS / BDS / Allied">Medical / Allied</option>
-                    <option value="Law / BA LLB / BBA LLB">Law / LLB</option>
-                  </select>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="email"
+                      required
+                      placeholder="student@gmail.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-sm outline-none transition-all bg-white"
+                    />
+                  </div>
                 </div>
+
+                {/* City / State */}
                 <div>
-                  <label className="block text-xs font-bold text-[#15182D] uppercase tracking-wider mb-1.5">
-                    12th Score / JEE (Optional)
+                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                    Current City / State <span className="text-[#E31E2B]">*</span>
                   </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. 84% in PCM or 88 percentile"
-                    value={formData.score}
-                    onChange={(e) => setFormData({ ...formData, score: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B] focus:border-[#E31E2B] text-sm outline-none transition-all"
-                  />
+                  <div className="relative">
+                    <MapPin className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Bhubaneswar / Patna"
+                      value={formData.city}
+                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-sm outline-none transition-all bg-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Academic Target */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                {/* Target Program */}
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                    Target Program / Stream <span className="text-[#E31E2B]">*</span>
+                  </label>
+                  <div className="relative">
+                    <GraduationCap className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <select
+                      value={formData.interestedCourse}
+                      onChange={(e) =>
+                        setFormData({ ...formData, interestedCourse: e.target.value })
+                      }
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-sm outline-none transition-all bg-white font-semibold text-gray-800 cursor-pointer"
+                    >
+                      <option value="B.Tech Computer Science (CSE)">B.Tech Computer Science (CSE)</option>
+                      <option value="B.Tech AI & Data Science">B.Tech AI & Data Science</option>
+                      <option value="B.Tech Core (Mechanical / Civil / Electrical)">B.Tech Core Engineering</option>
+                      <option value="MBA (Marketing / Finance / HR)">MBA / PGDM Specializations</option>
+                      <option value="BCA / MCA">BCA / MCA Software</option>
+                      <option value="Medical / MBBS / BDS / Allied">MBBS / BDS / Medical & Allied</option>
+                      <option value="Law / BA LLB / BBA LLB">Integrated Law (BA LLB / BBA LLB)</option>
+                      <option value="Pharmacy / B.Pharm">Pharmacy (B.Pharm / M.Pharm)</option>
+                      <option value="BBA / B.Com / Undergraduate">Undergraduate (BBA / B.Com / B.Sc)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Preferred College */}
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                    Preferred College / Campus
+                  </label>
+                  <div className="relative">
+                    <Building2 className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="text"
+                      placeholder="e.g. KIIT, SOA, Centurion or Any"
+                      value={formData.interestedCollege}
+                      onChange={(e) =>
+                        setFormData({ ...formData, interestedCollege: e.target.value })
+                      }
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-sm outline-none transition-all bg-white font-medium"
+                    />
+                  </div>
                 </div>
               </div>
 
               {/* Dynamic Discipline Campus Recommendations */}
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+              <div className="p-3 rounded-xl bg-slate-50/90 border border-slate-200/90 space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-bold text-gray-800 flex items-center gap-1.5 text-[11px]">
                     <Sparkles className="w-3.5 h-3.5 text-[#E31E2B]" />
-                    <span>Recommended {disciplineName} Colleges:</span>
+                    <span>Recommended Top {disciplineName} Campuses:</span>
                   </span>
-                  <span className="text-[10px] text-gray-500 font-medium">Click to select college</span>
+                  <span className="text-[10px] text-gray-400 font-medium">Click to select campus</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {recommendedColleges.map((rec) => {
@@ -297,16 +483,18 @@ export function CounselingModal({
                         onClick={() => setFormData({ ...formData, interestedCollege: rec.name })}
                         className={`text-xs px-2.5 py-1 rounded-lg border font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                           isSelected
-                            ? "bg-[#E31E2B] text-white border-[#E31E2B] shadow-2xs"
+                            ? "bg-[#15182D] text-white border-[#15182D] shadow-2xs"
                             : "bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:text-black"
                         }`}
                       >
-                        {isSelected && <CheckCircle2 className="w-3 h-3 text-white" />}
+                        {isSelected && <CheckCircle2 className="w-3 h-3 text-emerald-400" />}
                         <span>{rec.name}</span>
                         {rec.nirf && (
                           <span
-                            className={`text-[9px] px-1 rounded font-bold ${
-                              isSelected ? "bg-white/20 text-white" : "bg-emerald-50 text-emerald-700"
+                            className={`text-[9px] px-1 rounded font-extrabold ${
+                              isSelected
+                                ? "bg-white/20 text-white"
+                                : "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
                             }`}
                           >
                             NIRF {rec.nirf}
@@ -318,8 +506,41 @@ export function CounselingModal({
                 </div>
               </div>
 
+              {/* Optional Score / Percentile */}
+              <div>
+                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                  12th Marks / Entrance Rank (Optional)
+                </label>
+                <div className="relative">
+                  <Award className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <input
+                    type="text"
+                    placeholder="e.g. 84% in 12th PCM or 88 percentile in JEE/CAT/NEET"
+                    value={formData.score}
+                    onChange={(e) => setFormData({ ...formData, score: e.target.value })}
+                    className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-sm outline-none transition-all bg-white"
+                  />
+                </div>
+              </div>
+
+              {/* Reassuring Trust Bar */}
+              <div className="grid grid-cols-3 gap-2 py-2 px-1 text-[10px] sm:text-[11px] text-gray-600 font-semibold border-t border-b border-gray-100">
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>Zero Donation</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                  <span>15-Min Response</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Award className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <span>Official Allocation</span>
+                </div>
+              </div>
+
               {/* Consent Checkbox */}
-              <label className="flex items-start gap-2 pt-1 text-xs text-gray-500 cursor-pointer">
+              <label className="flex items-start gap-2 pt-0.5 text-[11px] text-gray-500 cursor-pointer">
                 <input
                   type="checkbox"
                   required
@@ -328,41 +549,43 @@ export function CounselingModal({
                   className="mt-0.5 rounded border-gray-300 text-[#E31E2B] focus:ring-[#E31E2B]"
                 />
                 <span>
-                  I authorize Aspirant Vision to contact me via Call, SMS and WhatsApp regarding admissions.
+                  I authorize Aspirant Vision senior academic counsellors to share verified cutoff reports and seat updates via WhatsApp &amp; Call.
                 </span>
               </label>
 
-              <div className="pt-2">
-                <Button
+              {/* Main Submit Button */}
+              <div className="pt-1">
+                <button
                   type="submit"
                   disabled={isSubmitting}
-                  variant="primary"
-                  size="lg"
-                  className="w-full justify-center py-3.5 text-base shadow-lg hover:shadow-xl font-bold bg-[#E31E2B] hover:bg-[#C91A25]"
+                  className="w-full py-3.5 px-6 rounded-xl font-display font-bold text-sm sm:text-base text-white bg-[#E31E2B] hover:bg-[#c91824] active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 shadow-sm"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                      <span>Submitting Enquiry...</span>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Verifying &amp; Registering Enquiry...</span>
                     </>
                   ) : (
                     <>
-                      <Send className="w-4 h-4 mr-2" />
-                      <span>Request Instant Counseling</span>
+                      <span>Submit Application for Official Counselling</span>
+                      <ArrowRight className="w-4 h-4" />
                     </>
                   )}
-                </Button>
+                </button>
               </div>
 
-              <div className="text-center pt-2">
+              {/* Instant WhatsApp Alternative */}
+              <div className="pt-1 text-center">
                 <a
-                  href={SITE_CONFIG.whatsappUrl}
+                  href={`https://wa.me/919876543210?text=Hello%20Aspirant%20Vision,%20I%20would%20like%20guidance%20for%20admission%20into%20${encodeURIComponent(
+                    formData.interestedCollege || formData.interestedCourse
+                  )}.`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-semibold text-emerald-600 hover:underline inline-flex items-center gap-1"
+                  className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100/70 border border-emerald-200/80 px-4 py-2 rounded-xl transition-colors"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                  Prefer direct chat? Connect on WhatsApp directly
+                  <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Prefer direct chat? Connect on WhatsApp with an Admissions Officer</span>
                 </a>
               </div>
             </form>

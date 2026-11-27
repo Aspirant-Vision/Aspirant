@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdmin, requireCounsellor, getCurrentProfile } from "@/lib/auth/session";
 import { enforceRateLimit } from "@/lib/security/rate-limit";
 import {
@@ -84,7 +85,7 @@ export async function submitPublicEnquiryAction(
     // 2. Normalization
     const normalizedPhone = data.phone.replace(/[^\d+]/g, "").trim();
     const normalizedEmail = data.email.toLowerCase().trim();
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // 3. Safe Duplicate Detection within 24-Hour Window
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
@@ -198,9 +199,16 @@ export async function submitPublicEnquiryAction(
       .single();
 
     if (insertError || !newLead) {
+      console.error("[submitPublicEnquiryAction] Insert failed:", insertError);
       return {
         success: false,
-        error: { code: "INSERT_FAILED", message: insertError?.message || "Failed to submit enquiry" },
+        error: {
+          code: "INSERT_FAILED",
+          message:
+            insertError?.message && !insertError.message.toLowerCase().includes("row-level security")
+              ? insertError.message
+              : "Unable to register enquiry right now. Please reach out directly on WhatsApp or call our admission desk.",
+        },
       };
     }
 
