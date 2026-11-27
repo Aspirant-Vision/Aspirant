@@ -5,6 +5,10 @@ import { X, CheckCircle2, Send, GraduationCap, Sparkles, Loader2, AlertCircle } 
 import { Button } from "@/components/ui/button";
 import { SITE_CONFIG } from "@/lib/constants";
 import { submitPublicEnquiryAction } from "@/lib/crm/actions";
+import {
+  getRecommendedCollegesForDiscipline,
+  getCollegeTypeFromCourseCategory,
+} from "@/lib/discipline-meta";
 
 interface CounselingModalProps {
   isOpen: boolean;
@@ -39,6 +43,9 @@ export function CounselingModal({
       setFormData((prev) => ({ ...prev, interestedCollege: initialCollege }));
     }
   }, [initialCollege]);
+
+  const recommendedColleges = getRecommendedCollegesForDiscipline(formData.interestedCourse);
+  const disciplineName = getCollegeTypeFromCourseCategory(formData.interestedCourse);
 
   if (!isOpen) return null;
 
@@ -268,6 +275,46 @@ export function CounselingModal({
                     onChange={(e) => setFormData({ ...formData, score: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B] focus:border-[#E31E2B] text-sm outline-none transition-all"
                   />
+                </div>
+              </div>
+
+              {/* Dynamic Discipline Campus Recommendations */}
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-bold text-gray-800 flex items-center gap-1.5 text-[11px]">
+                    <Sparkles className="w-3.5 h-3.5 text-[#E31E2B]" />
+                    <span>Recommended {disciplineName} Colleges:</span>
+                  </span>
+                  <span className="text-[10px] text-gray-500 font-medium">Click to select college</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {recommendedColleges.map((rec) => {
+                    const isSelected = formData.interestedCollege === rec.name;
+                    return (
+                      <button
+                        key={rec.name}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, interestedCollege: rec.name })}
+                        className={`text-xs px-2.5 py-1 rounded-lg border font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                          isSelected
+                            ? "bg-[#E31E2B] text-white border-[#E31E2B] shadow-2xs"
+                            : "bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:text-black"
+                        }`}
+                      >
+                        {isSelected && <CheckCircle2 className="w-3 h-3 text-white" />}
+                        <span>{rec.name}</span>
+                        {rec.nirf && (
+                          <span
+                            className={`text-[9px] px-1 rounded font-bold ${
+                              isSelected ? "bg-white/20 text-white" : "bg-emerald-50 text-emerald-700"
+                            }`}
+                          >
+                            NIRF {rec.nirf}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

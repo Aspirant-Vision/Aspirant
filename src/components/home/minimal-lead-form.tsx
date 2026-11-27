@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Sparkles,
   CheckCircle2,
@@ -12,6 +13,10 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { submitPublicEnquiryAction } from "@/lib/crm/actions";
+import {
+  getCollegeTypeFromCourseCategory,
+  getRecommendedCollegesForDiscipline,
+} from "@/lib/discipline-meta";
 
 interface MinimalLeadFormProps {
   badge: string;
@@ -238,6 +243,37 @@ export function MinimalLeadForm({
                 </button>
               </div>
             </div>
+
+            {/* Dynamic Discipline Campus Recommendations */}
+            {(() => {
+              const streamDiscipline = getCollegeTypeFromCourseCategory(course);
+              const recs = getRecommendedCollegesForDiscipline(course);
+              return (
+                <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] text-gray-500 font-medium">
+                  <span className="inline-flex items-center gap-1 font-bold text-gray-700">
+                    <Sparkles className="w-3.5 h-3.5 text-[#E31E2B]" />
+                    <span>Recommended {streamDiscipline} Campuses:</span>
+                  </span>
+                  <div className="flex flex-wrap gap-1.5 items-center">
+                    {recs.slice(0, 4).map((rec) => (
+                      <Link
+                        key={rec.name}
+                        href={`/colleges/${rec.slug}`}
+                        className="text-gray-700 hover:text-[#E31E2B] bg-gray-100 hover:bg-red-50 px-2 py-0.5 rounded font-semibold transition-colors"
+                      >
+                        {rec.name} {rec.nirf ? `(${rec.nirf})` : ""}
+                      </Link>
+                    ))}
+                  </div>
+                  <Link
+                    href={`/colleges?type=${streamDiscipline}`}
+                    className="text-[#E31E2B] font-bold hover:underline ml-auto"
+                  >
+                    All {streamDiscipline} Colleges →
+                  </Link>
+                </div>
+              );
+            })()}
 
             <div className="flex flex-wrap items-center justify-between text-[11px] text-gray-400 pt-0.5 px-0.5">
               <span className="flex items-center gap-1 font-medium">

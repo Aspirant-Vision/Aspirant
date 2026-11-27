@@ -107,8 +107,8 @@ export function Footer() {
               <Link href="#colleges" className="text-gray-300 hover:text-white transition-colors">
                 SOA University
               </Link>
-              <Link href="#compare" className="text-[#E31E2B] font-bold hover:underline transition-colors mt-1 block">
-                Compare All Colleges →
+              <Link href="/colleges" className="text-[#E31E2B] font-bold hover:underline transition-colors mt-1 block">
+                Explore All Colleges →
               </Link>
             </nav>
           </div>

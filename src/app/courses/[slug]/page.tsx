@@ -6,7 +6,11 @@ import { Metadata } from "next";
 import { getCourseBySlugPublicAction } from "@/lib/course/actions";
 import { createClient } from "@/lib/supabase/server";
 import { CounselingTriggerButton } from "@/components/colleges/counseling-trigger-button";
-import { getCourseDisciplineMeta } from "@/lib/discipline-meta";
+import {
+  getCourseDisciplineMeta,
+  getCollegeTypeFromCourseCategory,
+  getRecommendedCollegesForDiscipline,
+} from "@/lib/discipline-meta";
 import {
   GraduationCap,
   Building2,
@@ -73,6 +77,10 @@ export default async function PublicCourseDetailPage({
   const offeringColleges = (course.college_courses || []).filter(
     (cc: any) => cc.colleges && cc.colleges.publication_status === "published"
   );
+
+  const collegeType = getCollegeTypeFromCourseCategory(course.category);
+  const disciplineMeta = getCourseDisciplineMeta(course.category);
+  const recommendedColleges = getRecommendedCollegesForDiscipline(course.category);
 
   // Fetch related courses
   const supabase = await createClient();
@@ -267,6 +275,82 @@ export default async function PublicCourseDetailPage({
                   })}
                 </div>
               )}
+            </div>
+
+            {/* Recommended Colleges in Discipline */}
+            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-gray-100">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#E31E2B] mb-1">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Discipline Recommendations</span>
+                  </div>
+                  <h2 className="text-lg font-bold text-gray-900">
+                    Recommended {disciplineMeta.typeKey} Colleges for {course.name}
+                  </h2>
+                </div>
+                <Link
+                  href={`/colleges?type=${collegeType}`}
+                  className="text-xs font-bold text-[#E31E2B] hover:underline inline-flex items-center gap-1 shrink-0"
+                >
+                  <span>All {disciplineMeta.typeKey} Colleges</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {recommendedColleges.map((rec) => (
+                  <div
+                    key={rec.name}
+                    className="p-4 rounded-xl border border-gray-200 hover:border-red-300 transition-colors flex flex-col justify-between space-y-3 bg-[#FAFBFD]"
+                  >
+                    <div className="space-y-1.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <Link
+                          href={`/colleges/${rec.slug}`}
+                          className="font-bold text-sm text-[#15182D] hover:text-[#E31E2B] transition-colors"
+                        >
+                          {rec.name}
+                        </Link>
+                        {rec.nirf && (
+                          <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[10px] font-extrabold shrink-0 border border-emerald-200">
+                            NIRF {rec.nirf}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-gray-400 shrink-0" />
+                        <span>{rec.location}</span>
+                      </p>
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[11px] font-semibold text-gray-700">
+                        <span className="bg-white px-2 py-0.5 rounded border border-gray-200 text-gray-600">
+                          {rec.highlight}
+                        </span>
+                        {rec.package && (
+                          <span className="bg-red-50 text-[#E31E2B] px-2 py-0.5 rounded border border-red-200">
+                            {rec.package}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-2 border-t border-gray-200/60">
+                      <CounselingTriggerButton
+                        collegeName={`${rec.name} - ${course.name}`}
+                        size="sm"
+                        label="Apply for Seat"
+                        className="flex-1 text-xs py-1.5 bg-[#E31E2B] hover:bg-[#c91824] text-white font-bold"
+                      />
+                      <Link
+                        href={`/colleges/${rec.slug}`}
+                        className="px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-100 transition-colors text-center"
+                      >
+                        Details
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 

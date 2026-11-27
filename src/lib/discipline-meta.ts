@@ -350,3 +350,78 @@ export function getCollegeCoverImage(collegeType?: string | null, currentCoverUr
   }
   return getCollegeDisciplineMeta(collegeType).image;
 }
+
+export function getCollegeTypeFromCourseCategory(category?: string | null): string {
+  if (!category) return "Engineering";
+  const clean = category.toLowerCase().trim();
+  if (clean.includes("medic") || clean.includes("dental") || clean.includes("health") || clean.includes("nurs") || clean.includes("mbbs")) {
+    return "Medical";
+  }
+  if (clean.includes("engine") || clean.includes("tech") || clean.includes("b.tech") || clean.includes("computer")) {
+    return "Engineering";
+  }
+  if (clean.includes("manage") || clean.includes("mba") || clean.includes("bba") || clean.includes("business") || clean.includes("commerce")) {
+    return "Management";
+  }
+  if (clean.includes("law") || clean.includes("legal")) {
+    return "Law";
+  }
+  if (clean.includes("pharm")) {
+    return "Pharmacy";
+  }
+  if (clean.includes("design") || clean.includes("media") || clean.includes("art")) {
+    return "Design & Media";
+  }
+  return "Engineering";
+}
+
+export interface CollegeRecommendation {
+  name: string;
+  slug: string;
+  location: string;
+  highlight: string;
+  nirf?: string;
+  package?: string;
+}
+
+export const DISCIPLINE_RECOMMENDED_COLLEGES: Record<string, CollegeRecommendation[]> = {
+  Engineering: [
+    { name: "KIIT University", slug: "kiit-university", location: "Bhubaneswar, Odisha", highlight: "NIRF #16 • NAAC A++", nirf: "#16", package: "₹63 LPA" },
+    { name: "SOA (Siksha 'O' Anusandhan)", slug: "siksha-o-anusandhan", location: "Bhubaneswar, Odisha", highlight: "NIRF #15 • NAAC A++", nirf: "#15", package: "₹46 LPA" },
+    { name: "Centurion University", slug: "centurion-university", location: "Bhubaneswar, Odisha", highlight: "AICTE Approved • Skill Labs", nirf: "Top 100", package: "₹13.8 LPA" },
+    { name: "C.V. Raman Global University", slug: "cv-raman-global-university", location: "Bhubaneswar, Odisha", highlight: "Center of Excellence in Robotics", nirf: "Top 100", package: "₹24 LPA" },
+    { name: "BITS Pilani", slug: "bits-pilani", location: "Pilani, Rajasthan", highlight: "Tier-1 Autonomous Engineering", nirf: "#20", package: "₹60 LPA" },
+    { name: "RV College of Engineering", slug: "rv-college-of-engineering", location: "Bengaluru, Karnataka", highlight: "Top Karnataka Tech Campus", nirf: "#96", package: "₹62 LPA" },
+  ],
+  Medical: [
+    { name: "IMS & SUM Hospital (SOA)", slug: "ims-and-sum-hospital", location: "Bhubaneswar, Odisha", highlight: "1,750+ Bed Super Speciality Hospital", nirf: "#16", package: "NMC Approved" },
+    { name: "Kalinga Institute of Medical Sciences (KIMS)", slug: "kims-bhubaneswar", location: "Bhubaneswar, Odisha", highlight: "NMC Recognized • 2,600+ Beds", nirf: "#26", package: "NEET UG Cutoff" },
+    { name: "Hi-Tech Medical College & Hospital", slug: "hi-tech-medical-college", location: "Bhubaneswar, Odisha", highlight: "NMC Approved • Clinical Rotations", nirf: "Accredited", package: "Verified Intake" },
+    { name: "SCB Medical College & Hospital", slug: "scb-medical-college", location: "Cuttack, Odisha", highlight: "Premier Government Medical Institute", nirf: "Top 50", package: "NEET Merit" },
+  ],
+  Management: [
+    { name: "IIM Sambalpur", slug: "iim-sambalpur", location: "Sambalpur, Odisha", highlight: "Premier National IIM Campus", nirf: "Top 50", package: "₹64.6 LPA" },
+    { name: "KSOM (KIIT School of Management)", slug: "ksom-kiit", location: "Bhubaneswar, Odisha", highlight: "AACSB Aligned • Top 30 B-School", nirf: "#32", package: "₹22.7 LPA" },
+    { name: "SIBM (Symbiosis Institute of Business Management)", slug: "sibm", location: "Pune, Maharashtra", highlight: "Flagship Corporate MBA", nirf: "#17", package: "₹35 LPA" },
+    { name: "XIM University", slug: "xim-university", location: "Bhubaneswar, Odisha", highlight: "Premier MBA Business Management", nirf: "#46", package: "₹20 LPA" },
+    { name: "Indian School of Business (ISB)", slug: "isb", location: "Hyderabad, Telangana", highlight: "Global Triple Crown Accredited", nirf: "Top Tier", package: "₹34 LPA" },
+  ],
+  Law: [
+    { name: "National Law University Odisha (NLUO)", slug: "nlu-odisha", location: "Cuttack, Odisha", highlight: "Tier-1 National Law University", nirf: "#25", package: "BCI Approved" },
+    { name: "KIIT School of Law", slug: "kiit-school-of-law", location: "Bhubaneswar, Odisha", highlight: "Top Ranked Law Faculty in East India", nirf: "#12", package: "Moot Court Champion" },
+    { name: "SOA National Institute of Law", slug: "soa-law", location: "Bhubaneswar, Odisha", highlight: "BCI Approved • Dual Integrated Degrees", nirf: "Accredited", package: "Corporate Law" },
+  ],
+  Pharmacy: [
+    { name: "School of Pharmaceutical Sciences (SOA)", slug: "soa-pharmacy", location: "Bhubaneswar, Odisha", highlight: "PCI & AICTE Approved R&D Labs", nirf: "#30", package: "GPAT Accredited" },
+    { name: "Centurion School of Pharmacy", slug: "centurion-pharmacy", location: "Bhubaneswar, Odisha", highlight: "Industrial Formulation & Drug Design", nirf: "Accredited", package: "Pharma Placement" },
+  ],
+  "Design & Media": [
+    { name: "KIIT School of Fashion Technology", slug: "kiit-fashion", location: "Bhubaneswar, Odisha", highlight: "Creative Studio & Portfolio Labs", nirf: "Accredited", package: "Design Career" },
+    { name: "Centurion School of Media & Communication", slug: "centurion-media", location: "Bhubaneswar, Odisha", highlight: "Digital Media, Animation & UI/UX", nirf: "Accredited", package: "Media Placement" },
+  ],
+};
+
+export function getRecommendedCollegesForDiscipline(disciplineOrCourse?: string | null): CollegeRecommendation[] {
+  const collegeType = getCollegeTypeFromCourseCategory(disciplineOrCourse);
+  return DISCIPLINE_RECOMMENDED_COLLEGES[collegeType] || DISCIPLINE_RECOMMENDED_COLLEGES.Engineering;
+}

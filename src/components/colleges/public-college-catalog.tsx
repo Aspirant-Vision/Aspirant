@@ -26,6 +26,7 @@ import { CollegeRow, getPublicCollegesAction } from "@/lib/college/actions";
 import { COLLEGE_TYPES } from "@/lib/validation/college";
 import { useCounselingModal } from "@/components/forms/counseling-modal-context";
 import { Button } from "@/components/ui/button";
+import { getRecommendedCollegesForDiscipline } from "@/lib/discipline-meta";
 
 interface PublicCollegeCatalogProps {
   initialColleges: CollegeRow[];
@@ -628,6 +629,98 @@ export function PublicCollegeCatalog({
               })}
             </div>
           )}
+
+          {/* Premier Recommended Campuses in Discipline */}
+          {(() => {
+            const disciplineKey = selectedType !== "all" ? selectedType : "Engineering";
+            const recommended = getRecommendedCollegesForDiscipline(disciplineKey);
+            const existingNames = new Set(colleges.map((c) => c.name.toLowerCase()));
+            const filteredRecs = recommended.filter(
+              (r) => !existingNames.has(r.name.toLowerCase())
+            );
+
+            if (filteredRecs.length === 0) return null;
+
+            return (
+              <div className="pt-6 border-t border-gray-200/80 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1">
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#E31E2B] mb-0.5">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Premier Discipline Recommendations</span>
+                    </div>
+                    <h3 className="font-display font-bold text-base sm:text-lg text-[#15182D]">
+                      Top Recommended {disciplineKey} Campuses
+                    </h3>
+                  </div>
+                  <span className="text-xs text-gray-500 font-medium">
+                    Verified NIRF &amp; NAAC Accredited
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {filteredRecs.map((rec) => (
+                    <div
+                      key={rec.name}
+                      className="p-4 rounded-xl border border-gray-200/90 bg-white hover:border-red-300 transition-colors flex flex-col justify-between space-y-3"
+                    >
+                      <div className="space-y-1.5">
+                        <div className="flex items-start justify-between gap-2">
+                          <Link
+                            href={`/colleges/${rec.slug}`}
+                            className="font-bold text-sm text-[#15182D] hover:text-[#E31E2B] transition-colors"
+                          >
+                            {rec.name}
+                          </Link>
+                          {rec.nirf && (
+                            <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[10px] font-extrabold shrink-0 border border-emerald-200">
+                              NIRF {rec.nirf}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-gray-400 shrink-0" />
+                          <span>{rec.location}</span>
+                        </p>
+                        <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[11px] font-semibold text-gray-700">
+                          <span className="bg-gray-50 px-2 py-0.5 rounded border border-gray-200 text-gray-600">
+                            {rec.highlight}
+                          </span>
+                          {rec.package && (
+                            <span className="bg-red-50 text-[#E31E2B] px-2 py-0.5 rounded border border-red-200">
+                              {rec.package}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openModal(`Admission Enquiry: ${rec.name}`)}
+                          className="flex-1 text-xs font-bold border-red-200 text-[#E31E2B] hover:bg-red-50 cursor-pointer py-1.5"
+                        >
+                          Apply Direct
+                        </Button>
+                        <Link href={`/colleges/${rec.slug}`} className="flex-1">
+                          <Button
+                            type="button"
+                            size="sm"
+                            className="w-full text-xs font-bold bg-[#15182D] hover:bg-black text-white cursor-pointer py-1.5"
+                          >
+                            <span>Explore</span>
+                            <ChevronRight className="w-3.5 h-3.5 ml-1" />
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
