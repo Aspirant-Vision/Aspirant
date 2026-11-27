@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import { useCounselingModal } from "@/components/forms/counseling-modal-context";
 import { submitPublicEnquiryAction } from "@/lib/crm/actions";
+import { SubmissionSuccessView } from "@/components/ui/submission-success-view";
 import { cn } from "@/lib/utils";
 
 // --- DATA: TOP B-SCHOOLS ---
@@ -1268,23 +1269,12 @@ export default function MbaLandingPage() {
             </div>
 
             {isSubmitted ? (
-              <div className="text-center py-8 space-y-3">
-                <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-8 h-8" />
-                </div>
-                <h3 className="font-display text-xl font-extrabold text-[#15182D]">
-                  Application Received Successfully!
-                </h3>
-                <p className="text-xs sm:text-sm text-[#687086] max-w-md mx-auto">
-                  Our Senior Management Admissions Mentor will reach out to you within 2 working hours with customized college shortlists and cutoff cut-sheets.
-                </p>
-                <button
-                  onClick={() => setIsSubmitted(false)}
-                  className="text-xs font-bold text-[#E31E2B] hover:underline pt-2 block mx-auto"
-                >
-                  Submit another inquiry
-                </button>
-              </div>
+              <SubmissionSuccessView
+                title="Thank You!"
+                quote="Your MBA profile has been received. Our senior admissions mentor will reach out to you shortly."
+                onReset={() => setIsSubmitted(false)}
+                whatsappMessage={`Hello Aspirant Vision, I just submitted my MBA profile evaluation inquiry.`}
+              />
             ) : (
               <form onSubmit={handleLeadSubmit} className="space-y-4">
                 {formError && (

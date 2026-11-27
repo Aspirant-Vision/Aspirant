@@ -20,6 +20,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { submitPublicEnquiryAction } from "@/lib/crm/actions";
+import { SubmissionSuccessView } from "@/components/ui/submission-success-view";
 import {
   getRecommendedCollegesForDiscipline,
   getCollegeTypeFromCourseCategory,
@@ -248,71 +249,17 @@ export function CounselingModal({
         {/* Modal Body */}
         <div className="p-6 sm:p-8">
           {submitted ? (
-            <div className="text-center py-6 sm:py-8 space-y-4 animate-fade-in">
-              <div className="w-16 h-16 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto shadow-2xs">
-                <CheckCircle2 className="w-9 h-9" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-display font-extrabold text-2xl text-[#15182D]">
-                  Application Guidance Registered
-                </h3>
-                <p className="text-xs text-gray-500">
-                  Ref ID: <span className="font-mono font-bold text-gray-800">AV-{Date.now().toString().slice(-6)}</span>
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 border border-gray-200/80 max-w-md mx-auto text-left space-y-2 text-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-500 font-medium">Student Name:</span>
-                  <span className="font-bold text-gray-900">{formData.name}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-500 font-medium">Target Program:</span>
-                  <span className="font-bold text-gray-900">{formData.interestedCourse}</span>
-                </div>
-                {formData.interestedCollege && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-500 font-medium">Preferred Institute:</span>
-                    <span className="font-bold text-[#E31E2B]">{formData.interestedCollege}</span>
-                  </div>
-                )}
-                <div className="flex items-center justify-between pt-1 border-t border-gray-200/60">
-                  <span className="text-gray-500 font-medium">Allotment Status:</span>
-                  <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                    Senior Counsellor Assigned
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-xs text-gray-600 max-w-sm mx-auto leading-relaxed">
-                Our academic counsellor will connect with you on WhatsApp / Phone at{" "}
-                <strong className="text-gray-900">{formData.phone}</strong> within 15 minutes.
-              </p>
-
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <a
-                  href={`https://wa.me/919876543210?text=Hello%20Aspirant%20Vision,%20I%20just%20submitted%20my%20enquiry%20for%20${encodeURIComponent(
-                    formData.interestedCollege || formData.interestedCourse
-                  )}.`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>Connect on WhatsApp Now</span>
-                </a>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSubmitted(false);
-                    onClose();
-                  }}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-100 text-xs font-bold text-gray-700 transition-colors cursor-pointer"
-                >
-                  Close Window
-                </button>
-              </div>
-            </div>
+            <SubmissionSuccessView
+              title="Thank You!"
+              quote="Your request has been received. Our senior advisor will reach out to you shortly."
+              onClose={() => {
+                setSubmitted(false);
+                onClose();
+              }}
+              whatsappMessage={`Hello Aspirant Vision, I just submitted my enquiry for ${
+                formData.interestedCollege || formData.interestedCourse
+              }.`}
+            />
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               {errorMessage && (

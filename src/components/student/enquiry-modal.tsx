@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { studentEnquirySchema, StudentEnquiryInput } from "@/lib/validation/student";
 import { submitStudentPortalEnquiryAction } from "@/lib/student/actions";
+import { SubmissionSuccessView } from "@/components/ui/submission-success-view";
 import { Button } from "@/components/ui/button";
 import {
   MessageSquare,
@@ -63,13 +64,9 @@ export function EnquiryModal({
       if (res.success) {
         setStatusMessage({
           type: "success",
-          text: "Your enquiry has been submitted! An admission counsellor will connect with you soon.",
+          text: "Success",
         });
         reset();
-        setTimeout(() => {
-          onClose();
-          if (onSuccess) onSuccess();
-        }, 1500);
       } else {
         setStatusMessage({
           type: "error",
@@ -107,24 +104,26 @@ export function EnquiryModal({
           </button>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
-          {statusMessage && (
-            <div
-              className={`p-3.5 rounded-xl flex items-center gap-2.5 text-xs font-semibold ${
-                statusMessage.type === "success"
-                  ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                  : "bg-red-50 text-red-800 border border-red-200"
-              }`}
-            >
-              {statusMessage.type === "success" ? (
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-              ) : (
+        {/* Form Body or Success View */}
+        {statusMessage?.type === "success" ? (
+          <div className="p-6">
+            <SubmissionSuccessView
+              title="Thank You!"
+              quote="Your enquiry has been received. Our admission counsellor will connect with you soon."
+              onClose={() => {
+                onClose();
+                if (onSuccess) onSuccess();
+              }}
+            />
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+            {statusMessage && (
+              <div className="p-3.5 rounded-xl flex items-center gap-2.5 text-xs font-semibold bg-red-50 text-red-800 border border-red-200">
                 <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-              )}
-              <span>{statusMessage.text}</span>
-            </div>
-          )}
+                <span>{statusMessage.text}</span>
+              </div>
+            )}
 
           {/* College Selection (Optional) */}
           <div className="space-y-1.5">
@@ -213,6 +212,7 @@ export function EnquiryModal({
             </Button>
           </div>
         </form>
+      )}
       </div>
     </div>
   );

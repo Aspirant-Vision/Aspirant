@@ -13,6 +13,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { submitPublicEnquiryAction } from "@/lib/crm/actions";
+import { SubmissionSuccessView } from "@/components/ui/submission-success-view";
 import {
   getCollegeTypeFromCourseCategory,
   getRecommendedCollegesForDiscipline,
@@ -118,46 +119,17 @@ export function MinimalLeadForm({
 
         {/* Minimalist 1-Row Form */}
         {isSuccess ? (
-          <div className="py-4 px-4 rounded-xl bg-emerald-50/70 border border-emerald-200 flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in">
-            <div className="flex items-center gap-3 text-emerald-900">
-              <div className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
-                <CheckCircle2 className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xs sm:text-sm font-bold">
-                  Thank you, {fullName}! Your inquiry for {course} is received.
-                </div>
-                <div className="text-[11px] text-emerald-700">
-                  Our academic advisor will contact you within 15 minutes.
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 shrink-0">
-              <a
-                href={`https://wa.me/919876543210?text=Hello%20Aspirant%20Vision,%20I%20just%20submitted%20my%20details%20for%20${encodeURIComponent(
-                  course
-                )}.`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors shadow-2xs"
-              >
-                <MessageCircle className="w-3.5 h-3.5" />
-                <span>Chat on WhatsApp</span>
-              </a>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsSuccess(false);
-                  setFullName("");
-                  setPhone("");
-                }}
-                className="text-xs text-gray-500 hover:text-gray-900 underline font-medium cursor-pointer"
-              >
-                Reset
-              </button>
-            </div>
-          </div>
+          <SubmissionSuccessView
+            compact={true}
+            title="Thank You!"
+            quote="Your inquiry has been received. Our senior advisor will connect with you shortly."
+            onReset={() => {
+              setIsSuccess(false);
+              setFullName("");
+              setPhone("");
+            }}
+            whatsappMessage={`Hello Aspirant Vision, I just submitted my details for ${course}.`}
+          />
         ) : (
           <form onSubmit={handleSubmit} className="space-y-3">
             {errorMessage && (
