@@ -6,6 +6,7 @@ import { Metadata } from "next";
 import { getCourseBySlugPublicAction } from "@/lib/course/actions";
 import { createClient } from "@/lib/supabase/server";
 import { CounselingTriggerButton } from "@/components/colleges/counseling-trigger-button";
+import { getCourseDisciplineMeta } from "@/lib/discipline-meta";
 import {
   GraduationCap,
   Building2,
@@ -110,8 +111,8 @@ export default async function PublicCourseDetailPage({
       {/* 2. PRESTIGIOUS EDITORIAL HERO HEADER */}
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
         <div className="relative rounded-2xl sm:rounded-3xl border border-gray-200/90 p-6 sm:p-10 overflow-hidden bg-white">
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="space-y-3.5 max-w-3xl">
+          <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+            <div className="space-y-3.5 max-w-2xl">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#E31E2B] text-white">
                   {course.degree_type}
@@ -144,12 +145,26 @@ export default async function PublicCourseDetailPage({
               </div>
             </div>
 
-            <div className="w-full md:w-auto shrink-0">
+            {/* Right: Discipline Visual Badge & Apply CTA */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto shrink-0">
+              <div className="hidden sm:block relative w-36 h-24 rounded-2xl overflow-hidden border border-gray-200/90 shrink-0 bg-slate-100">
+                <Image
+                  src={getCourseDisciplineMeta(course.category).image}
+                  alt={course.name}
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                <span className="absolute bottom-2 left-2 right-2 text-[10.5px] font-extrabold text-white truncate block">
+                  {getCourseDisciplineMeta(course.category).showcaseTag1}
+                </span>
+              </div>
+
               <CounselingTriggerButton
                 collegeName={`Course Enquiry: ${course.name}`}
                 size="lg"
                 label="Apply for Admission"
-                className="text-sm px-8 w-full md:w-auto bg-[#E31E2B] hover:bg-[#c91824] text-white font-bold cursor-pointer"
+                className="text-sm px-8 w-full sm:w-auto bg-[#E31E2B] hover:bg-[#c91824] text-white font-bold cursor-pointer"
               />
             </div>
           </div>

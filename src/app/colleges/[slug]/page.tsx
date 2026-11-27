@@ -7,6 +7,7 @@ import { getCollegeBySlugPublicAction } from "@/lib/college/actions";
 import { getCoursesForCollegeAction } from "@/lib/course/actions";
 import { createClient } from "@/lib/supabase/server";
 import { CounselingTriggerButton } from "@/components/colleges/counseling-trigger-button";
+import { getCollegeCoverImage, getCollegeDisciplineMeta } from "@/lib/discipline-meta";
 import {
   MapPin,
   Building2,
@@ -141,7 +142,7 @@ export default async function PublicCollegeDetailPage({
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
         <div className="relative w-full h-56 sm:h-80 lg:h-96 rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900">
           <Image
-            src={college.cover_image_url || "/images/auth/auth_campus_highres.jpg"}
+            src={getCollegeCoverImage(college.college_type, college.cover_image_url)}
             alt={college.name}
             fill
             priority
@@ -149,6 +150,13 @@ export default async function PublicCollegeDetailPage({
             className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          
+          {/* Top Stream Indicator Badge */}
+          <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
+            <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#15182D] text-xs font-extrabold border border-white/60 shadow-sm flex items-center gap-1.5">
+              {getCollegeDisciplineMeta(college.college_type).showcaseTag1}
+            </span>
+          </div>
         </div>
 
         {/* 3. PROFILE HEADER CARD (Floats over bottom of banner) */}
