@@ -6,6 +6,7 @@ import { FeaturedColleges } from "@/components/home/featured-colleges";
 import { EducationHubs } from "@/components/home/education-hubs";
 import { CompareCollegesModule } from "@/components/home/compare-colleges-module";
 import { AdmissionJourneyTimeline } from "@/components/home/admission-journey-timeline";
+import { CareerAccelerationCta } from "@/components/home/career-acceleration-cta";
 import { WhyAspirantVision } from "@/components/home/why-aspirant-vision";
 import { UpcomingExams } from "@/components/home/upcoming-exams";
 import { StudentSuccessStories } from "@/components/home/student-success-stories";
@@ -70,6 +71,9 @@ export default async function HomePage() {
 
       {/* SECTION 08: Admission Journey (Curved Road with Milestone Markers) */}
       <AdmissionJourneyTimeline />
+
+      {/* Career Acceleration Desk CTA Card */}
+      <CareerAccelerationCta />
 
       {/* SECTION 09: Why Aspirant Vision (Editorial Trust & Mentorship Ecosystem) */}
       <WhyAspirantVision />
