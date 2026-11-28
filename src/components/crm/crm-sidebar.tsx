@@ -199,6 +199,12 @@ export function CrmSidebar({
             primaryRole === "super_admin",
         },
         {
+          title: "Attendance & Leaves",
+          href: "/admin/attendance",
+          icon: CalendarClock,
+          allowed: true,
+        },
+        {
           title: "Reports",
           href: "/admin/reports",
           icon: BarChart3,
