@@ -11,7 +11,6 @@ import {
   Building2,
   MapPin,
   User,
-  Phone,
   Mail,
   Award,
   ShieldCheck,
@@ -25,6 +24,7 @@ import {
   getRecommendedCollegesForDiscipline,
   getCollegeTypeFromCourseCategory,
 } from "@/lib/discipline-meta";
+import { cn } from "@/lib/utils";
 
 interface CounselingModalProps {
   isOpen: boolean;
@@ -32,13 +32,60 @@ interface CounselingModalProps {
   initialCollege?: string;
 }
 
+interface TriggerContext {
+  college: string;
+  course?: string;
+  city?: string;
+  intent?: string;
+}
+
+const HUB_COLLEGES: Record<string, string[]> = {
+  "bhubaneswar": ["KIIT University", "SOA University", "Centurion University", "C.V. Raman Global"],
+  "bhubaneswar & odisha": ["KIIT University", "SOA University", "Centurion University", "C.V. Raman Global"],
+  "delhi": ["IIT Delhi", "DTU Delhi", "NSUT", "Amity University"],
+  "delhi ncr": ["IIT Delhi", "DTU Delhi", "NSUT", "Amity University"],
+  "bangalore": ["RVCE", "BMS College", "PES University", "Ramaiah Institute"],
+  "bangalore & karnataka": ["RVCE", "BMS College", "PES University", "Ramaiah Institute"],
+  "mumbai": ["IIT Bombay", "COEP Tech", "VJTI Mumbai", "MIT-WPU"],
+  "mumbai & pune": ["IIT Bombay", "COEP Tech", "VJTI Mumbai", "MIT-WPU"],
+  "pune": ["COEP Tech", "Symbiosis", "MIT-WPU", "Bharati Vidyapeeth"],
+};
+
 /**
- * Sanitizes triggers like "Apply Now", "Free Consultation", "Course Guidance: ...", etc.
- * so generic button labels never populate the "Preferred College" field.
+ * Sanitizes triggers like "Education Hub: Bhubaneswar", "Apply Now", "Free Consultation", etc.
+ * so generic button labels never populate the "Preferred College" field, and locations
+ * prefill the location field correctly.
  */
-function sanitizeTriggerContext(raw?: string): { college: string; course?: string; intent?: string } {
+function sanitizeTriggerContext(raw?: string): TriggerContext {
   if (!raw) return { college: "" };
   const trimmed = raw.trim();
+
+  // Known location / education hub triggers
+  if (/^Education Hub:\s*/i.test(trimmed)) {
+    const hubCity = trimmed.replace(/^Education Hub:\s*/i, "").trim();
+    return { college: "", city: hubCity, intent: `hub_${hubCity}` };
+  }
+  if (/^All Educational Hubs/i.test(trimmed)) {
+    return { college: "", intent: "all_hubs" };
+  }
+
+  const genericLocations = [
+    "bhubaneswar",
+    "bhubaneswar & odisha",
+    "delhi",
+    "delhi ncr",
+    "bangalore",
+    "bangalore & karnataka",
+    "mumbai",
+    "mumbai & pune",
+    "pune",
+    "kolkata",
+    "hyderabad",
+    "chennai",
+  ];
+  if (genericLocations.includes(trimmed.toLowerCase())) {
+    return { college: "", city: trimmed, intent: `location_${trimmed}` };
+  }
 
   const genericPhrases = [
     "apply now",
@@ -111,7 +158,7 @@ export function CounselingModal({
     name: "",
     phone: "",
     email: "",
-    city: "",
+    city: parsedTrigger.city || "",
     interestedCollege: parsedTrigger.college || "",
     interestedCourse: parsedTrigger.course || "B.Tech Computer Science (CSE)",
     score: "",
@@ -119,18 +166,25 @@ export function CounselingModal({
     honeypot: "",
   });
 
-  // Keep preferred college in sync when initialCollege prop changes
+  // Keep state in sync when initialCollege prop changes
   useEffect(() => {
     const parsed = sanitizeTriggerContext(initialCollege);
     setFormData((prev) => ({
       ...prev,
+      city: parsed.city || prev.city,
       interestedCollege: parsed.college || prev.interestedCollege,
       interestedCourse: parsed.course || prev.interestedCourse,
     }));
   }, [initialCollege]);
 
-  const recommendedColleges = getRecommendedCollegesForDiscipline(formData.interestedCourse);
-  const disciplineName = getCollegeTypeFromCourseCategory(formData.interestedCourse);
+  // Determine top campus suggestions based on hub city or discipline
+  const cityKey = parsedTrigger.city?.toLowerCase().trim() || "";
+  const hubCampuses = cityKey ? HUB_COLLEGES[cityKey] : null;
+  const disciplineRecs = getRecommendedCollegesForDiscipline(formData.interestedCourse);
+
+  const campusSuggestions = hubCampuses
+    ? hubCampuses
+    : disciplineRecs.slice(0, 4).map((c) => c.name);
 
   if (!isOpen) return null;
 
@@ -163,9 +217,12 @@ export function CounselingModal({
         fullName: formData.name.trim(),
         email: formData.email.trim(),
         phone: cleanPhone,
-        preferredLocation: formData.city.trim() || "India",
-        enquiryMessage: `College: ${formData.interestedCollege || "Not specified / Open to counseling"} | Course: ${formData.interestedCourse
-          }${formData.score ? ` | Score/Rank: ${formData.score}` : ""}`,
+        preferredLocation: formData.city.trim() || parsedTrigger.city || "India",
+        enquiryMessage: `College: ${formData.interestedCollege || "Not specified / Open to counseling"} | Course: ${
+          formData.interestedCourse
+        }${formData.city ? ` | Location: ${formData.city}` : ""}${
+          formData.score ? ` | Score/Rank: ${formData.score}` : ""
+        }`,
         consentStatus: formData.consent,
         source: initialCollege ? `modal_${initialCollege.slice(0, 30)}` : "website_modal",
         landingPage,
@@ -179,7 +236,7 @@ export function CounselingModal({
       if (!res.success) {
         setErrorMessage(
           res.error?.message ||
-          "Unable to register your enquiry right now. Please message our admissions desk directly on WhatsApp."
+            "Unable to register your enquiry right now. Please message our admissions desk directly on WhatsApp."
         );
       } else {
         setSubmitted(true);
@@ -194,59 +251,53 @@ export function CounselingModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-100 overflow-hidden my-6 sm:my-8 text-[#15182D]"
+        className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden text-[#15182D] flex flex-col max-h-[92vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Brand Accent Line */}
-        <div className="h-1.5 w-full bg-gradient-to-r from-[#E31E2B] via-red-500 to-[#15182D]" />
+        <div className="h-1 w-full bg-gradient-to-r from-[#E31E2B] via-red-500 to-[#15182D] shrink-0" />
 
-        {/* Modal Header — Prestigious, Human & Official */}
-        <div className="px-6 sm:px-8 pt-5 pb-4 bg-gradient-to-b from-slate-50/90 to-white border-b border-gray-100">
-          <div className="flex items-start justify-between gap-4">
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200/80 text-[#E31E2B] text-[11px] font-bold tracking-wide">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#E31E2B] animate-pulse" />
-                <span>Official Admissions Desk • Session 2026–27</span>
+        {/* Compact, Clean Header */}
+        <div className="px-5 py-3.5 bg-gradient-to-b from-slate-50/90 to-white border-b border-gray-100 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-[#E31E2B] shrink-0">
+              <GraduationCap className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h2 className="font-display text-sm sm:text-base font-bold text-[#15182D] truncate">
+                  Direct Admission &amp; Merit Guidance
+                </h2>
+                <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full bg-red-50 text-[#E31E2B] text-[10px] font-extrabold uppercase tracking-wide shrink-0">
+                  Session 2026–27
+                </span>
               </div>
-              <h2 className="font-display text-xl sm:text-2xl font-extrabold text-[#15182D] tracking-tight">
-                Direct Admission &amp; Merit Guidance
-              </h2>
-              <p className="text-xs text-gray-600 leading-relaxed max-w-md">
-                1-on-1 verified admission counselling, cutoff analytics, and institutional seat allotment support.
+              <p className="text-[11px] text-gray-500 truncate">
+                {parsedTrigger.city
+                  ? `Regional advisory desk for ${parsedTrigger.city}`
+                  : parsedTrigger.college
+                  ? `Verified cutoffs, fees & seat advisory for ${parsedTrigger.college}`
+                  : "Official advisory • Cutoffs, fee waivers & verified institutional seats"}
               </p>
             </div>
-
-            <button
-              type="button"
-              onClick={onClose}
-              className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-900 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
-              aria-label="Close dialog"
-            >
-              <X className="w-4 h-4" />
-            </button>
           </div>
 
-          {/* Pre-selected Target Context Chip */}
-          {parsedTrigger.college && (
-            <div className="mt-3 px-3 py-1.5 rounded-xl bg-slate-900 text-white flex items-center justify-between text-xs font-medium">
-              <div className="flex items-center gap-2 truncate">
-                <Building2 className="w-3.5 h-3.5 text-red-400 shrink-0" />
-                <span className="text-gray-300">Selected Institute:</span>
-                <span className="font-bold text-white truncate">{parsedTrigger.college}</span>
-              </div>
-              <span className="text-[10px] bg-[#E31E2B] text-white font-extrabold px-2 py-0.5 rounded shrink-0">
-                Verified Campus
-              </span>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-900 flex items-center justify-center transition-colors shrink-0 ml-2 cursor-pointer"
+            aria-label="Close dialog"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        {/* Modal Body */}
-        <div className="p-6 sm:p-8">
+        {/* Modal Body - Fits comfortably on screen; scrollable only as failsafe */}
+        <div className="overflow-y-auto overflow-x-hidden p-4 sm:p-5 flex-1 space-y-3">
           {submitted ? (
             <SubmissionSuccessView
               title="Thank You!"
@@ -256,16 +307,16 @@ export function CounselingModal({
                 onClose();
               }}
               whatsappMessage={`Hello Aspirant Vision, I just submitted my enquiry for ${
-                formData.interestedCollege || formData.interestedCourse
+                formData.interestedCollege || formData.city || formData.interestedCourse
               }.`}
             />
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3">
               {errorMessage && (
-                <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-xs text-[#E31E2B] animate-shake">
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2 text-xs text-[#E31E2B] animate-shake">
                   <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                   <div className="space-y-0.5">
-                    <span className="font-bold block">Admissions Desk Notice</span>
+                    <span className="font-bold block">Admissions Notice</span>
                     <span>{errorMessage}</span>
                   </div>
                 </div>
@@ -282,29 +333,49 @@ export function CounselingModal({
                 autoComplete="off"
               />
 
-              {/* Personal Details */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {/* Full Name */}
+              {/* Context Pill (if triggered by a specific location or college) */}
+              {(parsedTrigger.city || parsedTrigger.college) && (
+                <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs">
+                  <div className="flex items-center gap-2 truncate">
+                    {parsedTrigger.city ? (
+                      <MapPin className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                    ) : (
+                      <Building2 className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                    )}
+                    <span className="text-gray-300 text-[11px]">
+                      {parsedTrigger.city ? "Target Location:" : "Selected Campus:"}
+                    </span>
+                    <span className="font-bold truncate text-[11px]">
+                      {parsedTrigger.city || parsedTrigger.college}
+                    </span>
+                  </div>
+                  <span className="text-[9.5px] bg-[#E31E2B] text-white font-extrabold px-1.5 py-0.5 rounded shrink-0 uppercase tracking-wider">
+                    Verified
+                  </span>
+                </div>
+              )}
+
+              {/* Personal Details Row 1 */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                  <label className="block text-[10.5px] font-bold text-gray-700 uppercase tracking-wide mb-1">
                     Student Full Name <span className="text-[#E31E2B]">*</span>
                   </label>
                   <div className="relative">
-                    <User className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <User className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="text"
                       required
                       placeholder="e.g. Rahul Sharma"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-sm outline-none transition-all bg-white"
+                      className="w-full pl-8 pr-3 py-2 rounded-xl border border-gray-200 focus:ring-1 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-[13px] outline-none transition-all bg-white"
                     />
                   </div>
                 </div>
 
-                {/* WhatsApp Phone */}
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                  <label className="block text-[10.5px] font-bold text-gray-700 uppercase tracking-wide mb-1">
                     WhatsApp Mobile Number <span className="text-[#E31E2B]">*</span>
                   </label>
                   <div className="relative">
@@ -317,65 +388,63 @@ export function CounselingModal({
                       placeholder="98765 43210"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full pl-11 pr-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-sm outline-none transition-all bg-white font-medium"
+                      className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-200 focus:ring-1 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-[13px] outline-none transition-all bg-white font-medium"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {/* Email Address */}
+              {/* Personal Details Row 2 */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                  <label className="block text-[10.5px] font-bold text-gray-700 uppercase tracking-wide mb-1">
                     Email Address <span className="text-[#E31E2B]">*</span>
                   </label>
                   <div className="relative">
-                    <Mail className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <Mail className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="email"
                       required
                       placeholder="student@gmail.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-sm outline-none transition-all bg-white"
+                      className="w-full pl-8 pr-3 py-2 rounded-xl border border-gray-200 focus:ring-1 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-[13px] outline-none transition-all bg-white"
                     />
                   </div>
                 </div>
 
-                {/* City / State */}
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                  <label className="block text-[10.5px] font-bold text-gray-700 uppercase tracking-wide mb-1">
                     Current City / State <span className="text-[#E31E2B]">*</span>
                   </label>
                   <div className="relative">
-                    <MapPin className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <MapPin className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="text"
                       required
                       placeholder="e.g. Bhubaneswar / Patna"
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-sm outline-none transition-all bg-white"
+                      className="w-full pl-8 pr-3 py-2 rounded-xl border border-gray-200 focus:ring-1 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-[13px] outline-none transition-all bg-white"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Academic Target */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {/* Target Program */}
+              {/* Academic Target Row */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                  <label className="block text-[10.5px] font-bold text-gray-700 uppercase tracking-wide mb-1">
                     Target Program / Stream <span className="text-[#E31E2B]">*</span>
                   </label>
                   <div className="relative">
-                    <GraduationCap className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <GraduationCap className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <select
                       value={formData.interestedCourse}
                       onChange={(e) =>
                         setFormData({ ...formData, interestedCourse: e.target.value })
                       }
-                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-sm outline-none transition-all bg-white font-semibold text-gray-800 cursor-pointer"
+                      className="w-full pl-8 pr-3 py-2 rounded-xl border border-gray-200 focus:ring-1 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-[13px] outline-none transition-all bg-white font-semibold text-gray-800 cursor-pointer"
                     >
                       <option value="B.Tech Computer Science (CSE)">B.Tech Computer Science (CSE)</option>
                       <option value="B.Tech AI & Data Science">B.Tech AI & Data Science</option>
@@ -390,13 +459,12 @@ export function CounselingModal({
                   </div>
                 </div>
 
-                {/* Preferred College */}
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                  <label className="block text-[10.5px] font-bold text-gray-700 uppercase tracking-wide mb-1">
                     Preferred College / Campus
                   </label>
                   <div className="relative">
-                    <Building2 className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <Building2 className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="text"
                       placeholder="e.g. KIIT, SOA, Centurion or Any"
@@ -404,114 +472,102 @@ export function CounselingModal({
                       onChange={(e) =>
                         setFormData({ ...formData, interestedCollege: e.target.value })
                       }
-                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-sm outline-none transition-all bg-white font-medium"
+                      className="w-full pl-8 pr-3 py-2 rounded-xl border border-gray-200 focus:ring-1 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-[13px] outline-none transition-all bg-white font-medium"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Dynamic Discipline Campus Recommendations */}
-              <div className="p-3 rounded-xl bg-slate-50/90 border border-slate-200/90 space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-gray-800 flex items-center gap-1.5 text-[11px]">
-                    <Sparkles className="w-3.5 h-3.5 text-[#E31E2B]" />
-                    <span>Recommended Top {disciplineName} Campuses:</span>
+              {/* Quick Regional / Discipline Campus Recommendation Chips */}
+              {campusSuggestions.length > 0 && (
+                <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 no-scrollbar">
+                  <span className="text-[10px] font-bold text-gray-500 shrink-0 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-[#E31E2B]" />
+                    <span>Quick Pick:</span>
                   </span>
-                  <span className="text-[10px] text-gray-400 font-medium">Click to select campus</span>
+                  <div className="flex items-center gap-1 flex-wrap sm:flex-nowrap">
+                    {campusSuggestions.map((name) => {
+                      const isSelected = formData.interestedCollege === name;
+                      return (
+                        <button
+                          key={name}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, interestedCollege: name })}
+                          className={cn(
+                            "text-[10px] px-2 py-0.5 rounded-md border font-semibold transition-all shrink-0 cursor-pointer flex items-center gap-1",
+                            isSelected
+                              ? "bg-[#15182D] text-white border-[#15182D]"
+                              : "bg-gray-50 text-gray-700 border-gray-200 hover:border-red-300 hover:text-[#E31E2B] hover:bg-red-50/50"
+                          )}
+                        >
+                          {isSelected && <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />}
+                          <span>{name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {recommendedColleges.map((rec) => {
-                    const isSelected = formData.interestedCollege === rec.name;
-                    return (
-                      <button
-                        key={rec.name}
-                        type="button"
-                        onClick={() => setFormData({ ...formData, interestedCollege: rec.name })}
-                        className={`text-xs px-2.5 py-1 rounded-lg border font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${isSelected
-                          ? "bg-[#15182D] text-white border-[#15182D] shadow-2xs"
-                          : "bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:text-black"
-                          }`}
-                      >
-                        {isSelected && <CheckCircle2 className="w-3 h-3 text-emerald-400" />}
-                        <span>{rec.name}</span>
-                        {rec.nirf && (
-                          <span
-                            className={`text-[9px] px-1 rounded font-extrabold ${isSelected
-                              ? "bg-white/20 text-white"
-                              : "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-                              }`}
-                          >
-                            NIRF {rec.nirf}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              )}
 
-              {/* Optional Score / Percentile */}
-              <div>
-                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
-                  12th Marks / Entrance Rank (Optional)
-                </label>
-                <div className="relative">
-                  <Award className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <input
-                    type="text"
-                    placeholder="e.g. 84% in 12th PCM or 88 percentile in JEE/CAT/NEET"
-                    value={formData.score}
-                    onChange={(e) => setFormData({ ...formData, score: e.target.value })}
-                    className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-sm outline-none transition-all bg-white"
-                  />
+              {/* Optional Score & Inline Trust Badges */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-center">
+                <div>
+                  <label className="block text-[10.5px] font-bold text-gray-700 uppercase tracking-wide mb-1">
+                    12th Score / Exam Rank (Optional)
+                  </label>
+                  <div className="relative">
+                    <Award className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="text"
+                      placeholder="e.g. 84% or JEE / NEET rank"
+                      value={formData.score}
+                      onChange={(e) => setFormData({ ...formData, score: e.target.value })}
+                      className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-gray-200 focus:ring-1 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] text-xs sm:text-[13px] outline-none transition-all bg-white"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              {/* Reassuring Trust Bar */}
-              <div className="grid grid-cols-3 gap-2 py-2 px-1 text-[10px] sm:text-[11px] text-gray-600 font-semibold border-t border-b border-gray-100">
-                <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span>Zero Donation</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                  <span>15-Min Response</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Award className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                  <span>Official Allocation</span>
+                <div className="flex items-center justify-between text-[10.5px] text-gray-600 font-semibold px-2.5 py-2 rounded-xl bg-slate-50 border border-slate-100 mt-0 sm:mt-5">
+                  <span className="flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3 text-emerald-600 shrink-0" />
+                    <span>Zero Donation</span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-blue-600 shrink-0" />
+                    <span>15-Min Response</span>
+                  </span>
                 </div>
               </div>
 
               {/* Consent Checkbox */}
-              <label className="flex items-start gap-2 pt-0.5 text-[11px] text-gray-500 cursor-pointer">
+              <label className="flex items-center gap-2 text-[10.5px] text-gray-500 cursor-pointer select-none pt-0.5">
                 <input
                   type="checkbox"
                   required
                   checked={formData.consent}
                   onChange={(e) => setFormData({ ...formData, consent: e.target.checked })}
-                  className="mt-0.5 rounded border-gray-300 text-[#E31E2B] focus:ring-[#E31E2B]"
+                  className="rounded border-gray-300 text-[#E31E2B] focus:ring-[#E31E2B]"
                 />
                 <span>
-                  I authorize Aspirant Vision senior academic counsellors to share verified cutoff reports and seat updates via WhatsApp &amp; Call.
+                  I authorize senior academic counsellors to share verified cutoff &amp; admission updates via WhatsApp &amp; Call.
                 </span>
               </label>
 
-              {/* Main Submit Button */}
+              {/* Submit CTA */}
               <div className="pt-1">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 px-6 rounded-xl font-display font-bold text-sm sm:text-base text-white bg-[#E31E2B] hover:bg-[#c91824] active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 shadow-sm"
+                  className="w-full py-2.5 sm:py-3 px-5 rounded-xl font-display font-bold text-xs sm:text-sm text-white bg-[#E31E2B] hover:bg-[#c91824] active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 shadow-sm"
                 >
                   {isSubmitting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Verifying &amp; Registering Enquiry...</span>
+                      <span>Registering Counselling Request...</span>
                     </>
                   ) : (
                     <>
-                      <span>Submit Application for Official Counselling</span>
+                      <span>Submit for Official Counselling</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
@@ -519,17 +575,17 @@ export function CounselingModal({
               </div>
 
               {/* Instant WhatsApp Alternative */}
-              <div className="pt-1 text-center">
+              <div className="text-center pt-0.5">
                 <a
                   href={`https://wa.me/919876543210?text=Hello%20Aspirant%20Vision,%20I%20would%20like%20guidance%20for%20admission%20into%20${encodeURIComponent(
-                    formData.interestedCollege || formData.interestedCourse
+                    formData.interestedCollege || formData.city || formData.interestedCourse
                   )}.`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100/70 border border-emerald-200/80 px-4 py-2 rounded-xl transition-colors"
+                  className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 hover:text-emerald-800 transition-colors"
                 >
                   <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Prefer direct chat? Connect on WhatsApp with an Admissions Officer</span>
+                  <span>Prefer direct chat? Connect on WhatsApp</span>
                 </a>
               </div>
             </form>
