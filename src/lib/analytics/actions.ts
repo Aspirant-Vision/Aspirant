@@ -113,7 +113,7 @@ export async function getCollegeAnalyticsAction(
 export async function exportReportAction(
   reportType: ReportType,
   preset: DateRangePreset = "30d"
-): Promise<ApiResponse<{ filename: string; csvContent: string }>> {
+): Promise<ApiResponse<{ filename: string; csvContent: string; rowCount: number }>> {
   try {
     const profile = await getCurrentProfile();
     if (!profile || !isStaff(profile.role)) {

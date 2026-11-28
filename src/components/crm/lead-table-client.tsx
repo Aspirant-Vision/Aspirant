@@ -136,17 +136,38 @@ export function LeadTableClient({
   // CSV Export State
   const [isExporting, setIsExporting] = useState(false);
 
-  const fetchLeads = async (newPage = page) => {
+  const fetchLeads = async (
+    newPage = page,
+    overrides?: {
+      search?: string;
+      status?: string;
+      priority?: string;
+      source?: string;
+      counsellorId?: string;
+      collegeId?: string;
+      courseId?: string;
+      sortBy?: "newest" | "oldest" | "priority";
+    }
+  ) => {
+    const activeSearch = overrides?.search !== undefined ? overrides.search : search;
+    const activeStatus = overrides?.status !== undefined ? overrides.status : status;
+    const activePriority = overrides?.priority !== undefined ? overrides.priority : priority;
+    const activeSource = overrides?.source !== undefined ? overrides.source : source;
+    const activeCounsellorId = overrides?.counsellorId !== undefined ? overrides.counsellorId : counsellorId;
+    const activeCollegeId = overrides?.collegeId !== undefined ? overrides.collegeId : collegeId;
+    const activeCourseId = overrides?.courseId !== undefined ? overrides.courseId : courseId;
+    const activeSortBy = overrides?.sortBy !== undefined ? overrides.sortBy : sortBy;
+
     startTransition(async () => {
       const res = await getLeadsListingAction({
-        search: search.trim() || undefined,
-        status: status !== "all" ? status : undefined,
-        priority: priority !== "all" ? priority : undefined,
-        source: source !== "all" ? source : undefined,
-        counsellorId: counsellorId !== "all" ? counsellorId : undefined,
-        collegeId: collegeId !== "all" ? collegeId : undefined,
-        courseId: courseId !== "all" ? courseId : undefined,
-        sortBy,
+        search: activeSearch.trim() || undefined,
+        status: activeStatus !== "all" ? activeStatus : undefined,
+        priority: activePriority !== "all" ? activePriority : undefined,
+        source: activeSource !== "all" ? activeSource : undefined,
+        counsellorId: activeCounsellorId !== "all" ? activeCounsellorId : undefined,
+        collegeId: activeCollegeId !== "all" ? activeCollegeId : undefined,
+        courseId: activeCourseId !== "all" ? activeCourseId : undefined,
+        sortBy: activeSortBy,
         page: newPage,
         pageSize,
         onlyMine: isCounsellorOnly,
@@ -164,7 +185,7 @@ export function LeadTableClient({
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchLeads(1);
+    fetchLeads(1, { search });
   };
 
   // Selection Helpers
@@ -434,104 +455,224 @@ export function LeadTableClient({
         </div>
 
         {/* Search & Filter Bar */}
-        <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5">
-          {/* Search Input */}
-          <div className="relative sm:col-span-2">
-            <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search by student name, email or phone..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#E31E2B] focus:border-[#E31E2B]"
-            />
-          </div>
+        <form onSubmit={handleSearchSubmit} className="space-y-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5">
+            {/* Search Input */}
+            <div className="relative sm:col-span-2">
+              <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search by student name, email or phone..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-8 pr-8 py-2 text-xs rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 text-gray-900 transition-all shadow-2xs"
+              />
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch("");
+                    fetchLeads(1, { search: "" });
+                  }}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5 rounded cursor-pointer"
+                  title="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
 
-          {/* Status Filter */}
-          <div>
-            <select
-              value={status}
-              onChange={(e) => {
-                setStatus(e.target.value);
-                startTransition(() => {
-                  fetchLeads(1);
-                });
-              }}
-              className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-1 focus:ring-[#E31E2B]"
-            >
-              <option value="all">All Statuses</option>
-              <option value="new">New</option>
-              <option value="contacted">Contacted</option>
-              <option value="interested">Interested</option>
-              <option value="counselling_scheduled">Counselling Scheduled</option>
-              <option value="application_started">Application Started</option>
-              <option value="admitted">Admitted</option>
-              <option value="not_interested">Not Interested</option>
-              <option value="lost">Lost</option>
-            </select>
-          </div>
-
-          {/* Priority Filter */}
-          <div>
-            <select
-              value={priority}
-              onChange={(e) => {
-                setPriority(e.target.value);
-                startTransition(() => {
-                  fetchLeads(1);
-                });
-              }}
-              className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-1 focus:ring-[#E31E2B]"
-            >
-              <option value="all">All Priorities</option>
-              <option value="urgent">Urgent</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-            </select>
-          </div>
-
-          {/* Counsellor Filter (If Admin) */}
-          {!isCounsellorOnly && (
+            {/* Status Filter */}
             <div>
               <select
-                value={counsellorId}
+                value={status}
                 onChange={(e) => {
-                  setCounsellorId(e.target.value);
-                  startTransition(() => {
-                    fetchLeads(1);
-                  });
+                  const val = e.target.value;
+                  setStatus(val);
+                  fetchLeads(1, { status: val });
                 }}
-                className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-1 focus:ring-[#E31E2B]"
+                className={cn(
+                  "w-full px-2.5 py-2 text-xs rounded-xl border transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500/20 shadow-2xs",
+                  status !== "all"
+                    ? "border-red-400 bg-red-50/30 text-red-900 font-semibold"
+                    : "border-gray-200 bg-white text-gray-700"
+                )}
               >
-                <option value="all">All Counsellors</option>
-                <option value="unassigned">Unassigned Leads</option>
-                {counsellors.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.full_name || c.email}
-                  </option>
-                ))}
+                <option value="all">All Statuses</option>
+                <option value="new">New Inquiry</option>
+                <option value="contacted">Contacted</option>
+                <option value="interested">Interested</option>
+                <option value="counselling_scheduled">Counselling Scheduled</option>
+                <option value="application_started">Application Started</option>
+                <option value="admitted">Admitted</option>
+                <option value="not_interested">Not Interested</option>
+                <option value="lost">Lost</option>
               </select>
             </div>
-          )}
 
-          {/* Sort By */}
-          <div>
-            <select
-              value={sortBy}
-              onChange={(e) => {
-                setSortBy(e.target.value as any);
-                startTransition(() => {
-                  fetchLeads(1);
-                });
-              }}
-              className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-1 focus:ring-[#E31E2B]"
-            >
-              <option value="newest">Sort: Newest First</option>
-              <option value="oldest">Sort: Oldest First</option>
-              <option value="priority">Sort: Highest Priority</option>
-            </select>
+            {/* Priority Filter */}
+            <div>
+              <select
+                value={priority}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setPriority(val);
+                  fetchLeads(1, { priority: val });
+                }}
+                className={cn(
+                  "w-full px-2.5 py-2 text-xs rounded-xl border transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500/20 shadow-2xs",
+                  priority !== "all"
+                    ? "border-red-400 bg-red-50/30 text-red-900 font-semibold"
+                    : "border-gray-200 bg-white text-gray-700"
+                )}
+              >
+                <option value="all">All Priorities</option>
+                <option value="urgent">Urgent</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+
+            {/* Counsellor Filter (If Admin) */}
+            {!isCounsellorOnly && (
+              <div>
+                <select
+                  value={counsellorId}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setCounsellorId(val);
+                    fetchLeads(1, { counsellorId: val });
+                  }}
+                  className={cn(
+                    "w-full px-2.5 py-2 text-xs rounded-xl border transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500/20 shadow-2xs",
+                    counsellorId !== "all"
+                      ? "border-red-500 bg-red-50/40 text-red-900 font-bold ring-1 ring-red-400/50"
+                      : "border-gray-200 bg-white text-gray-700"
+                  )}
+                >
+                  <option value="all">All Counsellors</option>
+                  <option value="unassigned">Unassigned Leads Only</option>
+                  {counsellors.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.full_name || c.email}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Sort By */}
+            <div>
+              <select
+                value={sortBy}
+                onChange={(e) => {
+                  const val = e.target.value as any;
+                  setSortBy(val);
+                  fetchLeads(1, { sortBy: val });
+                }}
+                className="w-full px-2.5 py-2 text-xs rounded-xl border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500/20 cursor-pointer shadow-2xs"
+              >
+                <option value="newest">Sort: Newest First</option>
+                <option value="oldest">Sort: Oldest First</option>
+                <option value="priority">Sort: Highest Priority</option>
+              </select>
+            </div>
           </div>
+
+          {/* Active Filter Indicators Bar */}
+          {(search.trim() !== "" || status !== "all" || priority !== "all" || counsellorId !== "all") && (
+            <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+              <span className="text-[11px] font-semibold text-gray-500">
+                Active Filter ({total} {total === 1 ? "lead" : "leads"} found):
+              </span>
+
+              {search.trim() && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-gray-100 text-gray-800 text-[11px] font-medium border border-gray-200">
+                  <span>Keyword: &quot;{search.trim()}&quot;</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearch("");
+                      fetchLeads(1, { search: "" });
+                    }}
+                    className="hover:text-red-600 p-0.5 rounded cursor-pointer"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              {counsellorId !== "all" && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[11px] font-bold">
+                  <span>
+                    Counsellor: {counsellorId === "unassigned" ? "Unassigned" : (counsellors.find((c) => c.id === counsellorId)?.full_name || "Selected")}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCounsellorId("all");
+                      fetchLeads(1, { counsellorId: "all" });
+                    }}
+                    className="hover:text-red-900 p-0.5 rounded cursor-pointer"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              {status !== "all" && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[11px] font-bold capitalize">
+                  <span>Status: {status.replace("_", " ")}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStatus("all");
+                      fetchLeads(1, { status: "all" });
+                    }}
+                    className="hover:text-red-900 p-0.5 rounded cursor-pointer"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              {priority !== "all" && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[11px] font-bold capitalize">
+                  <span>Priority: {priority}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPriority("all");
+                      fetchLeads(1, { priority: "all" });
+                    }}
+                    className="hover:text-red-900 p-0.5 rounded cursor-pointer"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch("");
+                  setStatus("all");
+                  setPriority("all");
+                  setCounsellorId("all");
+                  fetchLeads(1, {
+                    search: "",
+                    status: "all",
+                    priority: "all",
+                    counsellorId: "all",
+                  });
+                }}
+                className="text-[11px] font-bold text-red-600 hover:text-red-800 hover:underline ml-1 cursor-pointer"
+              >
+                Reset all
+              </button>
+            </div>
+          )}
         </form>
       </div>
 
@@ -547,11 +688,33 @@ export function LeadTableClient({
       {viewMode === "table" && (
         <>
           {leads.length === 0 ? (
-            <EmptyState
-              icon={Inbox}
-              title="No Leads Found"
-              description="No admission leads match your selected search terms or filters."
-            />
+            <div className="bg-white rounded-2xl border border-gray-200/80 p-12 text-center shadow-2xs space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-gray-100 text-gray-400 mx-auto flex items-center justify-center">
+                <Inbox className="w-6 h-6" />
+              </div>
+              <h3 className="text-sm font-bold text-gray-900">No Leads Found</h3>
+              <p className="text-xs text-gray-500 max-w-sm mx-auto">
+                No candidate inquiries match your active filter settings.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch("");
+                  setStatus("all");
+                  setPriority("all");
+                  setCounsellorId("all");
+                  fetchLeads(1, {
+                    search: "",
+                    status: "all",
+                    priority: "all",
+                    counsellorId: "all",
+                  });
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-900 text-white text-xs font-semibold hover:bg-black transition-colors cursor-pointer"
+              >
+                <span>Reset All Filters</span>
+              </button>
+            </div>
           ) : (
             <div className="bg-white rounded-2xl border border-gray-200/80 shadow-2xs overflow-hidden">
               <div className="overflow-x-auto">
@@ -688,10 +851,19 @@ export function LeadTableClient({
                                 </div>
                               </div>
                             ) : (
-                              <div className="flex items-center gap-1.5 text-amber-600 text-xs font-semibold">
-                                <AlertCircle className="w-3.5 h-3.5" />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setAssignModalLead(lead);
+                                  setSelectedCounsellor("");
+                                  setAssignNotes("");
+                                }}
+                                className="inline-flex items-center gap-1.5 text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200/90 px-2 py-0.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors"
+                                title="Click to assign counsellor"
+                              >
+                                <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
                                 <span>Unassigned</span>
-                              </div>
+                              </button>
                             )}
                           </td>
 
