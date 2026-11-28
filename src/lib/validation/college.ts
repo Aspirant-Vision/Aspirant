@@ -7,6 +7,7 @@ export const COLLEGE_TYPES = [
   "Engineering",
   "Medical",
   "Management",
+  "MBA / PGDM",
   "Arts & Science",
   "Law",
   "Pharmacy",

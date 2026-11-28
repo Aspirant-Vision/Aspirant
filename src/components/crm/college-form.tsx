@@ -436,6 +436,9 @@ export function CollegeForm({ mode, initialData }: CollegeFormProps) {
                 {errors.collegeType && (
                   <p className="text-[11px] text-red-600 mt-1">{errors.collegeType.message}</p>
                 )}
+                <p className="text-[11px] text-gray-500 mt-1">
+                  Selecting <strong>Management</strong> or <strong>MBA / PGDM</strong> automatically lists this college in the MBA | PGDM section.
+                </p>
               </div>
 
               {/* Ownership Type */}
