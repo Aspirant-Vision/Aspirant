@@ -341,6 +341,64 @@ export function getCourseDisciplineMeta(category?: string | null): DisciplineMet
     };
   }
 
+  if (
+    clean.includes("comput") ||
+    clean.includes("application") ||
+    clean.includes("bca") ||
+    clean.includes("mca") ||
+    clean.includes("software") ||
+    clean.includes("information tech")
+  ) {
+    return {
+      ...COLLEGE_DISCIPLINES.engineering,
+      badge: "IT & COMPUTING DEGREE CATALOG",
+      titlePrefix: "Explore Flagship",
+      highlightedText: "Computer Applications & IT Programs",
+      titleSuffix: "in India",
+      description:
+        "Discover premier BCA, MCA, and Software Engineering programs with industry-aligned syllabi in Cloud Computing, AI/ML, Full-Stack Development, and audited campus placements.",
+      image: "/images/disciplines/engineering.jpg",
+      showcaseTag1: "💻 Computer Applications & IT",
+      showcaseTag2: "AICTE & UGC Aligned",
+      captionTitle: "BCA, MCA, Cloud & Software Engineering Programs",
+      captionSubtitle: "Coding labs, tech corporate tie-ups & high-growth IT placement tracks",
+      trustBadge1: "AICTE & UGC Recognized",
+      trustBadge2: "Coding & AI Sandbox Labs",
+      trustBadge3: "Free IT Career Mapping",
+      metric1Value: "40+",
+      metric1Label: "IT Specializations",
+      metric2Value: "₹24 LPA",
+      metric2Label: "Top BCA/MCA Package",
+      metric3Value: "96%",
+      metric3Label: "IT Placement Rate",
+    };
+  }
+
+  if (clean.includes("design") || clean.includes("arch") || clean.includes("media") || clean.includes("art")) {
+    return {
+      ...COLLEGE_DISCIPLINES.design,
+      badge: "CREATIVE & DESIGN DEGREE CATALOG",
+      titlePrefix: "Explore Flagship",
+      highlightedText: "Design & Creative Arts Curricula",
+      titleSuffix: "in India",
+      description:
+        "Discover accredited B.Des, B.Arch, and Visual Communication curricula with studio-based portfolios, industry mentors, and premier campus recruitments.",
+      showcaseTag1: "🎨 Design & Media Studies",
+      showcaseTag2: "CoA & UGC Aligned",
+      captionTitle: "B.Des, B.Arch, Animation & UI/UX Design Curricula",
+      captionSubtitle: "Design studios, creative workshops & creative agency placements",
+      trustBadge1: "CoA & UGC Approved",
+      trustBadge2: "Design Studio Infrastructure",
+      trustBadge3: "Portfolio Advisory",
+      metric1Value: "35+",
+      metric1Label: "Creative Specializations",
+      metric2Value: "₹18 LPA",
+      metric2Label: "Top Design Package",
+      metric3Value: "100%",
+      metric3Label: "Studio-Based Training",
+    };
+  }
+
   return getCollegeDisciplineMeta(category);
 }
 

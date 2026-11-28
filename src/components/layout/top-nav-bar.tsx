@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Logo } from "@/components/ui/logo";
 import { useCounselingModal } from "@/components/forms/counseling-modal-context";
 import { NavUserProfile } from "@/components/layout/nav-user-profile";
@@ -12,13 +12,14 @@ import {
   Menu,
   X,
   User,
-  ShieldCheck,
   Sparkles,
+  Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function TopNavBar() {
+function TopNavBarContent() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -29,10 +30,10 @@ export function TopNavBar() {
   const isCollegesActive = pathname.startsWith("/colleges");
   const isCoursesActive = pathname.startsWith("/courses");
 
-  // Reset navigation indicator on route change
+  // Reset navigation indicator whenever route or query params change
   useEffect(() => {
     setIsNavigating(false);
-  }, [pathname]);
+  }, [pathname, searchParams]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,9 +44,70 @@ export function TopNavBar() {
   }, []);
 
   const handleLinkClick = (href: string) => {
-    if (pathname !== href) {
+    const currentFullUrl = searchParams.toString()
+      ? `${pathname}?${searchParams.toString()}`
+      : pathname;
+    if (currentFullUrl !== href) {
       setIsNavigating(true);
+      // Failsafe auto-reset so indicator never hangs if client router is instantaneous
+      const timer = setTimeout(() => setIsNavigating(false), 700);
+      return () => clearTimeout(timer);
     }
+  };
+
+  /**
+   * Evaluates if a dropdown sub-item is active taking both pathname
+   * and query parameters (such as ?type=... or ?category=...) into account.
+   */
+  const isSubItemActive = (subHref: string): boolean => {
+    if (!pathname) return false;
+
+    // Direct hash links
+    if (subHref.startsWith("/#")) {
+      return pathname === "/" && typeof window !== "undefined" && window.location.hash === subHref.slice(1);
+    }
+
+    // Pure path without query string (e.g. "/colleges", "/courses", "/mba")
+    if (!subHref.includes("?")) {
+      if (subHref === "/colleges") {
+        const currentType = searchParams.get("type") || searchParams.get("category");
+        return pathname === "/colleges" && !currentType;
+      }
+      if (subHref === "/courses") {
+        const currentCategory = searchParams.get("category") || searchParams.get("stream");
+        return pathname === "/courses" && !currentCategory;
+      }
+      return pathname === subHref;
+    }
+
+    // Subitem has query parameters
+    const [subPath, subQueryString] = subHref.split("?");
+    if (pathname !== subPath) return false;
+
+    const subParams = new URLSearchParams(subQueryString);
+    let allMatch = true;
+
+    subParams.forEach((expectedValue, paramKey) => {
+      const currentVal = searchParams.get(paramKey);
+      if (!currentVal) {
+        allMatch = false;
+        return;
+      }
+
+      const decodedExpected = decodeURIComponent(expectedValue).toLowerCase().trim();
+      const decodedCurrent = decodeURIComponent(currentVal).toLowerCase().trim();
+
+      const matched =
+        decodedCurrent === decodedExpected ||
+        decodedCurrent.includes(decodedExpected) ||
+        decodedExpected.includes(decodedCurrent);
+
+      if (!matched) {
+        allMatch = false;
+      }
+    });
+
+    return allMatch;
   };
 
   const navItems = [
@@ -71,11 +133,11 @@ export function TopNavBar() {
       hasDropdown: true,
       subItems: [
         { label: "Explore All Programs", href: "/courses" },
-        { label: "Engineering (B.Tech / M.Tech)", href: "/courses?category=Engineering&degree=B.Tech+%2F+B.E." },
+        { label: "Engineering (B.Tech / M.Tech)", href: "/courses?category=Engineering" },
         { label: "Medical & Allied Health (MBBS / BDS)", href: "/courses?category=Medical+%26+Allied+Health" },
         { label: "Management & Business (BBA / MBA)", href: "/courses?category=Management" },
-        { label: "Computer Applications (BCA / MCA)", href: "/courses?category=Management" },
-        { label: "Design, Media & Humanities", href: "/courses?category=Design" },
+        { label: "Computer Applications (BCA / MCA)", href: "/courses?category=Computer+Applications+%26+IT" },
+        { label: "Design, Media & Architecture", href: "/courses?category=Design+%26+Architecture" },
       ],
     },
     {
@@ -119,7 +181,7 @@ export function TopNavBar() {
           : "bg-white/90 backdrop-blur-sm border-b border-white/50 py-3"
       )}
     >
-      {/* Instant route transition indicator */}
+      {/* Route & Query Parameter Transition Indicator */}
       {isNavigating && (
         <div className="absolute top-0 left-0 right-0 h-[2.5px] bg-[#E31E2B] animate-pulse z-50" />
       )}
@@ -129,65 +191,105 @@ export function TopNavBar() {
         <Logo className="shrink-0" />
 
         {/* Center Navigation - Ultra-Snappy CSS Dropdowns (0ms JS delay) */}
-        <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
+        <nav className="hidden lg:flex items-center gap-4 xl:gap-6">
           {navItems.map((item) => (
-            <div
-              key={item.name}
-              className="relative group py-1"
-            >
-              <Link
-                href={item.href}
-                prefetch={true}
-                onClick={() => handleLinkClick(item.href)}
-                className={cn(
-                  "inline-flex items-center gap-1.5 text-[13.5px] font-semibold tracking-tight transition-colors py-1 relative",
-                  item.active
-                    ? "text-[#E31E2B] font-bold"
-                    : item.special
-                    ? "text-[#E31E2B] font-bold hover:text-[#B5121B]"
-                    : "text-[#15182D] group-hover:text-[#E31E2B] hover:text-[#E31E2B]"
-                )}
-              >
-                <span>{item.name}</span>
-                {item.badge && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-extrabold bg-[#E31E2B] text-white uppercase tracking-wider shadow-xs">
-                    {item.badge}
-                  </span>
-                )}
-                {item.hasDropdown && (
-                  <ChevronDown className="w-3.5 h-3.5 text-[#687086] group-hover:text-[#E31E2B] group-hover:rotate-180 transition-transform duration-150 mt-0.5" />
-                )}
-                {item.active && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#E31E2B] rounded-full" />
-                )}
-              </Link>
+            <div key={item.name} className="relative group py-1">
+              {item.special ? (
+                /* Specialized MBA | PGDM Feature Nav Button */
+                <Link
+                  href={item.href}
+                  prefetch={true}
+                  onClick={() => handleLinkClick(item.href)}
+                  className={cn(
+                    "group/mba relative inline-flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300",
+                    item.active
+                      ? "bg-red-50/90 border border-red-300 shadow-[0_2px_10px_rgba(227,30,43,0.18)]"
+                      : "bg-gradient-to-r from-red-50/80 via-rose-50/50 to-white hover:from-red-100/90 hover:via-rose-100/60 hover:to-red-50/70 border border-red-200/90 hover:border-[#E31E2B]/60 shadow-[0_2px_8px_-2px_rgba(227,30,43,0.12)] hover:shadow-[0_4px_16px_rgba(227,30,43,0.25)] hover:-translate-y-0.5 active:translate-y-0"
+                  )}
+                >
+                  {/* Ambient Glow Aura */}
+                  <span className="absolute -inset-0.5 rounded-full bg-gradient-to-r from-red-500/25 via-rose-500/15 to-red-500/25 blur-xs opacity-0 group-hover/mba:opacity-100 transition-opacity duration-300 -z-10" />
 
-              {/* Submenu Dropdown - Instant pure CSS hover, 0ms lag, pre-rendered in DOM */}
+                  <Sparkles className="w-3.5 h-3.5 text-[#E31E2B] transition-transform duration-300 group-hover/mba:rotate-12 group-hover/mba:scale-110 shrink-0" />
+
+                  <span className="text-[13px] font-bold text-[#15182D] tracking-tight flex items-center">
+                    <span>MBA</span>
+                    <span className="text-gray-300 font-light mx-1">|</span>
+                    {/* PGDM Highlight with smooth transition animation & micro-underline */}
+                    <span className="relative inline-block font-black text-[#E31E2B] transition-all duration-300 group-hover/mba:text-[#B5121B] group-hover/mba:scale-105">
+                      PGDM
+                      <span className="absolute -bottom-0.5 left-0 right-0 h-[2px] bg-gradient-to-r from-[#E31E2B] to-[#FF4D5A] rounded-full scale-x-100 transition-transform duration-300 origin-left" />
+                    </span>
+                  </span>
+
+                  {/* Pulsing Live 2026 Radar Badge */}
+                  <span className="inline-flex items-center gap-1 pl-1.5 pr-2 py-0.5 rounded-full text-[9.5px] font-extrabold uppercase tracking-wider bg-gradient-to-r from-[#E31E2B] to-[#B5121B] text-white shadow-xs">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-80" />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
+                    </span>
+                    <span>{item.badge || "2026"}</span>
+                  </span>
+                </Link>
+              ) : (
+                /* Standard Top Nav Item */
+                <Link
+                  href={item.href}
+                  prefetch={true}
+                  onClick={() => handleLinkClick(item.href)}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 text-[13.5px] font-semibold tracking-tight transition-colors py-1 relative",
+                    item.active
+                      ? "text-[#E31E2B] font-bold"
+                      : "text-[#15182D] group-hover:text-[#E31E2B] hover:text-[#E31E2B]"
+                  )}
+                >
+                  <span>{item.name}</span>
+                  {item.hasDropdown && (
+                    <ChevronDown className="w-3.5 h-3.5 text-[#687086] group-hover:text-[#E31E2B] group-hover:rotate-180 transition-transform duration-150 mt-0.5" />
+                  )}
+                  {item.active && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#E31E2B] rounded-full" />
+                  )}
+                </Link>
+              )}
+
+              {/* Submenu Dropdown - Instant pure CSS hover with zero delay */}
               {item.hasDropdown && (
                 <div
                   className={cn(
-                    "absolute top-full left-0 w-72 pt-1.5 z-50 transition-all duration-75 ease-out",
+                    "absolute top-full left-0 w-72 pt-1.5 z-50 transition-all duration-100 ease-out",
                     "invisible opacity-0 pointer-events-none -translate-y-1",
                     "group-hover:visible group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0"
                   )}
                 >
-                  <div className="bg-white rounded-2xl border border-gray-200/90 p-2 space-y-0.5 shadow-lg">
-                    {item.subItems?.map((sub: any) => (
-                      <Link
-                        key={sub.label}
-                        href={sub.href}
-                        prefetch={true}
-                        onClick={() => handleLinkClick(sub.href)}
-                        className={cn(
-                          "block px-3.5 py-2 text-xs font-semibold rounded-xl transition-colors duration-75",
-                          pathname === sub.href
-                            ? "text-[#E31E2B] bg-red-50 font-bold"
-                            : "text-[#15182D] hover:text-[#E31E2B] hover:bg-red-50/70"
-                        )}
-                      >
-                        {sub.label}
-                      </Link>
-                    ))}
+                  <div className="bg-white/98 backdrop-blur-md rounded-2xl border border-gray-200/90 p-1.5 space-y-0.5 shadow-[0_12px_36px_-6px_rgba(0,0,0,0.12),0_4px_12px_-2px_rgba(0,0,0,0.06)]">
+                    {item.subItems?.map((sub: any) => {
+                      const active = isSubItemActive(sub.href);
+                      return (
+                        <Link
+                          key={sub.label}
+                          href={sub.href}
+                          prefetch={true}
+                          onClick={() => handleLinkClick(sub.href)}
+                          className={cn(
+                            "group/sub relative flex items-center justify-between px-3.5 py-2.5 text-xs rounded-xl transition-all duration-100",
+                            active
+                              ? "text-[#E31E2B] bg-red-50/90 font-bold shadow-xs border-l-[3px] border-[#E31E2B]"
+                              : "text-[#15182D] font-semibold hover:text-[#E31E2B] hover:bg-red-50/60"
+                          )}
+                        >
+                          <span className="truncate pr-2">{sub.label}</span>
+                          {active ? (
+                            <span className="shrink-0 flex items-center justify-center w-4 h-4 rounded-full bg-[#E31E2B] text-white shadow-xs">
+                              <Check className="w-2.5 h-2.5 stroke-[3]" />
+                            </span>
+                          ) : (
+                            <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-transparent group-hover/sub:bg-red-300 transition-colors" />
+                          )}
+                        </Link>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -240,15 +342,24 @@ export function TopNavBar() {
               setIsMobileMenuOpen(false);
               handleLinkClick("/mba");
             }}
-            className="block p-3.5 rounded-2xl bg-gradient-to-r from-red-500/10 via-red-500/5 to-[#171B52]/10 border border-red-200"
+            className={cn(
+              "block p-3.5 rounded-2xl border transition-all duration-200",
+              isMbaActive
+                ? "bg-red-50 border-[#E31E2B] shadow-sm"
+                : "bg-gradient-to-r from-red-500/10 via-rose-500/5 to-[#171B52]/5 border-red-200 hover:border-[#E31E2B]"
+            )}
           >
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs font-extrabold text-[#E31E2B] flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
-                Looking for MBA | PGDM?
+                Looking for MBA | <span className="underline decoration-2">PGDM</span>?
               </span>
-              <span className="px-2 py-0.5 rounded-full bg-[#E31E2B] text-white text-[9px] font-extrabold uppercase tracking-wider">
-                Special Hub
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#E31E2B] text-white text-[9px] font-extrabold uppercase tracking-wider">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-80" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
+                </span>
+                2026 Live
               </span>
             </div>
             <p className="text-[11px] text-[#475569] font-medium leading-tight">
@@ -275,20 +386,31 @@ export function TopNavBar() {
                 </Link>
                 {item.hasDropdown && (
                   <div className="pl-3 py-1 space-y-1">
-                    {item.subItems?.map((sub) => (
-                      <Link
-                        key={sub.label}
-                        href={sub.href}
-                        prefetch={true}
-                        onClick={() => {
-                          setIsMobileMenuOpen(false);
-                          handleLinkClick(sub.href);
-                        }}
-                        className="block py-1 text-xs text-[#687086] hover:text-[#E31E2B]"
-                      >
-                        {sub.label}
-                      </Link>
-                    ))}
+                    {item.subItems?.map((sub) => {
+                      const active = isSubItemActive(sub.href);
+                      return (
+                        <Link
+                          key={sub.label}
+                          href={sub.href}
+                          prefetch={true}
+                          onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            handleLinkClick(sub.href);
+                          }}
+                          className={cn(
+                            "flex items-center justify-between py-1.5 px-2 rounded-lg text-xs transition-colors",
+                            active
+                              ? "text-[#E31E2B] font-bold bg-red-50/80"
+                              : "text-[#687086] hover:text-[#E31E2B] hover:bg-gray-50"
+                          )}
+                        >
+                          <span>{sub.label}</span>
+                          {active && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#E31E2B]" />
+                          )}
+                        </Link>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -322,5 +444,31 @@ export function TopNavBar() {
         </div>
       )}
     </header>
+  );
+}
+
+function TopNavBarSkeleton() {
+  return (
+    <header className="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-[#E7E9F0] py-3">
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+        <Logo className="shrink-0" />
+        <div className="hidden lg:flex items-center gap-6">
+          <div className="h-4 w-12 bg-gray-100 rounded animate-pulse" />
+          <div className="h-4 w-16 bg-gray-100 rounded animate-pulse" />
+          <div className="h-4 w-16 bg-gray-100 rounded animate-pulse" />
+          <div className="h-7 w-28 bg-red-50 rounded-full animate-pulse" />
+          <div className="h-4 w-12 bg-gray-100 rounded animate-pulse" />
+        </div>
+        <div className="h-8 w-24 bg-red-100 rounded-full animate-pulse" />
+      </div>
+    </header>
+  );
+}
+
+export function TopNavBar() {
+  return (
+    <Suspense fallback={<TopNavBarSkeleton />}>
+      <TopNavBarContent />
+    </Suspense>
   );
 }
