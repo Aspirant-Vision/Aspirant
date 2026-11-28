@@ -12,7 +12,7 @@ export function StickyConsultationTab() {
       <button
         type="button"
         onClick={() => openModal("Sticky Vertical Consultation Tab")}
-        className="group relative flex flex-col items-center justify-between py-2.5 px-1.5 sm:py-4 sm:px-2.5 rounded-l-xl sm:rounded-l-2xl text-white transition-all duration-300 cursor-pointer shadow-[-4px_4px_20px_rgba(227,30,43,0.35)] hover:shadow-[-6px_6px_25px_rgba(227,30,43,0.5)] hover:-translate-x-1 active:translate-x-0 border-y border-l border-white/30 overflow-hidden"
+        className="group relative flex flex-col items-center justify-between py-2.5 px-1.5 sm:py-4 sm:px-2.5 rounded-l-xl sm:rounded-l-2xl text-white transition-colors duration-200 cursor-pointer shadow-[-4px_4px_20px_rgba(227,30,43,0.35)] hover:shadow-[-6px_6px_25px_rgba(227,30,43,0.5)] border-y border-l border-white/30 overflow-hidden"
         style={{
           background: "linear-gradient(180deg, #FF3845 0%, #E31E2B 45%, #B30E19 100%)",
         }}
@@ -22,7 +22,7 @@ export function StickyConsultationTab() {
         <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/30 to-transparent pointer-events-none" />
 
         {/* Clean Integrated Icon */}
-        <div className="relative z-10 w-6 h-6 sm:w-7 sm:h-7 rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-white shadow-xs group-hover:scale-110 transition-transform">
+        <div className="relative z-10 w-6 h-6 sm:w-7 sm:h-7 rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-white shadow-xs">
           <PhoneCall className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5]" />
         </div>
 

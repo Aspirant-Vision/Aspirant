@@ -208,7 +208,7 @@ function TopNavBarContent() {
                   <span className="flex items-center">
                     <span>MBA</span>
                     <span className="text-gray-300 font-light mx-1">|</span>
-                    <span className="font-extrabold text-[#E31E2B] group-hover:text-[#B5121B] group-hover:scale-105 transition-all duration-200 inline-block">
+                    <span className="font-extrabold text-[#E31E2B] group-hover:text-[#B5121B] transition-colors duration-150 inline-block">
                       PGDM
                     </span>
                   </span>
@@ -217,7 +217,7 @@ function TopNavBarContent() {
                 )}
 
                 {item.badge && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-extrabold bg-[#E31E2B] text-white uppercase tracking-wider shadow-xs transition-transform duration-200 group-hover:scale-105">
+                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-extrabold bg-[#E31E2B] text-white uppercase tracking-wider shadow-xs">
                     {item.badge}
                   </span>
                 )}

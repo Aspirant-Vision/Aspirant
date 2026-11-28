@@ -7,15 +7,15 @@ export interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function GlassCard({
   className,
-  hoverLift = true,
+  hoverLift = false,
   children,
   ...props
 }: GlassCardProps) {
   return (
     <div
       className={cn(
-        "glass-card rounded-2xl shadow-card transition-all duration-300",
-        hoverLift && "hover:-translate-y-1 hover:shadow-card-hover",
+        "glass-card rounded-2xl shadow-card transition-colors duration-200",
+        hoverLift && "hover:border-red-200/80",
         className
       )}
       {...props}

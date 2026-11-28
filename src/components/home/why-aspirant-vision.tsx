@@ -95,10 +95,10 @@ export function WhyAspirantVision() {
               <button
                 type="button"
                 onClick={() => openModal("Why Aspirant Vision - Expert Guidance")}
-                className="tactile-btn-red text-white px-7 py-3 rounded-full text-xs sm:text-sm font-bold inline-flex items-center gap-2 shadow-lg hover:scale-105 active:scale-95 transition-all group cursor-pointer"
+                className="tactile-btn-red text-white px-7 py-3 rounded-full text-xs sm:text-sm font-bold inline-flex items-center gap-2 shadow-md transition-colors group cursor-pointer"
               >
                 <span>Get Expert Guidance</span>
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -120,9 +120,9 @@ export function WhyAspirantVision() {
                   <div
                     key={idx}
                     onClick={() => openModal(`Why Aspirant Vision: ${b.title}`)}
-                    className="tactile-card bg-white/85 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/90 shadow-md hover:shadow-xl hover:-translate-y-1 hover:bg-white/95 transition-all duration-300 cursor-pointer group"
+                    className="tactile-card bg-white/85 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/90 shadow-md transition-colors duration-200 cursor-pointer group"
                   >
-                    <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#E31E2B] flex items-center justify-center shrink-0 border border-red-100 group-hover:scale-110 group-hover:bg-[#E31E2B] group-hover:text-white transition-all mb-3.5 shadow-xs">
+                    <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#E31E2B] flex items-center justify-center shrink-0 border border-red-100 group-hover:bg-[#E31E2B] group-hover:text-white transition-colors mb-3.5 shadow-xs">
                       <Icon className="w-6 h-6 stroke-[2.2]" />
                     </div>
                     <h3 className="font-display font-extrabold text-base text-[#15182D] group-hover:text-[#E31E2B] transition-colors leading-snug mb-1.5">

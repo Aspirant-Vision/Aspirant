@@ -63,7 +63,7 @@ export function StepsJourney() {
                   className="bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/10 hover:border-red-500/40 transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-[160px]"
                 >
                   {/* Icon */}
-                  <div className="w-11 h-11 rounded-2xl bg-[#DC2626] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform mb-4">
+                  <div className="w-11 h-11 rounded-2xl bg-[#DC2626] text-white flex items-center justify-center shadow-md mb-4">
                     <Icon className="w-5 h-5 stroke-[2.2]" />
                   </div>
 

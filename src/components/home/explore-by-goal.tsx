@@ -94,10 +94,10 @@ export function ExploreByGoal() {
         </div>
         <button
           onClick={() => openModal("All Courses & Streams")}
-          className="tactile-pill px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[#E31E2B] font-bold text-xs sm:text-sm flex items-center gap-1.5 hover:text-[#c91622] group"
+          className="tactile-pill px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[#E31E2B] font-bold text-xs sm:text-sm flex items-center gap-1.5 hover:text-[#c91622] cursor-pointer"
         >
           <span>Explore All Courses</span>
-          <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+          <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>
 
@@ -160,7 +160,7 @@ export function ExploreByGoal() {
             alt="Explore Colleges by Degree Goal - Aspirant Vision"
             fill
             sizes="100vw"
-            className="object-cover object-center group-hover:scale-[1.02] transition-transform duration-500"
+            className="object-cover object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/45 to-transparent flex items-center p-6 sm:p-10">
             <div className="max-w-xl space-y-2">
@@ -177,7 +177,7 @@ export function ExploreByGoal() {
                 <button
                   type="button"
                   onClick={() => openModal("Career Stream Mapping Session")}
-                  className="tactile-btn-red text-white px-5 py-2 rounded-full text-xs font-bold inline-flex items-center gap-1.5 shadow-md hover:scale-105 transition-all cursor-pointer"
+                  className="tactile-btn-red text-white px-5 py-2 rounded-full text-xs font-bold inline-flex items-center gap-1.5 shadow-md cursor-pointer"
                 >
                   <span>Book Free Stream Mapping</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -185,7 +185,7 @@ export function ExploreByGoal() {
 
                 <Link
                   href="/mba"
-                  className="bg-white hover:bg-slate-100 text-[#15182D] px-4 py-2 rounded-full text-xs font-bold inline-flex items-center gap-1.5 shadow-md hover:scale-105 transition-all border border-slate-200 cursor-pointer"
+                  className="bg-white hover:bg-slate-100 text-[#15182D] px-4 py-2 rounded-full text-xs font-bold inline-flex items-center gap-1.5 shadow-md border border-slate-200 cursor-pointer"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-[#E31E2B]" />
                   <span className="text-[#15182D] font-extrabold">Looking for MBA | PGDM? Explore Special Hub</span>

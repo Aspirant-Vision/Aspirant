@@ -11,7 +11,7 @@ interface LogoProps {
 export function Logo({ className, inverted = false }: LogoProps) {
   return (
     <Link href="/" className={cn("inline-flex items-center group select-none shrink-0", className)}>
-      <div className="relative h-10 w-44 sm:h-12 sm:w-52 transition-transform duration-200 group-hover:scale-[1.02]">
+      <div className="relative h-10 w-44 sm:h-12 sm:w-52">
         <Image
           src={
             inverted

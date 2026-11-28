@@ -35,7 +35,7 @@ export function FloatingWhatsApp() {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         aria-label="Chat with senior admission counsellors on WhatsApp"
-        className="relative group w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
+        className="relative group w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-colors duration-200 cursor-pointer"
         style={{
           background: "radial-gradient(circle at 35% 30%, #4EFA8B 0%, #25D366 40%, #128C7E 85%, #075E54 100%)",
           boxShadow:
@@ -62,7 +62,7 @@ export function FloatingWhatsApp() {
         {/* Official WhatsApp Vector Logo with 3D Emboss Drop Shadow */}
         <svg
           viewBox="0 0 24 24"
-          className="relative z-10 w-8 h-8 md:w-9 md:h-9 fill-white transition-transform group-hover:scale-105"
+          className="relative z-10 w-8 h-8 md:w-9 md:h-9 fill-white"
           style={{
             filter: "drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3)) drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2))",
           }}

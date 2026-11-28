@@ -160,7 +160,7 @@ export function EducationHubs() {
                 </div>
 
                 <div className="w-8 h-8 rounded-full bg-red-50 text-[#E31E2B] flex items-center justify-center group-hover:bg-[#E31E2B] group-hover:text-white transition-colors shadow-xs">
-                  <ArrowRight className="w-4 h-4 stroke-[2.2] group-hover:translate-x-0.5 transition-transform" />
+                  <ArrowRight className="w-4 h-4 stroke-[2.2]" />
                 </div>
               </div>
             </div>

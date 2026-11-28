@@ -76,7 +76,7 @@ export function FinalCounsellingCta() {
               <div
                 key={idx}
                 onClick={() => openModal(card.actionQuery)}
-                className="tactile-card rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-[#E7E9F0] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group bg-white"
+                className="tactile-card rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-[#E7E9F0] transition-colors duration-200 cursor-pointer flex flex-col justify-between group bg-white"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -176,10 +176,10 @@ export function FinalCounsellingCta() {
           <div className="lg:col-span-4 flex flex-col items-center lg:items-end justify-center gap-3">
             <button
               onClick={() => openModal("Ready to Start Your Journey CTA Banner")}
-              className="tactile-btn-white w-full sm:w-auto px-8 py-4 rounded-full font-display font-extrabold text-sm sm:text-base text-[#E31E2B] transition-all flex items-center justify-center gap-3 shadow-2xl hover:scale-105 active:scale-95 group"
+              className="tactile-btn-white w-full sm:w-auto px-8 py-4 rounded-full font-display font-extrabold text-sm sm:text-base text-[#E31E2B] transition-colors duration-200 flex items-center justify-center gap-3 shadow-md group cursor-pointer"
             >
               <span>Book Free Counselling</span>
-              <ArrowRight className="w-4 h-4 stroke-[3] transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="w-4 h-4 stroke-[3]" />
             </button>
 
             {/* Instant Call Alternative */}

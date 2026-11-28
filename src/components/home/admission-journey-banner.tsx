@@ -50,10 +50,10 @@ export function AdmissionJourneyBanner() {
           <div className="shrink-0">
             <button
               onClick={() => openModal("Admission Journey Banner")}
-              className="bg-white hover:bg-gray-50 text-[#C61D24] px-7 py-3.5 rounded-full font-display font-extrabold text-sm sm:text-base shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 group"
+              className="bg-white hover:bg-gray-50 text-[#C61D24] px-7 py-3.5 rounded-full font-display font-extrabold text-sm sm:text-base shadow-md transition-colors flex items-center gap-2 group cursor-pointer"
             >
               <span>Book Free Counselling</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>

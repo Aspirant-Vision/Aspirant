@@ -536,7 +536,7 @@ export default function ProfilePage() {
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-slate-500">Shortlisted</span>
-              <div className="w-8 h-8 rounded-xl bg-red-50 text-red-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
                 <BookmarkCheck className="w-4 h-4" />
               </div>
             </div>
@@ -557,7 +557,7 @@ export default function ProfilePage() {
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-slate-500">Courses</span>
-              <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                 <BookOpen className="w-4 h-4" />
               </div>
             </div>
@@ -645,7 +645,7 @@ export default function ProfilePage() {
                   </div>
                   <div className="mt-4 pt-3 border-t border-slate-100 flex items-center text-xs font-semibold text-slate-700 group-hover:text-red-600 transition-colors">
                     <span>Take action</span>
-                    <ArrowRight className="w-3.5 h-3.5 ml-1 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="w-3.5 h-3.5 ml-1" />
                   </div>
                 </Link>
               ))}

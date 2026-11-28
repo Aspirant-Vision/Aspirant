@@ -102,10 +102,10 @@ export function PopularCourses() {
         </div>
         <button
           onClick={() => openModal("All Course Catalogs")}
-          className="text-[#E31E2B] font-bold text-xs sm:text-sm flex items-center gap-1.5 hover:underline group"
+          className="text-[#E31E2B] font-bold text-xs sm:text-sm flex items-center gap-1.5 hover:underline cursor-pointer"
         >
           <span>Explore All 200+ Courses</span>
-          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          <ArrowRight className="w-4 h-4" />
         </button>
       </div>
 

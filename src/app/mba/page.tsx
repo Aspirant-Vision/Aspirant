@@ -888,7 +888,7 @@ export default function MbaLandingPage() {
                     alt={college.name}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+                    className="object-cover opacity-90"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20" />
 
@@ -1075,10 +1075,10 @@ export default function MbaLandingPage() {
 
                 <button
                   onClick={() => openModal(`MBA Specialization Counselling: ${spec.title}`)}
-                  className="mt-4 pt-3 border-t border-gray-200/60 w-full text-xs font-bold text-[#E31E2B] flex items-center justify-between group"
+                  className="mt-4 pt-3 border-t border-gray-200/60 w-full text-xs font-bold text-[#E31E2B] flex items-center justify-between group cursor-pointer"
                 >
                   <span>Explore B-Schools for {spec.title.split(" ")[0]}</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             ))}

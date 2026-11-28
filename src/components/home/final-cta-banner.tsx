@@ -38,7 +38,7 @@ export function FinalCtaBanner() {
               href={SITE_CONFIG.whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto bg-[#25D366] text-white px-8 py-4 rounded-2xl flex items-center justify-center gap-3 font-bold text-base sm:text-lg hover:shadow-2xl hover:-translate-y-1 active:translate-y-0 transition-all shadow-lg"
+              className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20ba59] text-white px-8 py-4 rounded-2xl flex items-center justify-center gap-3 font-bold text-base sm:text-lg transition-colors shadow-md"
             >
               <MessageCircle className="w-6 h-6 fill-current" />
               <span>WhatsApp Now</span>
@@ -46,7 +46,7 @@ export function FinalCtaBanner() {
 
             <Link
               href={SITE_CONFIG.phoneTel}
-              className="w-full sm:w-auto bg-primary text-white px-8 py-4 rounded-2xl flex items-center justify-center gap-3 font-bold text-base sm:text-lg hover:shadow-2xl hover:-translate-y-1 active:translate-y-0 transition-all shadow-lg"
+              className="w-full sm:w-auto bg-primary hover:bg-primary-light text-white px-8 py-4 rounded-2xl flex items-center justify-center gap-3 font-bold text-base sm:text-lg transition-colors shadow-md"
             >
               <PhoneCall className="w-5 h-5 text-secondary" />
               <span>Call Expert</span>

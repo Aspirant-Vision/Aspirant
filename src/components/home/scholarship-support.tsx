@@ -125,7 +125,7 @@ export function ScholarshipSupport() {
 
               <div className="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between text-xs font-semibold text-[#15182D]">
                 <span className="text-[#687086] text-[11px]">{p.eligibility}</span>
-                <span className="text-[#E31E2B] font-bold group-hover:translate-x-1 transition-transform inline-flex items-center gap-0.5">
+                <span className="text-[#E31E2B] font-bold inline-flex items-center gap-0.5">
                   Check →
                 </span>
               </div>

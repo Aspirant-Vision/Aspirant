@@ -196,8 +196,8 @@ export function AdmissionJourneyTimeline() {
                           className={cn(
                             "w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-300 shadow-md",
                             isActive
-                              ? "bg-gradient-to-tr from-[#B5121B] to-[#E31E2B] text-white scale-110 shadow-red-500/40"
-                              : "bg-white text-[#15182D] border-2 border-[#E7E9F0] hover:border-[#E31E2B] hover:scale-105"
+                              ? "bg-gradient-to-tr from-[#B5121B] to-[#E31E2B] text-white shadow-red-500/40"
+                              : "bg-white text-[#15182D] border-2 border-[#E7E9F0] hover:border-[#E31E2B]"
                           )}
                         >
                           <Icon className="w-4 h-4 sm:w-6 sm:h-6 stroke-[2.2]" />

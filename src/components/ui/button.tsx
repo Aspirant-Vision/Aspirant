@@ -10,21 +10,21 @@ export interface ButtonProps
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", children, ...props }, ref) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
+      "inline-flex items-center justify-center font-semibold transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 
     const variants = {
       primary:
-        "bg-primary text-white hover:bg-primary-light shadow-sm hover:shadow-md focus:ring-primary",
+        "bg-primary text-white hover:bg-primary-light shadow-sm focus:ring-primary",
       secondary:
         "border border-primary text-primary bg-transparent hover:bg-surface-container focus:ring-primary",
       accent:
-        "bg-secondary text-primary hover:bg-secondary-light font-bold shadow-md hover:shadow-lg focus:ring-secondary",
+        "bg-secondary text-primary hover:bg-secondary-light font-bold shadow-sm focus:ring-secondary",
       outline:
         "border border-outline-variant text-primary bg-white hover:bg-surface-container focus:ring-outline",
       ghost:
         "bg-transparent text-primary hover:bg-surface-container/60 focus:ring-primary",
       whatsapp:
-        "bg-[#25D366] text-white hover:bg-[#20ba59] shadow-lg hover:shadow-xl focus:ring-[#25D366]",
+        "bg-[#25D366] text-white hover:bg-[#20ba59] shadow-md focus:ring-[#25D366]",
     };
 
     const sizes = {

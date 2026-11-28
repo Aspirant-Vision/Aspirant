@@ -41,7 +41,7 @@ export function Footer() {
                   href="https://linkedin.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#E31E2B] text-white flex items-center justify-center transition-all hover:scale-110 shadow-sm"
+                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#E31E2B] text-white flex items-center justify-center transition-colors shadow-sm"
                   aria-label="LinkedIn"
                 >
                   <Linkedin className="w-4 h-4" />
@@ -50,7 +50,7 @@ export function Footer() {
                   href="https://instagram.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#E31E2B] text-white flex items-center justify-center transition-all hover:scale-110 shadow-sm"
+                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#E31E2B] text-white flex items-center justify-center transition-colors shadow-sm"
                   aria-label="Instagram"
                 >
                   <Instagram className="w-4 h-4" />
@@ -59,7 +59,7 @@ export function Footer() {
                   href="https://youtube.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#E31E2B] text-white flex items-center justify-center transition-all hover:scale-110 shadow-sm"
+                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#E31E2B] text-white flex items-center justify-center transition-colors shadow-sm"
                   aria-label="YouTube"
                 >
                   <Youtube className="w-4 h-4" />
@@ -68,7 +68,7 @@ export function Footer() {
                   href="https://facebook.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#E31E2B] text-white flex items-center justify-center transition-all hover:scale-110 shadow-sm"
+                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#E31E2B] text-white flex items-center justify-center transition-colors shadow-sm"
                   aria-label="Facebook"
                 >
                   <Facebook className="w-4 h-4" />
@@ -77,7 +77,7 @@ export function Footer() {
                   href="https://twitter.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#E31E2B] text-white flex items-center justify-center transition-all hover:scale-110 shadow-sm"
+                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#E31E2B] text-white flex items-center justify-center transition-colors shadow-sm"
                   aria-label="Twitter / X"
                 >
                   <Twitter className="w-4 h-4" />

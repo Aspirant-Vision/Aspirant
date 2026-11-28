@@ -79,10 +79,10 @@ export function TopUniversities() {
         </div>
         <button
           onClick={() => openModal()}
-          className="text-primary font-bold flex items-center gap-2 group border-b-2 border-primary/20 hover:border-primary transition-all pb-1 text-sm sm:text-base"
+          className="text-primary font-bold flex items-center gap-2 border-b-2 border-primary/20 hover:border-primary transition-colors pb-1 text-sm sm:text-base cursor-pointer"
         >
           <span>View All Colleges</span>
-          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          <ArrowRight className="w-4 h-4" />
         </button>
       </div>
 
@@ -91,7 +91,7 @@ export function TopUniversities() {
         {UNIVERSITIES.map((univ) => (
           <div
             key={univ.id}
-            className="bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 border border-outline-variant/40 group flex flex-col"
+            className="bg-white rounded-2xl overflow-hidden shadow-card border border-outline-variant/40 group flex flex-col"
           >
             {/* Campus Photo Header */}
             <div className="relative h-48 sm:h-52 overflow-hidden bg-surface-container">
@@ -100,7 +100,7 @@ export function TopUniversities() {
                 alt={`${univ.name} Campus`}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                className="object-cover"
               />
               <div className="absolute top-3.5 right-3.5">
                 <Badge variant="match">{univ.matchScore}</Badge>

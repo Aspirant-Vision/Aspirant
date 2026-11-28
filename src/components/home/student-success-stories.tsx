@@ -153,7 +153,7 @@ export function StudentSuccessStories() {
                       alt={story.name}
                       fill
                       sizes="56px"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="object-cover"
                     />
                   </div>
                   <div>
@@ -198,7 +198,7 @@ export function StudentSuccessStories() {
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Verified Admission</span>
               </div>
-              <span className="font-bold text-[#E31E2B] group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
+              <span className="font-bold text-[#E31E2B] flex items-center gap-0.5">
                 <span>Read Story</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </span>

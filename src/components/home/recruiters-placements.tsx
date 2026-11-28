@@ -191,7 +191,7 @@ export function RecruitersPlacements() {
           <div className="shrink-0 text-center">
             <button
               onClick={() => openModal("Career & Placement Strategy Call")}
-              className="tactile-btn-red text-white px-8 py-4 rounded-2xl font-display font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-xl hover:scale-105 active:scale-95 transition-all"
+              className="tactile-btn-red text-white px-8 py-4 rounded-2xl font-display font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-md transition-colors cursor-pointer"
             >
               <PhoneCall className="w-4 h-4" />
               <span>Book Placement Consultation</span>

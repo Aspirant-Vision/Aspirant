@@ -88,7 +88,7 @@ export function BlogsSection() {
                 alt={post.title}
                 fill
                 sizes="(max-width: 768px) 100vw, 33vw"
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                className="object-cover"
               />
               {/* Category Pill Tag */}
               <div className="absolute top-3.5 left-3.5">
