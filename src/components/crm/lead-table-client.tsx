@@ -746,19 +746,43 @@ export function LeadTableClient({
                   <tbody className="divide-y divide-gray-100 text-gray-700">
                     {leads.map((lead) => {
                       const isSelected = selectedLeadIds.has(lead.id);
+                      const isSyntheticEmail =
+                        !lead.email || lead.email.endsWith("@aspirantvision.lead");
+                      const initials = (lead.full_name || "S")
+                        .split(" ")
+                        .filter(Boolean)
+                        .slice(0, 2)
+                        .map((w: string) => w.charAt(0).toUpperCase())
+                        .join("");
+
+                      const formatSourceLabel = (src?: string | null) => {
+                        if (!src) return "Website";
+                        const s = src.toLowerCase();
+                        if (s.includes("cutoff_predictor")) return "Cutoff Predictor";
+                        if (s.includes("fee_concession")) return "Fee Concession";
+                        if (s.includes("exam_strategy")) return "Exam Strategy";
+                        if (s.includes("campus_admission")) return "Direct Admission";
+                        if (s.includes("personalized search")) return "Personalized Search";
+                        if (s.includes("homepage_hero")) return "Homepage Hero";
+                        if (s.includes("consultation")) return "Consultation Modal";
+                        return src.replace(/_/g, " ");
+                      };
+
                       return (
                         <tr
                           key={lead.id}
                           className={cn(
-                            "transition-colors",
+                            "transition-colors group",
                             isSelected
                               ? "bg-red-50/40 border-l-[3px] border-[#E31E2B]"
-                              : "hover:bg-gray-50/70"
+                              : lead.priority === "urgent"
+                              ? "bg-rose-50/15 hover:bg-rose-50/35 border-l-[3px] border-rose-500"
+                              : "hover:bg-slate-50/90"
                           )}
                         >
                           {/* Selective Checkbox */}
                           {!isCounsellorOnly && (
-                            <td className="py-3 px-3 text-center">
+                            <td className="py-3.5 px-3 text-center">
                               <input
                                 type="checkbox"
                                 checked={isSelected}
@@ -768,85 +792,111 @@ export function LeadTableClient({
                             </td>
                           )}
 
-                          {/* Student Details */}
-                          <td className="py-3 px-4">
-                            <div className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
+                          {/* Student Details with Avatar */}
+                          <td className="py-3.5 px-4">
+                            <div className="flex items-center gap-3">
                               <Link
                                 href={`/admin/leads/${lead.id}`}
-                                className="hover:text-[#E31E2B] transition-colors"
+                                className={cn(
+                                  "w-9 h-9 rounded-xl font-extrabold text-xs flex items-center justify-center shrink-0 border shadow-2xs transition-transform group-hover:scale-105",
+                                  lead.status === "admitted"
+                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                    : lead.status === "new"
+                                    ? "bg-blue-50 text-blue-700 border-blue-200"
+                                    : "bg-red-50 text-[#E31E2B] border-red-200/80"
+                                )}
                               >
-                                {lead.full_name}
+                                {initials}
                               </Link>
-                            </div>
-                            <div className="flex items-center gap-1.5 text-gray-500 text-[11px] mt-0.5">
-                              <Phone className="w-3 h-3 text-gray-400" />
-                              <span>{lead.phone}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 text-gray-500 text-[11px]">
-                              <Mail className="w-3 h-3 text-gray-400" />
-                              <span>{lead.email}</span>
+                              <div className="min-w-0">
+                                <Link
+                                  href={`/admin/leads/${lead.id}`}
+                                  className="font-bold text-slate-900 text-sm hover:text-[#E31E2B] transition-colors block truncate"
+                                >
+                                  {lead.full_name}
+                                </Link>
+                                <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-slate-500 mt-0.5">
+                                  <a
+                                    href={`tel:${lead.phone}`}
+                                    className="inline-flex items-center gap-1 font-semibold text-slate-700 hover:text-[#E31E2B]"
+                                  >
+                                    <Phone className="w-3 h-3 text-slate-400" />
+                                    <span>{lead.phone}</span>
+                                  </a>
+                                  {isSyntheticEmail ? (
+                                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-100 text-slate-500 font-medium">
+                                      Phone Inquiry
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center gap-1 truncate max-w-[175px]">
+                                      <Mail className="w-3 h-3 text-slate-400 shrink-0" />
+                                      <span className="truncate">{lead.email}</span>
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
                             </div>
                           </td>
 
                           {/* Preferences */}
-                          <td className="py-3 px-4">
-                            <div className="font-semibold text-gray-800 flex items-center gap-1">
-                              <Building className="w-3 h-3 text-gray-400 shrink-0" />
+                          <td className="py-3.5 px-4">
+                            <div className="font-semibold text-slate-800 flex items-center gap-1.5 text-xs">
+                              <Building className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                               <span className="truncate max-w-[180px]">
                                 {lead.colleges?.name || "General Admission"}
                               </span>
                             </div>
-                            <div className="text-[11px] text-gray-500 flex items-center gap-1 mt-0.5">
-                              <GraduationCap className="w-3 h-3 text-gray-400 shrink-0" />
+                            <div className="text-[11px] text-slate-500 flex items-center gap-1.5 mt-1">
+                              <GraduationCap className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                               <span className="truncate max-w-[180px]">
                                 {lead.courses?.name || "Any Stream"}
                               </span>
                             </div>
-                            {lead.preferred_location && (
-                              <div className="text-[10px] text-gray-400 mt-0.5">
+                            {lead.preferred_location && lead.preferred_location !== "Website Fast Form" && (
+                              <div className="text-[10px] text-slate-400 mt-0.5 truncate max-w-[180px]">
                                 📍 {lead.preferred_location}
                               </div>
                             )}
                           </td>
 
                           {/* Status & Priority */}
-                          <td className="py-3 px-4">
-                            <div className="flex flex-col items-start gap-1">
+                          <td className="py-3.5 px-4">
+                            <div className="flex flex-col items-start gap-1.5">
                               <button
                                 type="button"
                                 onClick={() => {
                                   setStatusModalLead(lead);
                                   setSelectedStatus(lead.status);
                                 }}
-                                className="cursor-pointer"
+                                className="cursor-pointer hover:opacity-90 transition-opacity"
                                 title="Click to change status"
                               >
-                                <StatusBadge status={lead.status} />
+                                <StatusBadge status={lead.status} type="lead" />
                               </button>
                               <span
                                 className={cn(
-                                  "text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border",
+                                  "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border whitespace-nowrap",
                                   getPriorityBadgeClass(lead.priority)
                                 )}
                               >
-                                {lead.priority}
+                                {lead.priority === "urgent" ? "🔥 Urgent" : lead.priority}
                               </span>
                             </div>
                           </td>
 
                           {/* Assigned Counsellor */}
-                          <td className="py-3 px-4">
+                          <td className="py-3.5 px-4">
                             {lead.counsellor ? (
-                              <div className="flex items-center gap-2">
-                                <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[10px]">
-                                  {lead.counsellor.full_name?.charAt(0) || "C"}
+                              <div className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                                <div className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-extrabold text-[10px] shrink-0">
+                                  {lead.counsellor.full_name?.charAt(0).toUpperCase() || "C"}
                                 </div>
-                                <div>
-                                  <div className="font-semibold text-gray-900 text-xs">
+                                <div className="min-w-0">
+                                  <div className="font-bold text-slate-900 text-xs truncate max-w-[130px]">
                                     {lead.counsellor.full_name}
                                   </div>
-                                  <div className="text-[10px] text-gray-400">
-                                    {lead.counsellor.email}
+                                  <div className="text-[10px] text-slate-400 truncate max-w-[130px]">
+                                    Counsellor
                                   </div>
                                 </div>
                               </div>
@@ -858,65 +908,74 @@ export function LeadTableClient({
                                   setSelectedCounsellor("");
                                   setAssignNotes("");
                                 }}
-                                className="inline-flex items-center gap-1.5 text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200/90 px-2 py-0.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors"
+                                className="inline-flex items-center gap-1.5 text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200/90 px-2.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors"
                                 title="Click to assign counsellor"
                               >
                                 <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
-                                <span>Unassigned</span>
+                                <span>Assign Now</span>
                               </button>
                             )}
                           </td>
 
                           {/* Source & Date */}
-                          <td className="py-3 px-4 text-gray-500">
-                            <div className="font-medium text-gray-700 capitalize text-xs">
-                              {lead.source?.replace("_", " ") || "Website"}
-                            </div>
-                            <div className="text-[10px] text-gray-400 mt-0.5 flex items-center gap-1">
+                          <td className="py-3.5 px-4">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-semibold text-[11px] capitalize truncate max-w-[160px]" title={lead.source || "Website"}>
+                              {formatSourceLabel(lead.source)}
+                            </span>
+                            <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
                               <Clock className="w-3 h-3" />
-                              <span>{new Date(lead.created_at).toLocaleDateString()}</span>
+                              <span>
+                                {new Date(lead.created_at).toLocaleDateString("en-IN", {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                })}
+                              </span>
                             </div>
                           </td>
 
                           {/* Actions */}
-                          <td className="py-3 px-4 text-right">
-                            <div className="flex items-center justify-end gap-1">
-                              <Link href={`/admin/leads/${lead.id}`}>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0"
-                                  title="View Lead 360"
-                                >
-                                  <Eye className="w-3.5 h-3.5 text-gray-600" />
-                                </Button>
+                          <td className="py-3.5 px-4 text-right">
+                            <div className="flex items-center justify-end gap-1.5">
+                              <a
+                                href={`https://wa.me/91${(lead.phone || "").replace(/\D/g, "").slice(-10)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="h-8 w-8 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/80 inline-flex items-center justify-center transition-colors"
+                                title="WhatsApp Student"
+                              >
+                                <Phone className="w-3.5 h-3.5" />
+                              </a>
+
+                              <Link
+                                href={`/admin/leads/${lead.id}`}
+                                className="h-8 w-8 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80 inline-flex items-center justify-center transition-colors"
+                                title="View Lead 360"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
                               </Link>
 
-                              <Link href={`/admin/leads/${lead.id}/edit`}>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0"
-                                  title="Edit Lead"
-                                >
-                                  <Edit2 className="w-3.5 h-3.5 text-gray-600" />
-                                </Button>
+                              <Link
+                                href={`/admin/leads/${lead.id}/edit`}
+                                className="h-8 w-8 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80 inline-flex items-center justify-center transition-colors"
+                                title="Edit Lead"
+                              >
+                                <Edit2 className="w-3.5 h-3.5" />
                               </Link>
 
                               {/* Singular Assignment Trigger */}
                               {!isCounsellorOnly && (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0"
-                                  title="Assign Counsellor (Single)"
+                                <button
+                                  type="button"
+                                  className="h-8 w-8 rounded-lg bg-red-50 hover:bg-red-100 text-[#E31E2B] border border-red-200/80 inline-flex items-center justify-center transition-colors cursor-pointer"
+                                  title="Assign Counsellor"
                                   onClick={() => {
                                     setAssignModalLead(lead);
                                     setSelectedCounsellor(lead.assigned_counsellor_id || "");
                                   }}
                                 >
-                                  <UserCheck className="w-3.5 h-3.5 text-blue-600" />
-                                </Button>
+                                  <UserCheck className="w-3.5 h-3.5" />
+                                </button>
                               )}
                             </div>
                           </td>

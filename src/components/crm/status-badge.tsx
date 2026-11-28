@@ -36,6 +36,9 @@ export function StatusBadge({ status, type = "general", className }: StatusBadge
       case "counselling_scheduled":
         colorClasses = "bg-amber-50 text-amber-700 border-amber-200";
         break;
+      case "documents_pending":
+        colorClasses = "bg-orange-50 text-orange-700 border-orange-200";
+        break;
       case "interested":
       case "application_started":
         colorClasses = "bg-purple-50 text-purple-700 border-purple-200";
@@ -96,7 +99,7 @@ export function StatusBadge({ status, type = "general", className }: StatusBadge
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border tracking-wide select-none",
+        "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border tracking-wide select-none whitespace-nowrap",
         colorClasses,
         className
       )}
