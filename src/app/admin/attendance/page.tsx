@@ -67,8 +67,8 @@ export default async function AdminAttendancePage() {
           { label: "Management", href: "/admin" },
           { label: "Attendance & Leaves" },
         ]}
-        title="Attendance & Leave Management"
-        description="Daily login/logout tracking, counsellor 360° performance & salary portfolio, and real-time leave approvals for Super Admin."
+        title="Attendance & Leaves"
+        description="Daily staff shift logs, counsellor performance & salary portfolio, and leave approvals."
       />
 
       <AttendanceLeavesClient

@@ -149,7 +149,7 @@ export function AttendanceLeavesClient({
   const [reviewNoteText, setReviewNoteText] = useState("");
   const [isProcessingReview, setIsProcessingReview] = useState(false);
 
-  // Live Digital Clock
+  // Live Digital Clock (HH:MM:SS AM/PM)
   useEffect(() => {
     const updateClock = () => {
       const now = new Date();
@@ -215,8 +215,8 @@ export function AttendanceLeavesClient({
         if (res.success) {
           const actionText =
             res.data.action === "clock_in"
-              ? "Successfully Clocked In for today! Shift timer active."
-              : "Successfully Clocked Out. Today's shift summary updated.";
+              ? "Clocked In successfully! Shift timer running."
+              : "Clocked Out successfully. Shift summary saved.";
 
           setBannerMessage({ type: "success", text: actionText });
 
@@ -237,7 +237,7 @@ export function AttendanceLeavesClient({
         } else {
           setBannerMessage({
             type: "error",
-            text: res.error.message || "Failed to record clock punch.",
+            text: res.error.message || "Failed to record punch.",
           });
         }
       } catch (err: unknown) {
@@ -279,6 +279,32 @@ export function AttendanceLeavesClient({
     }
   };
 
+  // Smart Date Range Formatter (Prevents Text Spilling!)
+  const formatLeaveDates = (start: string, end: string, days: number) => {
+    try {
+      const s = new Date(start);
+      const e = new Date(end);
+      const sMonth = s.toLocaleDateString("en-IN", { month: "short" });
+      const sDay = s.getDate();
+      const sYear = s.getFullYear();
+
+      if (start === end || days === 1) {
+        return `${sDay} ${sMonth} ${sYear}`;
+      }
+
+      const eMonth = e.toLocaleDateString("en-IN", { month: "short" });
+      const eDay = e.getDate();
+      const eYear = e.getFullYear();
+
+      if (sYear === eYear && sMonth === eMonth) {
+        return `${sDay}–${eDay} ${sMonth} ${sYear}`;
+      }
+      return `${sDay} ${sMonth} – ${eDay} ${eMonth}`;
+    } catch {
+      return `${start} to ${end}`;
+    }
+  };
+
   // Handle Leave Application Submit
   const handleApplyLeave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -308,7 +334,7 @@ export function AttendanceLeavesClient({
         });
         setBannerMessage({
           type: "success",
-          text: "Leave application submitted! Sent to Super Admin for real-time approval.",
+          text: "Leave application submitted! Sent to Super Admin for approval.",
         });
       } else {
         alert(res.error.message || "Failed to submit leave request.");
@@ -349,7 +375,7 @@ export function AttendanceLeavesClient({
       if (res.success) {
         setBannerMessage({
           type: "success",
-          text: `Leave request for ${reviewNotePrompt.counsellorName} has been ${
+          text: `Leave for ${reviewNotePrompt.counsellorName} has been ${
             action === "accepted" ? "Approved" : "Declined"
           }!`,
         });
@@ -441,7 +467,7 @@ export function AttendanceLeavesClient({
   const pendingLeavesCount = leaveRecords.filter((l) => l.status === "pending").length;
 
   return (
-    <div className="space-y-6 pb-16">
+    <div className="space-y-5 pb-16">
       {/* Toast Alert Banner */}
       {bannerMessage && (
         <div
@@ -467,7 +493,7 @@ export function AttendanceLeavesClient({
           </div>
           <button
             onClick={() => setBannerMessage(null)}
-            className="text-gray-400 hover:text-gray-700 text-xs font-bold px-2 py-1"
+            className="text-gray-400 hover:text-gray-700 text-xs font-bold px-2 py-1 cursor-pointer"
           >
             ✕
           </button>
@@ -475,31 +501,30 @@ export function AttendanceLeavesClient({
       )}
 
       {/* ========================================================================= */}
-      {/* 1. COMPACT, EXECUTIVE SHIFT CONSOLE BAR (NO BLOATED WIDGET) */}
+      {/* 1. COMPACT, EXECUTIVE SHIFT CONSOLE BAR (SPILL-FREE) */}
       {/* ========================================================================= */}
-      <div className="bg-white border border-gray-200/90 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs">
-        <div className="flex flex-wrap items-center gap-3">
+      <div className="bg-white border border-gray-200/90 rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+        <div className="flex flex-wrap items-center gap-2.5">
           {/* Live Clock Chip */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 font-mono text-sm font-extrabold shadow-2xs">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 font-mono text-xs font-bold">
             <Clock className="w-3.5 h-3.5 text-red-600" />
             <span>{currentTime || "--:--:--"}</span>
-            <span className="text-[10px] text-gray-400 font-sans font-bold">IST</span>
+            <span className="text-[10px] text-gray-400 font-sans">IST</span>
           </div>
 
           {/* Today Date */}
-          <span className="text-xs font-semibold text-gray-500">
+          <span className="text-xs font-semibold text-gray-600">
             {new Date().toLocaleDateString("en-IN", {
-              weekday: "short",
               day: "numeric",
               month: "short",
               year: "numeric",
             })}
           </span>
 
-          <span className="hidden md:inline text-gray-300">|</span>
+          <span className="text-gray-300">|</span>
 
           {/* Current User Status Pill */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700">
             <span
               className={`w-2 h-2 rounded-full ${
                 todayStatus.isClockedIn
@@ -511,10 +536,10 @@ export function AttendanceLeavesClient({
             />
             <span>
               {todayStatus.isClockedIn
-                ? `On Shift (In: ${formatTime(todayStatus.clockInTime)})`
+                ? `On Shift (${formatTime(todayStatus.clockInTime)})`
                 : todayStatus.clockOutTime
-                ? `Shift Ended at ${formatTime(todayStatus.clockOutTime)} (${todayStatus.totalHours}h)`
-                : "Not Clocked In"}
+                ? `Shift Done (${todayStatus.totalHours}h)`
+                : "Off Shift"}
             </span>
           </div>
         </div>
@@ -523,7 +548,7 @@ export function AttendanceLeavesClient({
         <button
           onClick={handlePunchClock}
           disabled={isPunching}
-          className={`tactile-btn-red text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-2xs transition-all active:scale-95 cursor-pointer whitespace-nowrap ${
+          className={`tactile-btn-red text-white px-4 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition-all active:scale-95 cursor-pointer whitespace-nowrap shrink-0 ${
             isPunching ? "opacity-75 cursor-not-allowed" : ""
           }`}
         >
@@ -535,111 +560,91 @@ export function AttendanceLeavesClient({
           ) : todayStatus.isClockedIn ? (
             <>
               <LogOut className="w-3.5 h-3.5" />
-              <span>Clock Out (End Shift)</span>
+              <span>Clock Out</span>
             </>
           ) : (
             <>
               <LogIn className="w-3.5 h-3.5" />
-              <span>Clock In (Start Shift)</span>
+              <span>Clock In</span>
             </>
           )}
         </button>
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. UNIFIED METRIC CARDS (MATCHING CRM DESIGN) */}
+      {/* 2. SPILL-PROOF 4-METRIC CARDS (CLEAN & COMPACT) */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-        <div className="bg-white border border-gray-200/80 rounded-2xl p-4.5 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-              Staff on Duty
-            </span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100/80 flex items-center justify-center">
-              <UserCheck className="w-4 h-4" />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {/* Card 1: Present */}
+        <div className="bg-white border border-gray-200/80 rounded-xl p-3.5 sm:p-4 shadow-2xs overflow-hidden">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-xs font-bold text-gray-500 truncate">Staff Active</span>
+            <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+              <UserCheck className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="mt-2.5 flex items-baseline gap-1.5">
-            <p className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
-              {stats.presentToday}
-            </p>
-            <span className="text-xs font-semibold text-gray-500">Active</span>
+          <div className="mt-2 flex items-baseline gap-1">
+            <p className="text-2xl font-black text-gray-900 tracking-tight">{stats.presentToday}</p>
+            <span className="text-[11px] font-semibold text-gray-400">counsellors</span>
           </div>
-          <p className="text-[11px] text-emerald-600 font-semibold mt-1">
-            ● Logged into shift today
-          </p>
+          <p className="text-[11px] text-emerald-600 font-semibold mt-0.5 truncate">On duty today</p>
         </div>
 
-        <div className="bg-white border border-gray-200/80 rounded-2xl p-4.5 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-              On Approved Leave
-            </span>
-            <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 border border-purple-100/80 flex items-center justify-center">
-              <CalendarOff className="w-4 h-4" />
+        {/* Card 2: On Leave */}
+        <div className="bg-white border border-gray-200/80 rounded-xl p-3.5 sm:p-4 shadow-2xs overflow-hidden">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-xs font-bold text-gray-500 truncate">On Leave</span>
+            <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center shrink-0">
+              <CalendarOff className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="mt-2.5 flex items-baseline gap-1.5">
-            <p className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
-              {stats.onLeaveToday}
-            </p>
-            <span className="text-xs font-semibold text-gray-500">Staff</span>
+          <div className="mt-2 flex items-baseline gap-1">
+            <p className="text-2xl font-black text-gray-900 tracking-tight">{stats.onLeaveToday}</p>
+            <span className="text-[11px] font-semibold text-gray-400">staff</span>
           </div>
-          <p className="text-[11px] text-gray-500 font-semibold mt-1">
-            Scheduled absences
-          </p>
+          <p className="text-[11px] text-gray-500 font-semibold mt-0.5 truncate">Approved off</p>
         </div>
 
-        <div className="bg-white border border-gray-200/80 rounded-2xl p-4.5 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-              Average Shift
-            </span>
-            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 border border-blue-100/80 flex items-center justify-center">
-              <Timer className="w-4 h-4" />
+        {/* Card 3: Avg Shift */}
+        <div className="bg-white border border-gray-200/80 rounded-xl p-3.5 sm:p-4 shadow-2xs overflow-hidden">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-xs font-bold text-gray-500 truncate">Avg Shift</span>
+            <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
+              <Timer className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="mt-2.5 flex items-baseline gap-1.5">
-            <p className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
-              {stats.avgHoursLogged}h
-            </p>
-            <span className="text-xs font-semibold text-gray-500">Logged</span>
+          <div className="mt-2 flex items-baseline gap-1">
+            <p className="text-2xl font-black text-gray-900 tracking-tight">{stats.avgHoursLogged}h</p>
+            <span className="text-[11px] font-semibold text-gray-400">logged</span>
           </div>
-          <p className="text-[11px] text-blue-600 font-semibold mt-1">
-            Standard 8.5 hr benchmark
-          </p>
+          <p className="text-[11px] text-blue-600 font-semibold mt-0.5 truncate">8.5h benchmark</p>
         </div>
 
-        <div className="bg-white border border-gray-200/80 rounded-2xl p-4.5 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-              Total Team
-            </span>
-            <div className="w-8 h-8 rounded-xl bg-red-50 text-red-600 border border-red-100/80 flex items-center justify-center">
-              <Users className="w-4 h-4" />
+        {/* Card 4: Team Total */}
+        <div className="bg-white border border-gray-200/80 rounded-xl p-3.5 sm:p-4 shadow-2xs overflow-hidden">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-xs font-bold text-gray-500 truncate">Team Total</span>
+            <div className="w-7 h-7 rounded-lg bg-red-50 text-red-600 border border-red-100 flex items-center justify-center shrink-0">
+              <Users className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="mt-2.5 flex items-baseline gap-1.5">
-            <p className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
-              {counsellorsList.length || 2}
-            </p>
-            <span className="text-xs font-semibold text-gray-500">Counsellors</span>
+          <div className="mt-2 flex items-baseline gap-1">
+            <p className="text-2xl font-black text-gray-900 tracking-tight">{counsellorsList.length || 2}</p>
+            <span className="text-[11px] font-semibold text-gray-400">staff</span>
           </div>
-          <p className="text-[11px] text-gray-500 font-semibold mt-1">
-            Aspirant Vision roster
-          </p>
+          <p className="text-[11px] text-gray-500 font-semibold mt-0.5 truncate">Registered</p>
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* 3. EXECUTIVE CRM PILL TAB NAVIGATION (MATCHING REPORTS PAGE) */}
+      {/* 3. CRM PILL TAB NAVIGATION */}
       {/* ========================================================================= */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-2 rounded-2xl border border-gray-200/80 shadow-2xs">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 bg-white p-2 rounded-2xl border border-gray-200/80 shadow-2xs">
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => setActiveTab("attendance")}
             className={cn(
-              "px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer",
+              "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer",
               activeTab === "attendance"
                 ? "bg-[#15182D] text-white shadow-xs"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
@@ -652,20 +657,20 @@ export function AttendanceLeavesClient({
           <button
             onClick={() => setActiveTab("portfolio")}
             className={cn(
-              "px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer",
+              "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer",
               activeTab === "portfolio"
                 ? "bg-[#15182D] text-white shadow-xs"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             )}
           >
             <Briefcase className="w-3.5 h-3.5" />
-            <span>Counsellor 360° &amp; Salary</span>
+            <span>Counsellor 360°</span>
           </button>
 
           <button
             onClick={() => setActiveTab("leaves")}
             className={cn(
-              "px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer",
+              "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer",
               activeTab === "leaves"
                 ? "bg-[#15182D] text-white shadow-xs"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
@@ -674,7 +679,7 @@ export function AttendanceLeavesClient({
             <Calendar className="w-3.5 h-3.5" />
             <span>Leave Approvals</span>
             {pendingLeavesCount > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-red-600 text-white font-extrabold ml-0.5">
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-red-600 text-white font-black ml-0.5">
                 {pendingLeavesCount}
               </span>
             )}
@@ -686,7 +691,7 @@ export function AttendanceLeavesClient({
           {activeTab === "attendance" && (
             <button
               onClick={handleExportAttendanceCSV}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-1.5 rounded-xl text-xs font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors flex items-center gap-1.5 cursor-pointer"
             >
               <Download className="w-3.5 h-3.5 text-gray-500" />
               <span>Export CSV</span>
@@ -696,7 +701,7 @@ export function AttendanceLeavesClient({
           {activeTab === "leaves" && (
             <button
               onClick={() => setShowApplyModal(true)}
-              className="tactile-btn-red text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs cursor-pointer"
+              className="tactile-btn-red text-white px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Apply for Leave</span>
@@ -709,11 +714,11 @@ export function AttendanceLeavesClient({
       {/* TAB 1: ATTENDANCE ROSTER (NO HORIZONTAL OVERFLOW, CLEAN & CRISP) */}
       {/* ========================================================================= */}
       {activeTab === "attendance" && (
-        <div className="space-y-4">
+        <div className="space-y-3.5">
           {/* Filter Bar */}
-          <div className="bg-white border border-gray-200/80 rounded-2xl p-3 sm:p-4 flex flex-col md:flex-row items-center justify-between gap-3 shadow-2xs">
+          <div className="bg-white border border-gray-200/80 rounded-2xl p-3 flex flex-col md:flex-row items-center justify-between gap-2.5 shadow-2xs">
             <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full md:w-auto">
-              <div className="relative w-full sm:w-64">
+              <div className="relative w-full sm:w-60">
                 <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
@@ -734,7 +739,7 @@ export function AttendanceLeavesClient({
                 <button
                   type="button"
                   onClick={() => setDateFilter(new Date().toISOString().split("T")[0])}
-                  className="px-2.5 py-1.5 text-xs font-bold text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer"
+                  className="px-2 py-1.5 text-xs font-bold text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer"
                 >
                   Today
                 </button>
@@ -746,7 +751,7 @@ export function AttendanceLeavesClient({
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-1.5 text-xs font-semibold border border-gray-200 rounded-lg text-gray-800 bg-white cursor-pointer"
+                className="px-2.5 py-1.5 text-xs font-semibold border border-gray-200 rounded-lg text-gray-800 bg-white cursor-pointer"
               >
                 <option value="all">All Statuses</option>
                 <option value="present">Present</option>
@@ -829,7 +834,7 @@ export function AttendanceLeavesClient({
 
                         {/* Total Hours */}
                         <td className="py-3 px-3 font-bold text-gray-800 whitespace-nowrap">
-                          {record.totalHours > 0 ? `${record.totalHours} hrs` : "--"}
+                          {record.totalHours > 0 ? `${record.totalHours}h` : "--"}
                         </td>
 
                         {/* Status & Action */}
@@ -871,15 +876,15 @@ export function AttendanceLeavesClient({
       {/* TAB 2: COUNSELLOR 360° PORTFOLIO, PERFORMANCE & SALARY BREAKDOWN */}
       {/* ========================================================================= */}
       {activeTab === "portfolio" && (
-        <div className="space-y-5">
+        <div className="space-y-4">
           {/* Selector & Actions */}
-          <div className="bg-white border border-gray-200/80 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+          <div className="bg-white border border-gray-200/80 rounded-2xl p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <span className="text-xs font-bold text-gray-500 uppercase">Select Counsellor:</span>
+              <span className="text-xs font-bold text-gray-500 uppercase">Counsellor:</span>
               <select
                 value={selectedCounsellorId}
                 onChange={(e) => setSelectedCounsellorId(e.target.value)}
-                className="px-3 py-1.5 text-xs font-bold border border-gray-300 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-red-500 cursor-pointer min-w-[220px]"
+                className="px-2.5 py-1.5 text-xs font-bold border border-gray-300 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-red-500 cursor-pointer min-w-[200px]"
               >
                 {counsellorsList.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -897,33 +902,33 @@ export function AttendanceLeavesClient({
             {isSuperAdmin && portfolio && (
               <button
                 onClick={() => setShowSalaryModal(true)}
-                className="tactile-btn-red text-white px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-2xs cursor-pointer"
+                className="tactile-btn-red text-white px-3.5 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-2xs cursor-pointer"
               >
                 <Edit3 className="w-3.5 h-3.5" />
-                <span>Adjust Salary &amp; Incentives</span>
+                <span>Adjust Salary</span>
               </button>
             )}
           </div>
 
           {portfolio ? (
-            <div className="space-y-5">
+            <div className="space-y-4">
               {/* Profile Card */}
-              <div className="bg-white border border-gray-200/80 rounded-2xl p-5 shadow-2xs">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-600 to-rose-700 text-white font-extrabold text-xl flex items-center justify-center shadow-2xs">
+              <div className="bg-white border border-gray-200/80 rounded-2xl p-4 sm:p-5 shadow-2xs">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-red-600 to-rose-700 text-white font-extrabold text-lg flex items-center justify-center shadow-2xs shrink-0">
                       {portfolio.counsellor.fullName.charAt(0).toUpperCase()}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-bold text-gray-900">
+                        <h3 className="text-base font-bold text-gray-900">
                           {portfolio.counsellor.fullName}
                         </h3>
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-red-50 text-red-700 border border-red-200">
                           {portfolio.counsellor.role}
                         </span>
                       </div>
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 mt-1">
+                      <div className="flex flex-wrap items-center gap-x-3.5 gap-y-0.5 text-xs text-gray-500 mt-0.5">
                         <span className="flex items-center gap-1">
                           <Mail className="w-3 h-3 text-gray-400" />
                           {portfolio.counsellor.email}
@@ -942,34 +947,34 @@ export function AttendanceLeavesClient({
                     </div>
                   </div>
 
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     Active Staff
                   </span>
                 </div>
               </div>
 
-              {/* Performance Metrics */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-                <div className="bg-white border border-gray-200/80 rounded-2xl p-4 shadow-2xs">
-                  <p className="text-[11px] font-bold text-gray-500 uppercase">Assigned Leads</p>
-                  <p className="text-2xl font-black text-gray-900 mt-1">
+              {/* Performance Metrics (Spill-Proof) */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="bg-white border border-gray-200/80 rounded-xl p-3.5 shadow-2xs overflow-hidden">
+                  <p className="text-[11px] font-bold text-gray-500 truncate">Leads</p>
+                  <p className="text-xl font-black text-gray-900 mt-1">
                     {portfolio.performance.totalAssignedLeads}
                   </p>
-                  <p className="text-[11px] text-gray-500 mt-0.5">Allocated inquiries</p>
+                  <p className="text-[11px] text-gray-400 mt-0.5 truncate">Assigned</p>
                 </div>
 
-                <div className="bg-white border border-gray-200/80 rounded-2xl p-4 shadow-2xs">
-                  <p className="text-[11px] font-bold text-gray-500 uppercase">Admissions Converted</p>
-                  <p className="text-2xl font-black text-emerald-600 mt-1">
+                <div className="bg-white border border-gray-200/80 rounded-xl p-3.5 shadow-2xs overflow-hidden">
+                  <p className="text-[11px] font-bold text-gray-500 truncate">Admitted</p>
+                  <p className="text-xl font-black text-emerald-600 mt-1">
                     {portfolio.performance.convertedLeads}
                   </p>
-                  <p className="text-[11px] text-emerald-600 font-semibold mt-0.5">Confirmed seats</p>
+                  <p className="text-[11px] text-emerald-600 font-semibold mt-0.5 truncate">Converted</p>
                 </div>
 
-                <div className="bg-white border border-gray-200/80 rounded-2xl p-4 shadow-2xs">
-                  <p className="text-[11px] font-bold text-gray-500 uppercase">Conversion Rate</p>
-                  <p className="text-2xl font-black text-purple-600 mt-1">
+                <div className="bg-white border border-gray-200/80 rounded-xl p-3.5 shadow-2xs overflow-hidden">
+                  <p className="text-[11px] font-bold text-gray-500 truncate">Conversion</p>
+                  <p className="text-xl font-black text-purple-600 mt-1">
                     {portfolio.performance.conversionRate}%
                   </p>
                   <div className="w-full bg-gray-100 rounded-full h-1 mt-1.5 overflow-hidden">
@@ -980,69 +985,69 @@ export function AttendanceLeavesClient({
                   </div>
                 </div>
 
-                <div className="bg-white border border-gray-200/80 rounded-2xl p-4 shadow-2xs">
-                  <p className="text-[11px] font-bold text-gray-500 uppercase">Completed Calls</p>
-                  <p className="text-2xl font-black text-amber-600 mt-1">
+                <div className="bg-white border border-gray-200/80 rounded-xl p-3.5 shadow-2xs overflow-hidden">
+                  <p className="text-[11px] font-bold text-gray-500 truncate">Follow-ups</p>
+                  <p className="text-xl font-black text-amber-600 mt-1">
                     {portfolio.performance.completedFollowUps}
                   </p>
-                  <p className="text-[11px] text-gray-500 mt-0.5">Follow-ups logged</p>
+                  <p className="text-[11px] text-gray-400 mt-0.5 truncate">Completed</p>
                 </div>
               </div>
 
-              {/* Clean Salary Breakdown Card (White Executive Theme) */}
-              <div className="bg-white border border-gray-200/80 rounded-2xl p-5 sm:p-6 shadow-2xs">
-                <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+              {/* Salary Breakdown (Spill-Proof) */}
+              <div className="bg-white border border-gray-200/80 rounded-2xl p-4 sm:p-5 shadow-2xs">
+                <div className="flex items-center justify-between pb-3 border-b border-gray-100">
                   <div>
-                    <h4 className="font-extrabold text-gray-900 text-sm">
+                    <h4 className="font-bold text-gray-900 text-xs">
                       Salary &amp; Compensation Matrix
                     </h4>
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-[11px] text-gray-400">
                       Cycle: {portfolio.salary.payFrequency || "Monthly"}
                     </p>
                   </div>
                   <span
-                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
                       portfolio.salary.paymentStatus === "disbursed"
                         ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                         : "bg-blue-50 text-blue-700 border border-blue-200"
                     }`}
                   >
-                    Payment: {portfolio.salary.paymentStatus}
+                    {portfolio.salary.paymentStatus}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-4">
-                  <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                    <p className="text-[11px] font-bold text-gray-500 uppercase">Base Salary</p>
-                    <p className="text-lg font-black text-gray-900 mt-1">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 mt-3">
+                  <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 overflow-hidden">
+                    <p className="text-[10px] font-bold text-gray-500 truncate">Base Pay</p>
+                    <p className="text-base font-black text-gray-900 mt-1 truncate">
                       ₹{portfolio.salary.baseSalary.toLocaleString("en-IN")}
                     </p>
                   </div>
 
-                  <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                    <p className="text-[11px] font-bold text-gray-500 uppercase">Incentive Rate</p>
-                    <p className="text-lg font-black text-emerald-600 mt-1">
-                      {portfolio.salary.incentiveRate}%
+                  <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 overflow-hidden">
+                    <p className="text-[10px] font-bold text-gray-500 truncate">Incentive</p>
+                    <p className="text-base font-black text-emerald-600 mt-1 truncate">
+                      {portfolio.salary.incentiveRate}% / lead
                     </p>
                   </div>
 
-                  <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                    <p className="text-[11px] font-bold text-gray-500 uppercase">Conversion Bonus</p>
-                    <p className="text-lg font-black text-emerald-600 mt-1">
+                  <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 overflow-hidden">
+                    <p className="text-[10px] font-bold text-gray-500 truncate">Bonus</p>
+                    <p className="text-base font-black text-emerald-600 mt-1 truncate">
                       +₹{portfolio.salary.conversionsBonus.toLocaleString("en-IN")}
                     </p>
                   </div>
 
-                  <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                    <p className="text-[11px] font-bold text-gray-500 uppercase">Deductions</p>
-                    <p className="text-lg font-black text-rose-600 mt-1">
+                  <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 overflow-hidden">
+                    <p className="text-[10px] font-bold text-gray-500 truncate">Deductions</p>
+                    <p className="text-base font-black text-rose-600 mt-1 truncate">
                       -₹{portfolio.salary.deductions.toLocaleString("en-IN")}
                     </p>
                   </div>
 
-                  <div className="col-span-2 sm:col-span-1 bg-emerald-50 border border-emerald-200 p-3 rounded-xl">
-                    <p className="text-[11px] font-bold text-emerald-800 uppercase">Net Payable</p>
-                    <p className="text-lg font-black text-emerald-950 mt-1">
+                  <div className="col-span-2 sm:col-span-1 bg-emerald-50 border border-emerald-200 p-3 rounded-xl overflow-hidden">
+                    <p className="text-[10px] font-bold text-emerald-800 truncate">Net Payout</p>
+                    <p className="text-base font-black text-emerald-950 mt-1 truncate">
                       ₹{portfolio.salary.netPayable.toLocaleString("en-IN")}
                     </p>
                   </div>
@@ -1050,7 +1055,7 @@ export function AttendanceLeavesClient({
               </div>
             </div>
           ) : (
-            <div className="p-12 text-center text-gray-400 bg-white border border-gray-200 rounded-2xl text-xs font-semibold">
+            <div className="p-10 text-center text-gray-400 bg-white border border-gray-200 rounded-2xl text-xs font-semibold">
               Select a counsellor to inspect their profile.
             </div>
           )}
@@ -1061,14 +1066,14 @@ export function AttendanceLeavesClient({
       {/* TAB 3: LEAVE MANAGEMENT & APPROVALS (ZERO HORIZONTAL OVERFLOW!) */}
       {/* ========================================================================= */}
       {activeTab === "leaves" && (
-        <div className="space-y-4">
-          <div className="bg-white border border-gray-200/80 rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-2xs">
+        <div className="space-y-3.5">
+          <div className="bg-white border border-gray-200/80 rounded-2xl p-3 flex items-center justify-between gap-3 shadow-2xs">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-gray-500 uppercase">Filter:</span>
               <select
                 value={leaveStatusFilter}
                 onChange={(e) => setLeaveStatusFilter(e.target.value)}
-                className="px-2.5 py-1 text-xs font-bold border border-gray-200 rounded-lg text-gray-800 bg-white"
+                className="px-2.5 py-1 text-xs font-bold border border-gray-200 rounded-lg text-gray-800 bg-white cursor-pointer"
               >
                 <option value="all">All Requests</option>
                 <option value="pending">Pending Approval</option>
@@ -1087,11 +1092,11 @@ export function AttendanceLeavesClient({
             <table className="w-full text-left text-xs table-fixed">
               <thead className="bg-gray-50/90 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider text-[11px]">
                 <tr>
-                  <th className="py-3 px-4 w-[28%]">Counsellor</th>
-                  <th className="py-3 px-3 w-[22%]">Leave &amp; Duration</th>
-                  <th className="py-3 px-3 w-[24%]">Reason</th>
-                  <th className="py-3 px-3 w-[12%]">Status</th>
-                  <th className="py-3 px-4 w-[14%] text-right">Actions</th>
+                  <th className="py-3 px-4 w-[24%]">Counsellor</th>
+                  <th className="py-3 px-3 w-[18%]">Leave &amp; Dates</th>
+                  <th className="py-3 px-3 w-[28%]">Reason</th>
+                  <th className="py-3 px-3 w-[14%]">Status</th>
+                  <th className="py-3 px-4 w-[16%] text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -1110,25 +1115,25 @@ export function AttendanceLeavesClient({
                         <p className="text-[11px] text-gray-500 truncate">{leave.counsellorEmail}</p>
                       </td>
 
-                      {/* Leave & Duration */}
+                      {/* Leave & Dates (Smart Formatted, Spill-Free) */}
                       <td className="py-3 px-3 truncate">
                         <div className="space-y-0.5 truncate">
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-gray-100 text-gray-700">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-gray-100 text-gray-700">
                             {leave.leaveType} ({leave.daysCount}d)
                           </span>
-                          <p className="text-[11px] text-gray-500 whitespace-nowrap">
-                            {formatDate(leave.startDate)} → {formatDate(leave.endDate)}
+                          <p className="text-[11px] text-gray-500 truncate" title={`${leave.startDate} to ${leave.endDate}`}>
+                            {formatLeaveDates(leave.startDate, leave.endDate, leave.daysCount)}
                           </p>
                         </div>
                       </td>
 
                       {/* Reason */}
-                      <td className="py-3 px-3">
+                      <td className="py-3 px-3 truncate">
                         <p className="truncate text-gray-700 font-medium" title={leave.reason}>
                           {leave.reason}
                         </p>
                         {leave.reviewNotes && (
-                          <p className="text-[10px] text-gray-500 truncate mt-0.5">
+                          <p className="text-[10px] text-gray-500 truncate mt-0.5" title={leave.reviewNotes}>
                             Note: {leave.reviewNotes}
                           </p>
                         )}
@@ -1137,7 +1142,7 @@ export function AttendanceLeavesClient({
                       {/* Status */}
                       <td className="py-3 px-3 whitespace-nowrap">
                         <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
                             leave.status === "accepted"
                               ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                               : leave.status === "rejected"
@@ -1176,7 +1181,7 @@ export function AttendanceLeavesClient({
                                   counsellorName: leave.counsellorName,
                                 })
                               }
-                              className="px-2 py-1 rounded-lg text-xs font-bold bg-rose-600 text-white hover:bg-rose-700 shadow-2xs cursor-pointer"
+                              className="px-2 py-1 rounded-lg text-xs font-bold bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 cursor-pointer"
                             >
                               ✕
                             </button>
