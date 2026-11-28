@@ -498,7 +498,7 @@ export function CounselingModal({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3 px-6 rounded-xl font-bold text-xs sm:text-sm text-white bg-[#E31E2B] hover:bg-[#cf1823] transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 shadow-sm"
+                  className="tactile-btn-red text-white w-full py-3 px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 shadow-md transition-all"
                 >
                   {isSubmitting ? (
                     <>

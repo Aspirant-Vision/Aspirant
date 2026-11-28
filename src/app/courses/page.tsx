@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { getPublicCoursesAction } from "@/lib/course/actions";
 import { PublicCourseCatalog } from "@/components/courses/public-course-catalog";
+import { MinimalLeadForm } from "@/components/home/minimal-lead-form";
 import { getCourseDisciplineMeta } from "@/lib/discipline-meta";
 import { GraduationCap, ShieldCheck, Award, Layers, Sparkles, ChevronRight, BookOpen, Clock, CheckCircle2 } from "lucide-react";
 
@@ -186,6 +187,17 @@ export default async function PublicCoursesPage({ searchParams }: CoursesPagePro
           initialSearch={requestedSearch}
         />
       </section>
+
+      {/* 3. INLINE FAST DEGREE ADVISORY FORM */}
+      <MinimalLeadForm
+        badge="Degree & Career Advisory"
+        title="Confused Between Curricula or Streams? Get Syllabi & ROI Analysis"
+        subtitle="1-on-1 counseling with senior academic directors to evaluate career ROI, entrance cutoffs, and eligible scholarships."
+        buttonLabel="Evaluate My Eligibility"
+        source="courses_catalog_cta"
+        defaultCourse={requestedCategory !== "all" ? `${requestedCategory} Program` : "Engineering (B.Tech / B.E.)"}
+        className="pb-12"
+      />
     </div>
   );
 }

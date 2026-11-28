@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { getPublicCollegesAction } from "@/lib/college/actions";
 import { PublicCollegeCatalog } from "@/components/colleges/public-college-catalog";
+import { MinimalLeadForm } from "@/components/home/minimal-lead-form";
 import { getCollegeDisciplineMeta } from "@/lib/discipline-meta";
 import { ShieldCheck, Award, Building2, GraduationCap, Sparkles, ChevronRight, CheckCircle2 } from "lucide-react";
 
@@ -183,6 +184,17 @@ export default async function CollegesPage({ searchParams }: CollegesPageProps) 
           initialSearch={requestedSearch}
         />
       </section>
+
+      {/* 3. INLINE FAST ADMISSION COUNSELLING FORM */}
+      <MinimalLeadForm
+        badge="Personalized College Shortlist"
+        title="Can't Find Your Dream Campus? Let Advisors Shortlist For You"
+        subtitle="1-on-1 verified admission guidance across cutoffs, fees, and institutional quota seats in 2,500+ top universities."
+        buttonLabel="Get Free College Shortlist"
+        source="colleges_catalog_cta"
+        defaultCourse={requestedType !== "all" ? `${requestedType} Curricula` : "Engineering (B.Tech / B.E.)"}
+        className="pb-12"
+      />
     </div>
   );
 }

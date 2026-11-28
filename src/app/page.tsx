@@ -44,9 +44,9 @@ export default async function HomePage() {
 
       {/* MINIMALIST FORM 01: Instant Cutoff & Eligibility Predictor */}
       <MinimalLeadForm
-        badge="Instant Cutoff & Eligibility Predictor"
+        badge="Cutoff & Eligibility Predictor"
         title="Find Your Eligible College & 2026 Cutoff"
-        subtitle="Official admission cutoffs, fee structures, and verified seat allotments across 2,500+ campuses."
+        subtitle="Instant cutoff matcher across 2,500+ premier institutions with verified seat intakes."
         buttonLabel="Check Eligibility"
         source="home_cutoff_predictor"
         defaultCourse="Engineering (B.Tech / B.E.)"
@@ -61,9 +61,9 @@ export default async function HomePage() {
       {/* MINIMALIST FORM 02: Merit Fee Concession & Aid Desk */}
       <MinimalLeadForm
         badge="Tuition Aid & Fee Concession Desk"
-        title="Apply for Up to ₹5 Lakhs Merit Fee Concession"
-        subtitle="Verify institutional tuition fee concessions, early applicant aid, and 0% advance loans."
-        buttonLabel="Check Fee Concession"
+        title="Apply for Merit Fee Concessions & Aid"
+        subtitle="Verify institutional tuition waivers up to 100% and pre-approved 0% advance student financing."
+        buttonLabel="Claim Fee Concession"
         source="home_fee_concession_desk"
         defaultCourse="Management (MBA / PGDM)"
       />
@@ -80,8 +80,8 @@ export default async function HomePage() {
       {/* MINIMALIST FORM 03: 1-on-1 Exam Strategy & Backup Admission */}
       <MinimalLeadForm
         badge="1-on-1 Academic Mentorship"
-        title="Worried About Exam Cutoffs? Secure Safety Backup"
-        subtitle="Free 15-minute 1-on-1 strategic consultation with senior advisors to lock in accredited safety colleges."
+        title="Worried About Exam Cutoffs? Secure Your Safety Seat"
+        subtitle="15-minute strategic roadmap with senior advisors to guarantee confirmed seat allocation."
         buttonLabel="Schedule Free Call"
         source="home_exam_strategy"
         defaultCourse="Engineering (B.Tech / B.E.)"
@@ -93,9 +93,9 @@ export default async function HomePage() {
       {/* MINIMALIST FORM 04: Fast-Track Direct Admission Allotment Desk */}
       <MinimalLeadForm
         badge="Direct Admission Advisory Desk"
-        title="Ready to Secure Your Campus Seat for 2026?"
-        subtitle="1-on-1 official allotment guidance, course selection, and guaranteed zero hidden fees."
-        buttonLabel="Get Direct Admission Guidance"
+        title="Fast-Track Direct Admission Allotment 2026"
+        subtitle="Confirmed seat allotment support, institutional quota access, and zero hidden fees."
+        buttonLabel="Secure My Seat Now"
         source="home_campus_admission_desk"
         defaultCourse="Engineering (B.Tech / B.E.)"
       />

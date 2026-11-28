@@ -574,7 +574,7 @@ export default function MbaLandingPage() {
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <button
                   onClick={() => openModal("MBA / PGDM Comprehensive Profile Evaluation")}
-                  className="bg-[#E31E2B] hover:bg-[#c91824] text-white px-7 py-3 rounded-full font-bold text-sm flex items-center gap-2 transition-colors cursor-pointer"
+                  className="tactile-btn-red text-white px-7 py-3 rounded-full font-bold text-sm flex items-center gap-2 transition-all cursor-pointer shadow-md"
                 >
                   <GraduationCap className="w-4 h-4" />
                   <span>Evaluate My MBA Profile (Free)</span>
@@ -685,7 +685,7 @@ export default function MbaLandingPage() {
                         `MBA Matcher: ${matcherExam} | Budget: ${matcherBudget} | Spec: ${matcherSpec}`
                       )
                     }
-                    className="w-full mt-2 bg-[#E31E2B] hover:bg-[#c91824] text-white py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    className="tactile-btn-red text-white w-full mt-2 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
                   >
                     <Compass className="w-4 h-4" />
                     <span>Get Shortlist for {matcherBudget}</span>
@@ -1239,7 +1239,7 @@ export default function MbaLandingPage() {
 
                 <button
                   onClick={() => openModal("1-on-1 MBA Direct Admission Call")}
-                  className="w-full bg-[#E31E2B] hover:bg-[#c91824] text-white py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  className="tactile-btn-red text-white w-full py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
                 >
                   <PhoneCall className="w-4 h-4" />
                   <span>Connect with MBA Counselor Now</span>
@@ -1384,7 +1384,7 @@ export default function MbaLandingPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#E31E2B] hover:bg-[#c91824] text-white py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors mt-2 cursor-pointer disabled:opacity-50"
+                  className="tactile-btn-red text-white w-full py-3 px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all mt-2 cursor-pointer disabled:opacity-50 shadow-md"
                 >
                   {isSubmitting ? (
                     <>
@@ -1474,7 +1474,7 @@ export default function MbaLandingPage() {
           <div className="flex flex-wrap items-center justify-center gap-3 pt-3">
             <button
               onClick={() => openModal("MBA Fast-Track Application 2026")}
-              className="bg-[#E31E2B] hover:bg-[#c91824] text-white px-8 py-3 rounded-full font-bold text-xs sm:text-sm flex items-center gap-2 transition-colors cursor-pointer"
+              className="tactile-btn-red text-white px-8 py-3 rounded-full font-bold text-xs sm:text-sm flex items-center gap-2 transition-all cursor-pointer shadow-md"
             >
               <GraduationCap className="w-4 h-4" />
               <span>Apply for 2026–28 Batch Now</span>

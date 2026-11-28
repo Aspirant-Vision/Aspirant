@@ -11,13 +11,12 @@ import {
   User,
   GraduationCap,
   MessageCircle,
+  Clock,
+  Lock,
 } from "lucide-react";
 import { submitPublicEnquiryAction } from "@/lib/crm/actions";
 import { SubmissionSuccessView } from "@/components/ui/submission-success-view";
-import {
-  getCollegeTypeFromCourseCategory,
-  getRecommendedCollegesForDiscipline,
-} from "@/lib/discipline-meta";
+import { cn } from "@/lib/utils";
 
 interface MinimalLeadFormProps {
   badge: string;
@@ -26,6 +25,7 @@ interface MinimalLeadFormProps {
   buttonLabel?: string;
   source: string;
   defaultCourse?: string;
+  className?: string;
 }
 
 const STREAM_OPTIONS = [
@@ -44,6 +44,7 @@ export function MinimalLeadForm({
   buttonLabel = "Get Free Guidance",
   source,
   defaultCourse = "Engineering (B.Tech / B.E.)",
+  className,
 }: MinimalLeadFormProps) {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -81,7 +82,7 @@ export function MinimalLeadForm({
         currentQualification: course,
         enquiryMessage: `[${title}] Target Course: ${course} | Source: ${source}`,
         source,
-        landingPage: "/",
+        landingPage: typeof window !== "undefined" ? window.location.pathname : "/",
         consentStatus: true,
         honeypot,
       });
@@ -91,28 +92,28 @@ export function MinimalLeadForm({
       } else {
         setErrorMessage(res.error?.message || "Failed to submit. Please try again or WhatsApp our desk.");
       }
-    } catch (err: any) {
-      setErrorMessage(err?.message || "An unexpected error occurred. Please try again.");
+    } catch (err: unknown) {
+      setErrorMessage((err as Error)?.message || "An unexpected error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <section className="py-5 sm:py-7 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
-      <div className="bg-white rounded-2xl sm:rounded-3xl border border-gray-200/90 p-4 sm:p-6 lg:p-7 shadow-xs hover:border-gray-300 transition-colors">
-        {/* Minimal Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4 pb-3 border-b border-gray-100">
+    <section className={cn("py-4 sm:py-6 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 w-full", className)}>
+      <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#E7E9F0] p-4 sm:p-6 lg:p-7 shadow-md">
+        {/* Minimal Impressive Header (Punchy, Less Text) */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4 pb-3.5 border-b border-gray-100">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#E31E2B] mb-0.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#E31E2B]" />
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 text-[#E31E2B] text-[10.5px] font-extrabold uppercase tracking-wider border border-red-100 mb-1.5">
+              <Sparkles className="w-3 h-3 text-[#E31E2B]" />
               <span>{badge}</span>
             </div>
-            <h3 className="font-display text-base sm:text-lg lg:text-xl font-extrabold text-[#15182D]">
+            <h3 className="font-display text-base sm:text-xl lg:text-2xl font-extrabold text-[#15182D] tracking-tight">
               {title}
             </h3>
           </div>
-          <p className="text-xs text-gray-500 max-w-md font-medium leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#687086] max-w-md font-medium leading-relaxed md:text-right">
             {subtitle}
           </p>
         </div>
@@ -131,7 +132,7 @@ export function MinimalLeadForm({
             whatsappMessage={`Hello Aspirant Vision, I just submitted my details for ${course}.`}
           />
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-3.5">
             {errorMessage && (
               <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-[#E31E2B] text-xs font-semibold">
                 {errorMessage}
@@ -149,23 +150,23 @@ export function MinimalLeadForm({
               autoComplete="off"
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
               {/* Field 1: Full Name */}
               <div className="relative">
-                <User className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <User className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="text"
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Your Full Name *"
-                  className="w-full pl-9 pr-3 py-2.5 text-xs sm:text-sm font-medium rounded-xl border border-gray-200 bg-gray-50/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] transition-all"
+                  className="w-full pl-10 pr-3.5 py-2.5 sm:py-3 text-xs sm:text-sm font-medium rounded-xl border border-gray-200 bg-[#F7F8FC] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E31E2B]/15 focus:border-[#E31E2B] transition-all shadow-inner"
                 />
               </div>
 
               {/* Field 2: Mobile Number */}
               <div className="relative">
-                <span className="text-xs font-bold text-gray-400 absolute left-3 top-1/2 -translate-y-1/2">
+                <span className="text-xs font-bold text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 select-none">
                   +91
                 </span>
                 <input
@@ -174,17 +175,17 @@ export function MinimalLeadForm({
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Mobile / WhatsApp *"
-                  className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm font-medium rounded-xl border border-gray-200 bg-gray-50/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E31E2B]/20 focus:border-[#E31E2B] transition-all"
+                  className="w-full pl-11 pr-3.5 py-2.5 sm:py-3 text-xs sm:text-sm font-medium rounded-xl border border-gray-200 bg-[#F7F8FC] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E31E2B]/15 focus:border-[#E31E2B] transition-all shadow-inner"
                 />
               </div>
 
               {/* Field 3: Target Course */}
               <div className="relative">
-                <GraduationCap className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <GraduationCap className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <select
                   value={course}
                   onChange={(e) => setCourse(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 text-xs sm:text-sm font-semibold rounded-xl border border-gray-200 bg-gray-50/70 focus:bg-white text-gray-800 outline-none cursor-pointer"
+                  className="w-full pl-10 pr-3.5 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold rounded-xl border border-gray-200 bg-[#F7F8FC] focus:bg-white text-gray-800 outline-none cursor-pointer shadow-inner"
                 >
                   {STREAM_OPTIONS.map((opt) => (
                     <option key={opt} value={opt}>
@@ -194,12 +195,12 @@ export function MinimalLeadForm({
                 </select>
               </div>
 
-              {/* Field 4: Submit CTA */}
+              {/* Field 4: Skeuomorphic Tactile Submit Button */}
               <div>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-[#E31E2B] hover:bg-[#c91824] text-white shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-70"
+                  className="tactile-btn-red text-white w-full py-2.5 sm:py-3 px-5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 shadow-md"
                 >
                   {isSubmitting ? (
                     <>
@@ -209,52 +210,41 @@ export function MinimalLeadForm({
                   ) : (
                     <>
                       <span>{buttonLabel}</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-4 h-4 stroke-[2.5]" />
                     </>
                   )}
                 </button>
               </div>
             </div>
 
-            {/* Dynamic Discipline Campus Recommendations */}
-            {(() => {
-              const streamDiscipline = getCollegeTypeFromCourseCategory(course);
-              const recs = getRecommendedCollegesForDiscipline(course);
-              return (
-                <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] text-gray-500 font-medium">
-                  <span className="inline-flex items-center gap-1 font-bold text-gray-700">
-                    <Sparkles className="w-3.5 h-3.5 text-[#E31E2B]" />
-                    <span>Recommended {streamDiscipline} Campuses:</span>
-                  </span>
-                  <div className="flex flex-wrap gap-1.5 items-center">
-                    {recs.slice(0, 4).map((rec) => (
-                      <Link
-                        key={rec.name}
-                        href={`/colleges/${rec.slug}`}
-                        className="text-gray-700 hover:text-[#E31E2B] bg-gray-100 hover:bg-red-50 px-2 py-0.5 rounded font-semibold transition-colors"
-                      >
-                        {rec.name} {rec.nirf ? `(${rec.nirf})` : ""}
-                      </Link>
-                    ))}
-                  </div>
-                  <Link
-                    href={`/colleges?type=${streamDiscipline}`}
-                    className="text-[#E31E2B] font-bold hover:underline ml-auto"
-                  >
-                    All {streamDiscipline} Colleges →
-                  </Link>
-                </div>
-              );
-            })()}
+            {/* Clean, Impressive Trust Bar (Less Text, High Value) */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px] text-[#687086] font-medium">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Zero Donation Guarantee</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+                  <Clock className="w-3.5 h-3.5 text-blue-600" />
+                  <span>15-Minute Response</span>
+                </span>
+                <span className="hidden sm:inline-flex items-center gap-1.5 text-gray-500 font-semibold">
+                  <Lock className="w-3 h-3 text-gray-400" />
+                  <span>Encrypted Student Data</span>
+                </span>
+              </div>
 
-            <div className="flex flex-wrap items-center justify-between text-[11px] text-gray-400 pt-0.5 px-0.5">
-              <span className="flex items-center gap-1 font-medium">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>100% Free Consultation • Verified Institutional Allotments</span>
-              </span>
-              <span className="text-gray-400 hidden sm:inline">
-                Zero spam • Encrypted student privacy
-              </span>
+              <a
+                href={`https://wa.me/919876543210?text=Hello%20Aspirant%20Vision,%20I%20would%20like%20guidance%20for%20admission%20into%20${encodeURIComponent(
+                  course
+                )}.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 font-bold text-emerald-700 hover:text-emerald-800 transition-colors ml-auto sm:ml-0"
+              >
+                <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Prefer WhatsApp? Chat Now →</span>
+              </a>
             </div>
           </form>
         )}
