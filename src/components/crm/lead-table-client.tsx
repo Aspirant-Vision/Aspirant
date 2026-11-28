@@ -26,15 +26,24 @@ import {
   ChevronRight,
   Sparkles,
   Inbox,
+  Users,
+  Shuffle,
+  UserX,
+  X,
+  CheckSquare,
+  Square,
+  RefreshCw,
+  ShieldAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/crm/status-badge";
-import { DataTableContainer } from "@/components/crm/data-table";
 import { EmptyState } from "@/components/crm/empty-state";
 import {
   getLeadsListingAction,
   updateLeadStatusAction,
   assignLeadAction,
+  batchAssignLeadsAction,
+  batchUpdateLeadStatusAction,
   exportLeadsCsvAction,
 } from "@/lib/crm/actions";
 import { LeadPriority, LeadStatus } from "@/types/database.types";
@@ -93,13 +102,32 @@ export function LeadTableClient({
   const [courseId, setCourseId] = useState("all");
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "priority">("newest");
 
-  // Assign Modal State
+  // Selection States for Selective & Batch Actions
+  const [selectedLeadIds, setSelectedLeadIds] = useState<Set<string>>(new Set());
+
+  // Batch Modal States
+  const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
+  const [batchMode, setBatchMode] = useState<"direct" | "round_robin">("direct");
+  const [batchSelectedCounsellor, setBatchSelectedCounsellor] = useState("");
+  const [batchRoundRobinCounsellors, setBatchRoundRobinCounsellors] = useState<Set<string>>(
+    new Set(counsellors.map((c) => c.id))
+  );
+  const [batchNotes, setBatchNotes] = useState("");
+  const [isBatchAssigning, setIsBatchAssigning] = useState(false);
+
+  // Batch Status Modal State
+  const [isBatchStatusModalOpen, setIsBatchStatusModalOpen] = useState(false);
+  const [batchStatus, setBatchStatus] = useState<LeadStatus>("contacted");
+  const [batchStatusReason, setBatchStatusReason] = useState("");
+  const [isBatchUpdatingStatus, setIsBatchUpdatingStatus] = useState(false);
+
+  // Single Assign Modal State
   const [assignModalLead, setAssignModalLead] = useState<any | null>(null);
   const [selectedCounsellor, setSelectedCounsellor] = useState("");
   const [assignNotes, setAssignNotes] = useState("");
   const [isAssigning, setIsAssigning] = useState(false);
 
-  // Status Change Modal State
+  // Single Status Change Modal State
   const [statusModalLead, setStatusModalLead] = useState<any | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<LeadStatus>("new");
   const [statusReason, setStatusReason] = useState("");
@@ -129,6 +157,7 @@ export function LeadTableClient({
         setTotal(res.data.total);
         setPage(res.data.page);
         setTotalPages(res.data.totalPages);
+        setSelectedLeadIds(new Set()); // Reset selection on page reload
       }
     });
   };
@@ -138,6 +167,41 @@ export function LeadTableClient({
     fetchLeads(1);
   };
 
+  // Selection Helpers
+  const allSelectedOnPage = leads.length > 0 && leads.every((l) => selectedLeadIds.has(l.id));
+  const someSelectedOnPage = leads.some((l) => selectedLeadIds.has(l.id)) && !allSelectedOnPage;
+
+  const toggleSelectAllPage = () => {
+    if (allSelectedOnPage) {
+      setSelectedLeadIds(new Set());
+    } else {
+      const newSet = new Set(selectedLeadIds);
+      leads.forEach((l) => newSet.add(l.id));
+      setSelectedLeadIds(newSet);
+    }
+  };
+
+  const toggleSelectLead = (id: string) => {
+    const newSet = new Set(selectedLeadIds);
+    if (newSet.has(id)) {
+      newSet.delete(id);
+    } else {
+      newSet.add(id);
+    }
+    setSelectedLeadIds(newSet);
+  };
+
+  const selectUnassignedLeads = () => {
+    const unassigned = leads.filter((l) => !l.assigned_counsellor_id);
+    const newSet = new Set(unassigned.map((l) => l.id));
+    setSelectedLeadIds(newSet);
+  };
+
+  const clearSelection = () => {
+    setSelectedLeadIds(new Set());
+  };
+
+  // CSV Export
   const handleExportCsv = async () => {
     setIsExporting(true);
     try {
@@ -161,6 +225,7 @@ export function LeadTableClient({
     }
   };
 
+  // Single Lead Assignment
   const handleAssignSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!assignModalLead) return;
@@ -186,6 +251,73 @@ export function LeadTableClient({
     }
   };
 
+  // Batch Assignment Submit (Direct or Round-Robin)
+  const handleBatchAssignSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedLeadIds.size === 0) return;
+
+    if (batchMode === "direct" && !batchSelectedCounsellor) {
+      const confirmUnassign = window.confirm(
+        `Are you sure you want to mark all ${selectedLeadIds.size} selected leads as Unassigned?`
+      );
+      if (!confirmUnassign) return;
+    }
+
+    if (batchMode === "round_robin" && batchRoundRobinCounsellors.size === 0) {
+      alert("Please select at least one counsellor for round-robin distribution.");
+      return;
+    }
+
+    setIsBatchAssigning(true);
+    try {
+      const res = await batchAssignLeadsAction({
+        leadIds: Array.from(selectedLeadIds),
+        distributionMode: batchMode,
+        counsellorId: batchMode === "direct" ? batchSelectedCounsellor || null : undefined,
+        counsellorIds: batchMode === "round_robin" ? Array.from(batchRoundRobinCounsellors) : undefined,
+        notes: batchNotes,
+      });
+
+      if (!res.success) {
+        alert(res.error?.message || "Failed to batch assign leads");
+      } else {
+        setIsBatchModalOpen(false);
+        setBatchNotes("");
+        setSelectedLeadIds(new Set());
+        fetchLeads(page);
+      }
+    } finally {
+      setIsBatchAssigning(false);
+    }
+  };
+
+  // Batch Status Submit
+  const handleBatchStatusSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedLeadIds.size === 0) return;
+
+    setIsBatchUpdatingStatus(true);
+    try {
+      const res = await batchUpdateLeadStatusAction(
+        Array.from(selectedLeadIds),
+        batchStatus,
+        batchStatusReason
+      );
+
+      if (!res.success) {
+        alert(res.error?.message || "Failed to update lead statuses");
+      } else {
+        setIsBatchStatusModalOpen(false);
+        setBatchStatusReason("");
+        setSelectedLeadIds(new Set());
+        fetchLeads(page);
+      }
+    } finally {
+      setIsBatchUpdatingStatus(false);
+    }
+  };
+
+  // Single Status Update
   const handleStatusSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!statusModalLead) return;
@@ -224,9 +356,11 @@ export function LeadTableClient({
     }
   };
 
+  const unassignedCountOnPage = leads.filter((l) => !l.assigned_counsellor_id).length;
+
   return (
-    <div className="space-y-4">
-      {/* 1. TOP TOOLBAR: VIEW SWITCHER, SEARCH, FILTERS & ACTIONS */}
+    <div className="space-y-4 relative">
+      {/* 1. TOP TOOLBAR: VIEW SWITCHER, SEARCH, FILTERS & BATCH SHORTCUTS */}
       <div className="bg-white rounded-2xl p-4 border border-gray-200/80 shadow-2xs space-y-3.5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           {/* View Switcher Pills */}
@@ -259,8 +393,20 @@ export function LeadTableClient({
             </button>
           </div>
 
-          {/* Action CTAs */}
-          <div className="flex items-center gap-2">
+          {/* Action CTAs & Unassigned Quick Select */}
+          <div className="flex flex-wrap items-center gap-2">
+            {!isCounsellorOnly && unassignedCountOnPage > 0 && (
+              <button
+                type="button"
+                onClick={selectUnassignedLeads}
+                className="text-xs font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+                title="Select all unassigned leads currently on page"
+              >
+                <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+                <span>Select {unassignedCountOnPage} Unassigned</span>
+              </button>
+            )}
+
             {!isCounsellorOnly && (
               <Button
                 variant="outline"
@@ -279,7 +425,7 @@ export function LeadTableClient({
             )}
 
             <Link href="/admin/leads/new">
-              <Button variant="primary" size="sm" className="text-xs">
+              <Button variant="primary" size="sm" className="text-xs bg-[#E31E2B] text-white">
                 <Plus className="w-3.5 h-3.5 mr-1.5" />
                 <span>Create Lead</span>
               </Button>
@@ -397,7 +543,7 @@ export function LeadTableClient({
         </div>
       )}
 
-      {/* 3. VIEW 1: DATA TABLE VIEW */}
+      {/* 3. VIEW 1: DATA TABLE VIEW WITH BATCH CHECKBOXES */}
       {viewMode === "table" && (
         <>
           {leads.length === 0 ? (
@@ -412,6 +558,20 @@ export function LeadTableClient({
                 <table className="w-full text-left text-xs">
                   <thead>
                     <tr className="border-b border-gray-200/80 bg-gray-50/70 text-gray-500 font-semibold uppercase tracking-wider text-[10px]">
+                      {!isCounsellorOnly && (
+                        <th className="py-3.5 px-3 w-10 text-center">
+                          <input
+                            type="checkbox"
+                            checked={allSelectedOnPage}
+                            ref={(el) => {
+                              if (el) el.indeterminate = someSelectedOnPage;
+                            }}
+                            onChange={toggleSelectAllPage}
+                            className="rounded border-gray-300 text-[#E31E2B] focus:ring-[#E31E2B] cursor-pointer"
+                            title="Select all on this page"
+                          />
+                        </th>
+                      )}
                       <th className="py-3.5 px-4">Student Details</th>
                       <th className="py-3.5 px-4">Preferences</th>
                       <th className="py-3.5 px-4">Status & Priority</th>
@@ -421,152 +581,176 @@ export function LeadTableClient({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-gray-700">
-                    {leads.map((lead) => (
-                      <tr key={lead.id} className="hover:bg-gray-50/70 transition-colors">
-                        {/* Student Details */}
-                        <td className="py-3 px-4">
-                          <div className="font-bold text-gray-900 text-sm">
-                            <Link
-                              href={`/admin/leads/${lead.id}`}
-                              className="hover:text-[#E31E2B] transition-colors"
-                            >
-                              {lead.full_name}
-                            </Link>
-                          </div>
-                          <div className="flex items-center gap-1.5 text-gray-500 text-[11px] mt-0.5">
-                            <Phone className="w-3 h-3 text-gray-400" />
-                            <span>{lead.phone}</span>
-                          </div>
-                          <div className="flex items-center gap-1.5 text-gray-500 text-[11px]">
-                            <Mail className="w-3 h-3 text-gray-400" />
-                            <span>{lead.email}</span>
-                          </div>
-                        </td>
-
-                        {/* Preferences */}
-                        <td className="py-3 px-4">
-                          <div className="font-semibold text-gray-800 flex items-center gap-1">
-                            <Building className="w-3 h-3 text-gray-400 shrink-0" />
-                            <span className="truncate max-w-[180px]">
-                              {lead.colleges?.name || "General Admission"}
-                            </span>
-                          </div>
-                          <div className="text-[11px] text-gray-500 flex items-center gap-1 mt-0.5">
-                            <GraduationCap className="w-3 h-3 text-gray-400 shrink-0" />
-                            <span className="truncate max-w-[180px]">
-                              {lead.courses?.name || "Any Stream"}
-                            </span>
-                          </div>
-                          {lead.preferred_location && (
-                            <div className="text-[10px] text-gray-400 mt-0.5">
-                              📍 {lead.preferred_location}
-                            </div>
+                    {leads.map((lead) => {
+                      const isSelected = selectedLeadIds.has(lead.id);
+                      return (
+                        <tr
+                          key={lead.id}
+                          className={cn(
+                            "transition-colors",
+                            isSelected
+                              ? "bg-red-50/40 border-l-[3px] border-[#E31E2B]"
+                              : "hover:bg-gray-50/70"
                           )}
-                        </td>
-
-                        {/* Status & Priority */}
-                        <td className="py-3 px-4">
-                          <div className="flex flex-col items-start gap-1">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setStatusModalLead(lead);
-                                setSelectedStatus(lead.status);
-                              }}
-                              className="cursor-pointer"
-                              title="Click to change status"
-                            >
-                              <StatusBadge status={lead.status} />
-                            </button>
-                            <span
-                              className={cn(
-                                "text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border",
-                                getPriorityBadgeClass(lead.priority)
-                              )}
-                            >
-                              {lead.priority}
-                            </span>
-                          </div>
-                        </td>
-
-                        {/* Assigned Counsellor */}
-                        <td className="py-3 px-4">
-                          {lead.counsellor ? (
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[10px]">
-                                {lead.counsellor.full_name?.charAt(0) || "C"}
-                              </div>
-                              <div>
-                                <div className="font-semibold text-gray-900 text-xs">
-                                  {lead.counsellor.full_name}
-                                </div>
-                                <div className="text-[10px] text-gray-400">
-                                  {lead.counsellor.email}
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-1.5 text-amber-600 text-xs font-semibold">
-                              <AlertCircle className="w-3.5 h-3.5" />
-                              <span>Unassigned</span>
-                            </div>
+                        >
+                          {/* Selective Checkbox */}
+                          {!isCounsellorOnly && (
+                            <td className="py-3 px-3 text-center">
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => toggleSelectLead(lead.id)}
+                                className="rounded border-gray-300 text-[#E31E2B] focus:ring-[#E31E2B] cursor-pointer"
+                              />
+                            </td>
                           )}
-                        </td>
 
-                        {/* Source & Date */}
-                        <td className="py-3 px-4 text-gray-500">
-                          <div className="font-medium text-gray-700 capitalize text-xs">
-                            {lead.source?.replace("_", " ") || "Website"}
-                          </div>
-                          <div className="text-[10px] text-gray-400 mt-0.5 flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            <span>{new Date(lead.created_at).toLocaleDateString()}</span>
-                          </div>
-                        </td>
-
-                        {/* Actions */}
-                        <td className="py-3 px-4 text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            <Link href={`/admin/leads/${lead.id}`}>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-7 w-7 p-0"
-                                title="View Lead 360"
+                          {/* Student Details */}
+                          <td className="py-3 px-4">
+                            <div className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
+                              <Link
+                                href={`/admin/leads/${lead.id}`}
+                                className="hover:text-[#E31E2B] transition-colors"
                               >
-                                <Eye className="w-3.5 h-3.5 text-gray-600" />
-                              </Button>
-                            </Link>
+                                {lead.full_name}
+                              </Link>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-gray-500 text-[11px] mt-0.5">
+                              <Phone className="w-3 h-3 text-gray-400" />
+                              <span>{lead.phone}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-gray-500 text-[11px]">
+                              <Mail className="w-3 h-3 text-gray-400" />
+                              <span>{lead.email}</span>
+                            </div>
+                          </td>
 
-                            <Link href={`/admin/leads/${lead.id}/edit`}>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-7 w-7 p-0"
-                                title="Edit Lead"
-                              >
-                                <Edit2 className="w-3.5 h-3.5 text-gray-600" />
-                              </Button>
-                            </Link>
-
-                            {!isCounsellorOnly && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-7 w-7 p-0"
-                                title="Assign Counsellor"
-                                onClick={() => {
-                                  setAssignModalLead(lead);
-                                  setSelectedCounsellor(lead.assigned_counsellor_id || "");
-                                }}
-                              >
-                                <UserCheck className="w-3.5 h-3.5 text-blue-600" />
-                              </Button>
+                          {/* Preferences */}
+                          <td className="py-3 px-4">
+                            <div className="font-semibold text-gray-800 flex items-center gap-1">
+                              <Building className="w-3 h-3 text-gray-400 shrink-0" />
+                              <span className="truncate max-w-[180px]">
+                                {lead.colleges?.name || "General Admission"}
+                              </span>
+                            </div>
+                            <div className="text-[11px] text-gray-500 flex items-center gap-1 mt-0.5">
+                              <GraduationCap className="w-3 h-3 text-gray-400 shrink-0" />
+                              <span className="truncate max-w-[180px]">
+                                {lead.courses?.name || "Any Stream"}
+                              </span>
+                            </div>
+                            {lead.preferred_location && (
+                              <div className="text-[10px] text-gray-400 mt-0.5">
+                                📍 {lead.preferred_location}
+                              </div>
                             )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+
+                          {/* Status & Priority */}
+                          <td className="py-3 px-4">
+                            <div className="flex flex-col items-start gap-1">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setStatusModalLead(lead);
+                                  setSelectedStatus(lead.status);
+                                }}
+                                className="cursor-pointer"
+                                title="Click to change status"
+                              >
+                                <StatusBadge status={lead.status} />
+                              </button>
+                              <span
+                                className={cn(
+                                  "text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border",
+                                  getPriorityBadgeClass(lead.priority)
+                                )}
+                              >
+                                {lead.priority}
+                              </span>
+                            </div>
+                          </td>
+
+                          {/* Assigned Counsellor */}
+                          <td className="py-3 px-4">
+                            {lead.counsellor ? (
+                              <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[10px]">
+                                  {lead.counsellor.full_name?.charAt(0) || "C"}
+                                </div>
+                                <div>
+                                  <div className="font-semibold text-gray-900 text-xs">
+                                    {lead.counsellor.full_name}
+                                  </div>
+                                  <div className="text-[10px] text-gray-400">
+                                    {lead.counsellor.email}
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-1.5 text-amber-600 text-xs font-semibold">
+                                <AlertCircle className="w-3.5 h-3.5" />
+                                <span>Unassigned</span>
+                              </div>
+                            )}
+                          </td>
+
+                          {/* Source & Date */}
+                          <td className="py-3 px-4 text-gray-500">
+                            <div className="font-medium text-gray-700 capitalize text-xs">
+                              {lead.source?.replace("_", " ") || "Website"}
+                            </div>
+                            <div className="text-[10px] text-gray-400 mt-0.5 flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              <span>{new Date(lead.created_at).toLocaleDateString()}</span>
+                            </div>
+                          </td>
+
+                          {/* Actions */}
+                          <td className="py-3 px-4 text-right">
+                            <div className="flex items-center justify-end gap-1">
+                              <Link href={`/admin/leads/${lead.id}`}>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0"
+                                  title="View Lead 360"
+                                >
+                                  <Eye className="w-3.5 h-3.5 text-gray-600" />
+                                </Button>
+                              </Link>
+
+                              <Link href={`/admin/leads/${lead.id}/edit`}>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0"
+                                  title="Edit Lead"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5 text-gray-600" />
+                                </Button>
+                              </Link>
+
+                              {/* Singular Assignment Trigger */}
+                              {!isCounsellorOnly && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0"
+                                  title="Assign Counsellor (Single)"
+                                  onClick={() => {
+                                    setAssignModalLead(lead);
+                                    setSelectedCounsellor(lead.assigned_counsellor_id || "");
+                                  }}
+                                >
+                                  <UserCheck className="w-3.5 h-3.5 text-blue-600" />
+                                </Button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -622,80 +806,108 @@ export function LeadTableClient({
               return (
                 <div
                   key={col.id}
-                  className="w-72 shrink-0 bg-gray-100/70 rounded-2xl p-3 border border-gray-200/60 flex flex-col max-h-[750px]"
+                  className="w-80 flex-shrink-0 bg-gray-50/80 rounded-2xl p-3 border border-gray-200/80 flex flex-col max-h-[750px]"
                 >
                   {/* Column Header */}
-                  <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-gray-200">
-                    <span className="font-bold text-xs text-gray-800">{col.label}</span>
-                    <span
-                      className={cn(
-                        "text-[10px] font-extrabold px-2 py-0.5 rounded-full border",
-                        col.color
-                      )}
-                    >
+                  <div
+                    className={cn(
+                      "flex items-center justify-between px-3 py-2 rounded-xl border mb-3 font-bold text-xs",
+                      col.color
+                    )}
+                  >
+                    <span>{col.label}</span>
+                    <span className="px-2 py-0.5 rounded-full bg-white text-gray-800 text-[10px] shadow-2xs font-extrabold">
                       {colLeads.length}
                     </span>
                   </div>
 
-                  {/* Column Cards */}
-                  <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+                  {/* Cards List */}
+                  <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
                     {colLeads.length === 0 ? (
                       <div className="text-center py-8 text-gray-400 text-xs italic">
-                        No leads
+                        No leads in this stage
                       </div>
                     ) : (
-                      colLeads.map((card) => (
-                        <div
-                          key={card.id}
-                          className="bg-white rounded-xl p-3 border border-gray-200/80 shadow-2xs hover:shadow-xs transition-shadow space-y-2"
-                        >
-                          <div className="flex items-start justify-between gap-1">
-                            <Link
-                              href={`/admin/leads/${card.id}`}
-                              className="font-bold text-xs text-gray-900 hover:text-[#E31E2B] transition-colors leading-tight line-clamp-1"
-                            >
-                              {card.full_name}
-                            </Link>
-                            <span
-                              className={cn(
-                                "text-[9px] uppercase font-bold px-1.5 py-0.2 rounded border shrink-0",
-                                getPriorityBadgeClass(card.priority)
+                      colLeads.map((lead) => {
+                        const isSelected = selectedLeadIds.has(lead.id);
+                        return (
+                          <div
+                            key={lead.id}
+                            className={cn(
+                              "bg-white rounded-xl p-3 border shadow-2xs transition-all space-y-2",
+                              isSelected
+                                ? "border-[#E31E2B] ring-1 ring-[#E31E2B] bg-red-50/30"
+                                : "border-gray-200/90 hover:border-gray-300"
+                            )}
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              {!isCounsellorOnly && (
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => toggleSelectLead(lead.id)}
+                                  className="mt-0.5 rounded border-gray-300 text-[#E31E2B] focus:ring-[#E31E2B] cursor-pointer"
+                                />
                               )}
-                            >
-                              {card.priority}
-                            </span>
-                          </div>
-
-                          <div className="text-[11px] text-gray-500 space-y-0.5">
-                            <div className="flex items-center gap-1">
-                              <Building className="w-3 h-3 text-gray-400 shrink-0" />
-                              <span className="truncate">{card.colleges?.name || "General"}</span>
+                              <div className="flex-1 min-w-0">
+                                <Link
+                                  href={`/admin/leads/${lead.id}`}
+                                  className="font-bold text-gray-900 text-xs hover:text-[#E31E2B] transition-colors truncate block"
+                                >
+                                  {lead.full_name}
+                                </Link>
+                                <span className="text-[10px] text-gray-500 block truncate">
+                                  {lead.phone}
+                                </span>
+                              </div>
+                              <span
+                                className={cn(
+                                  "text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-md font-bold shrink-0",
+                                  getPriorityBadgeClass(lead.priority)
+                                )}
+                              >
+                                {lead.priority}
+                              </span>
                             </div>
-                            <div className="flex items-center gap-1">
-                              <Phone className="w-3 h-3 text-gray-400 shrink-0" />
-                              <span>{card.phone}</span>
-                            </div>
-                          </div>
 
-                          <div className="flex items-center justify-between pt-1 border-t border-gray-100 text-[10px] text-gray-400">
-                            <span>
-                              {card.counsellor?.full_name ? (
-                                <span className="text-gray-700 font-medium">
-                                  👤 {card.counsellor.full_name.split(" ")[0]}
+                            <div className="text-[11px] text-gray-600 space-y-0.5 pt-1 border-t border-gray-100">
+                              <div className="truncate font-medium">
+                                🏛️ {lead.colleges?.name || "General"}
+                              </div>
+                              <div className="truncate text-gray-500 text-[10px]">
+                                🎓 {lead.courses?.name || "Any Stream"}
+                              </div>
+                            </div>
+
+                            <div className="flex items-center justify-between pt-1 border-t border-gray-100 text-[10px]">
+                              {lead.counsellor ? (
+                                <span className="text-gray-700 font-semibold truncate max-w-[130px]">
+                                  👤 {lead.counsellor.full_name}
                                 </span>
                               ) : (
-                                <span className="text-amber-600 font-semibold">Unassigned</span>
+                                <span className="text-amber-600 font-bold flex items-center gap-1">
+                                  <AlertCircle className="w-2.5 h-2.5" />
+                                  Unassigned
+                                </span>
                               )}
-                            </span>
-                            <Link
-                              href={`/admin/leads/${card.id}`}
-                              className="text-[#E31E2B] font-bold hover:underline"
-                            >
-                              View →
-                            </Link>
+
+                              {!isCounsellorOnly && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setAssignModalLead(lead);
+                                    setSelectedCounsellor(lead.assigned_counsellor_id || "");
+                                  }}
+                                  className="text-blue-600 hover:text-blue-800 font-semibold cursor-pointer"
+                                  title="Assign counsellor"
+                                >
+                                  Assign
+                                </button>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
                 </div>
@@ -705,13 +917,323 @@ export function LeadTableClient({
         </div>
       )}
 
-      {/* 5. MODAL: ASSIGN COUNSELLOR */}
+      {/* 5. FLOATING BATCH ACTIONS BAR (Appears when 1+ leads are selected) */}
+      {!isCounsellorOnly && selectedLeadIds.size > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[#15182D] text-white px-5 py-3 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center gap-3 sm:gap-4 animate-in slide-in-from-bottom-5 duration-200">
+          <div className="flex items-center gap-2 pr-2 border-r border-slate-700">
+            <span className="bg-[#E31E2B] text-white text-xs font-black px-2 py-0.5 rounded-full">
+              {selectedLeadIds.size}
+            </span>
+            <span className="text-xs font-bold text-gray-200 hidden sm:inline">
+              Selected
+            </span>
+          </div>
+
+          {/* Action 1: Batch Assign to Specific Counsellor */}
+          <button
+            type="button"
+            onClick={() => {
+              setBatchMode("direct");
+              setIsBatchModalOpen(true);
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white transition-colors cursor-pointer shadow-sm"
+          >
+            <UserCheck className="w-3.5 h-3.5" />
+            <span>Assign Counsellor</span>
+          </button>
+
+          {/* Action 2: Round-Robin Split across Counsellors */}
+          <button
+            type="button"
+            onClick={() => {
+              setBatchMode("round_robin");
+              setIsBatchModalOpen(true);
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-xs font-bold text-white transition-colors cursor-pointer shadow-sm"
+          >
+            <Shuffle className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Round-Robin</span> Split
+          </button>
+
+          {/* Action 3: Batch Status Update */}
+          <button
+            type="button"
+            onClick={() => setIsBatchStatusModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-gray-200 transition-colors cursor-pointer"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Update Status</span>
+          </button>
+
+          {/* Action 4: Clear Selection */}
+          <button
+            type="button"
+            onClick={clearSelection}
+            className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer ml-1"
+            title="Deselect all"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* 6. ADVANCED BATCH ASSIGNMENT MODAL (Direct or Round-Robin) */}
+      {isBatchModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 border border-gray-200 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div>
+                <h3 className="font-bold text-base text-gray-900 flex items-center gap-2">
+                  <Users className="w-4 h-4 text-[#E31E2B]" />
+                  <span>Batch Assign {selectedLeadIds.size} Leads</span>
+                </h3>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Distribute the selected admission leads across your counseling team.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsBatchModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600 p-1 rounded-lg cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Mode Selector Tabs */}
+            <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-xl">
+              <button
+                type="button"
+                onClick={() => setBatchMode("direct")}
+                className={cn(
+                  "py-2 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5",
+                  batchMode === "direct"
+                    ? "bg-white text-gray-900 shadow-2xs"
+                    : "text-gray-500 hover:text-gray-900"
+                )}
+              >
+                <UserCheck className="w-3.5 h-3.5" />
+                <span>Single Counsellor</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setBatchMode("round_robin")}
+                className={cn(
+                  "py-2 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5",
+                  batchMode === "round_robin"
+                    ? "bg-white text-gray-900 shadow-2xs"
+                    : "text-gray-500 hover:text-gray-900"
+                )}
+              >
+                <Shuffle className="w-3.5 h-3.5 text-amber-600" />
+                <span>Round-Robin Distribution</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleBatchAssignSubmit} className="space-y-4">
+              {batchMode === "direct" ? (
+                /* Mode 1: Single Counsellor for All Selected */
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1.5">
+                    Assign All {selectedLeadIds.size} Leads To:
+                  </label>
+                  <select
+                    value={batchSelectedCounsellor}
+                    onChange={(e) => setBatchSelectedCounsellor(e.target.value)}
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#E31E2B] bg-white font-medium"
+                  >
+                    <option value="">Unassigned (Clear Counsellor Assignment)</option>
+                    {counsellors.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.full_name} ({c.email})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                /* Mode 2: Round-Robin Distribution Across Selected Counsellors */
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-gray-700">
+                      Distribute Evenly Across Active Counsellors:
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (batchRoundRobinCounsellors.size === counsellors.length) {
+                          setBatchRoundRobinCounsellors(new Set());
+                        } else {
+                          setBatchRoundRobinCounsellors(new Set(counsellors.map((c) => c.id)));
+                        }
+                      }}
+                      className="text-[11px] font-bold text-blue-600 hover:underline cursor-pointer"
+                    >
+                      {batchRoundRobinCounsellors.size === counsellors.length ? "Clear All" : "Select All"}
+                    </button>
+                  </div>
+
+                  <div className="max-h-48 overflow-y-auto space-y-1.5 border border-gray-200 rounded-xl p-2.5 bg-gray-50/50">
+                    {counsellors.map((c) => {
+                      const isIncluded = batchRoundRobinCounsellors.has(c.id);
+                      return (
+                        <label
+                          key={c.id}
+                          className="flex items-center justify-between p-2 rounded-lg bg-white border border-gray-200/80 hover:bg-gray-50 cursor-pointer text-xs"
+                        >
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={isIncluded}
+                              onChange={() => {
+                                const newSet = new Set(batchRoundRobinCounsellors);
+                                if (newSet.has(c.id)) newSet.delete(c.id);
+                                else newSet.add(c.id);
+                                setBatchRoundRobinCounsellors(newSet);
+                              }}
+                              className="rounded border-gray-300 text-[#E31E2B] focus:ring-[#E31E2B]"
+                            />
+                            <span className="font-semibold text-gray-900">{c.full_name}</span>
+                          </div>
+                          <span className="text-[10px] text-gray-400">{c.email}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+
+                  {/* Distribution Forecast */}
+                  {batchRoundRobinCounsellors.size > 0 && (
+                    <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+                      <span>
+                        <strong>{selectedLeadIds.size} leads</strong> will be evenly divided across{" "}
+                        <strong>{batchRoundRobinCounsellors.size} counsellors</strong> (~
+                        {Math.ceil(selectedLeadIds.size / batchRoundRobinCounsellors.size)} leads each).
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Assignment Notes */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  Internal Assignment Note (Optional)
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="e.g. High priority regional batch from Bhubaneswar Education Hub"
+                  value={batchNotes}
+                  onChange={(e) => setBatchNotes(e.target.value)}
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#E31E2B]"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsBatchModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="sm"
+                  disabled={isBatchAssigning}
+                  className="bg-[#E31E2B] text-white"
+                >
+                  {isBatchAssigning ? "Processing Batch Assignment..." : "Execute Batch Assignment"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 7. BATCH STATUS UPDATE MODAL */}
+      {isBatchStatusModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 border border-gray-200 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <h3 className="font-bold text-sm text-gray-900">
+                Update Status for {selectedLeadIds.size} Leads
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsBatchStatusModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600 cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleBatchStatusSubmit} className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  New Status for Selected Batch *
+                </label>
+                <select
+                  value={batchStatus}
+                  onChange={(e) => setBatchStatus(e.target.value as LeadStatus)}
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#E31E2B] bg-white font-medium"
+                >
+                  <option value="new">New</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="interested">Interested</option>
+                  <option value="counselling_scheduled">Counselling Scheduled</option>
+                  <option value="application_started">Application Started</option>
+                  <option value="admitted">Admitted</option>
+                  <option value="not_interested">Not Interested</option>
+                  <option value="lost">Lost</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  Reason / Notes (Optional)
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="e.g. Followed up via phone call session"
+                  value={batchStatusReason}
+                  onChange={(e) => setBatchStatusReason(e.target.value)}
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#E31E2B]"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsBatchStatusModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="sm"
+                  disabled={isBatchUpdatingStatus}
+                  className="bg-[#E31E2B] text-white"
+                >
+                  {isBatchUpdatingStatus ? "Updating Batch..." : "Confirm Status Update"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 8. SINGLE LEAD ASSIGNMENT MODAL */}
       {assignModalLead && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white rounded-2xl max-w-md w-full p-5 border border-gray-200 shadow-xl space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="font-bold text-sm text-gray-900">
-                Assign Counsellor to {assignModalLead.full_name}
+                Assign Counsellor: {assignModalLead.full_name}
               </h3>
               <button
                 type="button"
@@ -778,7 +1300,7 @@ export function LeadTableClient({
         </div>
       )}
 
-      {/* 6. MODAL: STATUS TRANSITION */}
+      {/* 9. SINGLE LEAD STATUS TRANSITION MODAL */}
       {statusModalLead && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white rounded-2xl max-w-md w-full p-5 border border-gray-200 shadow-xl space-y-4">

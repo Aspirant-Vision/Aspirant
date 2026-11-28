@@ -231,6 +231,30 @@ export async function submitPublicEnquiryAction(
       });
     }
 
+    // 6b. Send In-App Notification to Student (if student has an account)
+    try {
+      const { data: studentProfile } = await supabase
+        .from("profiles")
+        .select("id, full_name, email")
+        .eq("email", normalizedEmail)
+        .maybeSingle();
+
+      if (studentProfile) {
+        await createCrmNotification({
+          recipientId: studentProfile.id,
+          title: "Admission Enquiry Received • Session 2026–27",
+          message: `Your admission enquiry for ${data.preferredLocation || "premier institutions"} has been registered. An official academic advisor will connect with you shortly.`,
+          category: "student",
+          notificationType: "student_enquiry_received",
+          relatedEntityType: "leads",
+          relatedEntityId: newLead.id,
+          destinationUrl: "/student/enquiries",
+        });
+      }
+    } catch (notifErr) {
+      console.warn("[submitPublicEnquiryAction] Student notification dispatch skipped:", notifErr);
+    }
+
     // 7. Record Ingestion Activity
     await supabase.from("lead_activities").insert({
       lead_id: newLead.id,
@@ -984,6 +1008,203 @@ export async function assignLeadAction(
   } catch (err: unknown) {
     const msg = (err as Error).message || "Failed to assign lead";
     return { success: false, error: { code: "INTERNAL_ERROR", message: msg } };
+  }
+}
+
+export interface BatchAssignLeadsInput {
+  leadIds: string[];
+  counsellorId?: string | null;
+  distributionMode?: "direct" | "round_robin";
+  counsellorIds?: string[];
+  notes?: string;
+}
+
+/**
+ * Super Admin Batch Assignment:
+ * Allows assigning selected leads in bulk to a single counsellor or
+ * distributing them evenly across a selected team of counsellors via round-robin.
+ */
+export async function batchAssignLeadsAction(
+  input: BatchAssignLeadsInput
+): Promise<ApiResponse<{ assignedCount: number; leadIds: string[] }>> {
+  try {
+    const admin = await requireAdmin();
+    const { leadIds, counsellorId, distributionMode = "direct", counsellorIds = [], notes } = input;
+
+    if (!leadIds || !Array.isArray(leadIds) || leadIds.length === 0) {
+      return {
+        success: false,
+        error: { code: "VALIDATION_ERROR", message: "No leads selected for batch assignment" },
+      };
+    }
+
+    const supabase = createAdminClient();
+
+    // 1. Mark existing active assignments as reassigned
+    await supabase
+      .from("lead_assignments")
+      .update({
+        assignment_status: "reassigned",
+        unassigned_at: new Date().toISOString(),
+      })
+      .in("lead_id", leadIds)
+      .eq("assignment_status", "active");
+
+    const assignmentsToInsert: any[] = [];
+    const activitiesToInsert: any[] = [];
+    const counsellorCounts: Record<string, number> = {};
+
+    if (distributionMode === "round_robin" && counsellorIds.length > 0) {
+      // Fetch names of all selected counsellors
+      const { data: counsellorProfiles } = await supabase
+        .from("profiles")
+        .select("id, full_name, email")
+        .in("id", counsellorIds);
+
+      const profileMap = new Map((counsellorProfiles || []).map((p) => [p.id, p.full_name || p.email]));
+
+      // Evenly distribute across counsellors
+      for (let i = 0; i < leadIds.length; i++) {
+        const leadId = leadIds[i];
+        const assignedCId = counsellorIds[i % counsellorIds.length];
+        const cName = profileMap.get(assignedCId) || "Counsellor";
+
+        await supabase
+          .from("leads")
+          .update({ assigned_counsellor_id: assignedCId })
+          .eq("id", leadId);
+
+        assignmentsToInsert.push({
+          lead_id: leadId,
+          counsellor_id: assignedCId,
+          assigned_by: admin.id,
+          assignment_status: "active",
+        });
+
+        activitiesToInsert.push({
+          lead_id: leadId,
+          actor_id: admin.id,
+          activity_type: "lead_assigned",
+          description: `Batch distributed to ${cName} by ${admin.fullName || admin.email}${notes ? `. Notes: "${notes}"` : ""}`,
+          is_internal: true,
+        });
+
+        counsellorCounts[assignedCId] = (counsellorCounts[assignedCId] || 0) + 1;
+      }
+    } else {
+      // Direct assignment (all to counsellorId or null)
+      let counsellorName = "Unassigned";
+      if (counsellorId) {
+        const { data: cProfile } = await supabase
+          .from("profiles")
+          .select("full_name, email")
+          .eq("id", counsellorId)
+          .single();
+        if (cProfile) counsellorName = cProfile.full_name || cProfile.email;
+      }
+
+      await supabase
+        .from("leads")
+        .update({ assigned_counsellor_id: counsellorId || null })
+        .in("id", leadIds);
+
+      for (const leadId of leadIds) {
+        if (counsellorId) {
+          assignmentsToInsert.push({
+            lead_id: leadId,
+            counsellor_id: counsellorId,
+            assigned_by: admin.id,
+            assignment_status: "active",
+          });
+        }
+
+        activitiesToInsert.push({
+          lead_id: leadId,
+          actor_id: admin.id,
+          activity_type: counsellorId ? "lead_assigned" : "lead_unassigned",
+          description: counsellorId
+            ? `Batch assigned to ${counsellorName} by ${admin.fullName || admin.email}${notes ? `. Notes: "${notes}"` : ""}`
+            : `Batch unassigned by ${admin.fullName || admin.email}`,
+          is_internal: true,
+        });
+      }
+
+      if (counsellorId) {
+        counsellorCounts[counsellorId] = leadIds.length;
+      }
+    }
+
+    // Insert assignments in bulk
+    if (assignmentsToInsert.length > 0) {
+      await supabase.from("lead_assignments").insert(assignmentsToInsert);
+    }
+
+    // Insert activity logs in bulk
+    if (activitiesToInsert.length > 0) {
+      await supabase.from("lead_activities").insert(activitiesToInsert);
+    }
+
+    // Send notifications to affected counsellors
+    for (const [cId, count] of Object.entries(counsellorCounts)) {
+      await createCrmNotification({
+        recipientId: cId,
+        title: "Batch Leads Assigned",
+        message: `Super Admin assigned ${count} student ${count === 1 ? "lead" : "leads"} to your portfolio.${notes ? ` Note: "${notes}"` : ""}`,
+        notificationType: "lead_assigned",
+        destinationUrl: "/admin/my-leads",
+      });
+    }
+
+    revalidatePath("/admin/leads");
+    revalidatePath("/admin/my-leads");
+
+    return {
+      success: true,
+      data: { assignedCount: leadIds.length, leadIds },
+    };
+  } catch (err: unknown) {
+    const msg = (err as Error).message || "Failed to batch assign leads";
+    return { success: false, error: { code: "INTERNAL_ERROR", message: msg } };
+  }
+}
+
+/**
+ * Super Admin Batch Status Update
+ */
+export async function batchUpdateLeadStatusAction(
+  leadIds: string[],
+  status: LeadStatus,
+  reason?: string
+): Promise<ApiResponse<{ updatedCount: number }>> {
+  try {
+    const profile = await requireCounsellor();
+    if (!leadIds || leadIds.length === 0) {
+      return { success: false, error: { code: "VALIDATION_ERROR", message: "No leads selected" } };
+    }
+
+    const supabase = createAdminClient();
+
+    await supabase
+      .from("leads")
+      .update({ status })
+      .in("id", leadIds);
+
+    const activities = leadIds.map((id) => ({
+      lead_id: id,
+      actor_id: profile.id,
+      activity_type: "status_changed",
+      description: `Status bulk updated to "${status}" by ${profile.fullName || profile.email}${reason ? `. Reason: "${reason}"` : ""}`,
+      is_internal: true,
+    }));
+
+    await supabase.from("lead_activities").insert(activities);
+
+    revalidatePath("/admin/leads");
+    revalidatePath("/admin/my-leads");
+
+    return { success: true, data: { updatedCount: leadIds.length } };
+  } catch (err: unknown) {
+    return { success: false, error: { code: "INTERNAL_ERROR", message: (err as Error).message } };
   }
 }
 
