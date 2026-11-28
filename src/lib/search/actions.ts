@@ -35,7 +35,7 @@ const SYNONYMS: Record<string, string[]> = {
   llb: ["law", "legal"],
   bca: ["computer applications", "it"],
   mca: ["computer applications", "it"],
-  kiit: ["kalinga", "kiitee", "bhubaneswar"],
+  kiit: ["kalinga", "kiitee"],
 };
 
 const POPULAR_EXAMS = [
@@ -207,44 +207,59 @@ export async function getLiveSearchSuggestionsAction(
       termsToMatch.push(...SYNONYMS[cleanLower]);
     }
 
+    const isShortQuery = clean.length <= 2;
+
     // 1. Query Colleges
     let colQuery = supabase
       .from("colleges")
-      .select("id, name, slug, city, state, college_type, nirf_rank, naac_grade, logo_url, entrance_exams")
+      .select("id, name, slug, city, state, college_type, nirf_rank, naac_grade, logo_url, entrance_exams, is_featured")
       .eq("publication_status", "published");
 
     if (location && location !== "All India") {
       colQuery = colQuery.or(`city.ilike.%${location}%,state.ilike.%${location}%`);
     }
 
-    const colFilterString = termsToMatch
-      .flatMap((t) => [
-        `name.ilike.%${t}%`,
-        `slug.ilike.%${t}%`,
-        `city.ilike.%${t}%`,
-        `state.ilike.%${t}%`,
-        `college_type.ilike.%${t}%`,
-        `entrance_exams.ilike.%${t}%`,
-      ])
-      .join(",");
+    const colFilterString = isShortQuery
+      ? [
+          `name.ilike.${clean}%`,
+          `name.ilike.% ${clean}%`,
+          `name.ilike.%(${clean}%`,
+          `slug.ilike.${clean}%`,
+        ].join(",")
+      : termsToMatch
+          .flatMap((t) => [
+            `name.ilike.%${t}%`,
+            `slug.ilike.%${t}%`,
+            `city.ilike.%${t}%`,
+            `state.ilike.%${t}%`,
+            `college_type.ilike.%${t}%`,
+            `entrance_exams.ilike.%${t}%`,
+          ])
+          .join(",");
 
     colQuery = colQuery
       .or(colFilterString)
       .order("is_featured", { ascending: false })
       .order("name", { ascending: true })
-      .limit(6);
+      .limit(12);
 
     // 2. Query Courses
-    const crsFilterString = termsToMatch
-      .flatMap((t) => [
-        `name.ilike.%${t}%`,
-        `slug.ilike.%${t}%`,
-        `degree_type.ilike.%${t}%`,
-        `stream.ilike.%${t}%`,
-        `category.ilike.%${t}%`,
-        `specialization.ilike.%${t}%`,
-      ])
-      .join(",");
+    const crsFilterString = isShortQuery
+      ? [
+          `name.ilike.${clean}%`,
+          `degree_type.ilike.${clean}%`,
+          `name.ilike.%(${clean}%`,
+          `slug.ilike.${clean}%`,
+        ].join(",")
+      : termsToMatch
+          .flatMap((t) => [
+            `name.ilike.%${t}%`,
+            `slug.ilike.%${t}%`,
+            `degree_type.ilike.%${t}%`,
+            `stream.ilike.%${t}%`,
+            `category.ilike.%${t}%`,
+          ])
+          .join(",");
 
     const crsQuery = supabase
       .from("courses")
@@ -257,7 +272,21 @@ export async function getLiveSearchSuggestionsAction(
     const [colRes, crsRes] = await Promise.all([colQuery, crsQuery]);
 
     if (colRes.data) {
-      result.colleges = colRes.data.map((c) => ({
+      // Sort colleges by relevance: exact/prefix/acronym name match first
+      const scoreCollege = (name: string, slug: string) => {
+        const n = name.toLowerCase();
+        const s = slug.toLowerCase();
+        if (n.startsWith(cleanLower) || s.startsWith(cleanLower)) return 4;
+        if (n.includes(`(${cleanLower}`) || n.includes(` ${cleanLower}`)) return 3;
+        if (termsToMatch.some((t) => n.includes(t.toLowerCase()))) return 2;
+        return 1;
+      };
+
+      const sortedColleges = [...colRes.data]
+        .sort((a, b) => scoreCollege(b.name, b.slug) - scoreCollege(a.name, a.slug))
+        .slice(0, 6);
+
+      result.colleges = sortedColleges.map((c) => ({
         id: c.id,
         type: "college" as const,
         title: c.name,
@@ -283,6 +312,13 @@ export async function getLiveSearchSuggestionsAction(
 
     // 3. Match Exams
     const matchedExams = POPULAR_EXAMS.filter((exam) => {
+      if (isShortQuery) {
+        return (
+          exam.name.toLowerCase().startsWith(cleanLower) ||
+          exam.keywords.some((k) => k.startsWith(cleanLower))
+        );
+      }
+
       const matchInSelf =
         exam.name.toLowerCase().includes(cleanLower) ||
         exam.fullName.toLowerCase().includes(cleanLower) ||
