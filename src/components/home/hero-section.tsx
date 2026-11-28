@@ -185,7 +185,7 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative z-30 w-full min-h-0 sm:min-h-[640px] lg:min-h-[720px] flex items-center overflow-visible bg-[#F7F8FC]">
+    <section className="relative w-full min-h-0 sm:min-h-[640px] lg:min-h-[720px] flex items-center overflow-visible bg-[#F7F8FC]">
       {/* 1. CINEMATIC FULL-WIDTH BACKGROUND PHOTOGRAPHY (herobg.png) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <Image
@@ -198,11 +198,11 @@ export function HeroSection() {
         />
       </div>
 
-      {/* 2. HERO CONTENT LAYER */}
-      <div className="relative z-30 w-full max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-16 lg:py-20">
+      {/* 2. HERO CONTENT LAYER (no z-index on wrapper so z-30 search box sits above z-20 stats bar while stats bar sits above z-0 bg) */}
+      <div className="relative w-full max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-16 lg:py-20">
         <div className="max-w-2xl space-y-3.5 sm:space-y-5">
           {/* Eyebrow Trust Badge & Mobile Student Metric Row */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="relative z-10 flex flex-wrap items-center gap-2">
             <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white/95 backdrop-blur-sm border border-[#E7E9F0] text-[11px] sm:text-xs font-bold text-[#E31E2B] shadow-2xs">
               <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E31E2B]" />
               <span>India&apos;s Trusted Admission Partner</span>
@@ -219,7 +219,7 @@ export function HeroSection() {
           </div>
 
           {/* Main Headline - crystal clear contrast over light campus background */}
-          <h1 className="font-display text-[29px] sm:text-5xl lg:text-[56px] font-extrabold text-[#15182D] leading-[1.14] tracking-tight">
+          <h1 className="relative z-10 font-display text-[29px] sm:text-5xl lg:text-[56px] font-extrabold text-[#15182D] leading-[1.14] tracking-tight">
             Discover. Compare. Apply. <br />
             <span className="text-[#E31E2B]">
               Get Admitted.
@@ -227,7 +227,7 @@ export function HeroSection() {
           </h1>
 
           {/* Supporting Copy - bold, crisp, completely readable without any enclosing card */}
-          <p className="font-body text-xs sm:text-lg text-[#15182D] font-bold leading-relaxed max-w-xl">
+          <p className="relative z-10 font-body text-xs sm:text-lg text-[#15182D] font-bold leading-relaxed max-w-xl">
             Find the right college, explore top courses, and get expert counselling to complete your admission journey — all in one place.
           </p>
 
