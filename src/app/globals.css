@@ -246,3 +246,29 @@
 .animate-glass-pop {
   animation: glass-pop 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
+
+@keyframes road-flow {
+  from {
+    stroke-dashoffset: 36;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-road-flow {
+  animation: road-flow 1.2s linear infinite;
+}
+
+@keyframes step-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.animate-step-fill {
+  animation: step-fill 3.5s linear;
+}
