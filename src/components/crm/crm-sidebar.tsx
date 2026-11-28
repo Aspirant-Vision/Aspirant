@@ -220,9 +220,13 @@ export function CrmSidebar({
     },
   ];
 
-  // Close mobile drawer on route transition
+  // Close mobile drawer only when pathname actually changes
+  const prevPathnameRef = useRef(pathname);
   useEffect(() => {
-    onCloseMobile();
+    if (prevPathnameRef.current !== pathname) {
+      prevPathnameRef.current = pathname;
+      onCloseMobile();
+    }
   }, [pathname, onCloseMobile]);
 
   const SidebarContent = (

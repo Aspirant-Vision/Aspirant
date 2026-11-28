@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { UserProfile, UserRole } from "@/types/auth.types";
 import { CrmSidebar } from "./crm-sidebar";
 import { CrmTopNav } from "./crm-top-nav";
@@ -15,13 +15,16 @@ export function CrmShell({ profile, primaryRole, children }: CrmShellProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  const handleCloseMobile = useCallback(() => setIsMobileOpen(false), []);
+  const handleOpenMobile = useCallback(() => setIsMobileOpen(true), []);
+
   return (
     <div className="min-h-screen w-full bg-[#F8FAFC] flex selection:bg-red-100 selection:text-red-700">
       {/* 1. Sidebar Navigation (Desktop Persistent + Mobile Drawer) */}
       <CrmSidebar
         primaryRole={primaryRole}
         isMobileOpen={isMobileOpen}
-        onCloseMobile={() => setIsMobileOpen(false)}
+        onCloseMobile={handleCloseMobile}
         isCollapsed={isCollapsed}
         onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
       />
@@ -31,7 +34,7 @@ export function CrmShell({ profile, primaryRole, children }: CrmShellProps) {
         {/* Sticky Top Bar */}
         <CrmTopNav
           profile={profile}
-          onOpenMobile={() => setIsMobileOpen(true)}
+          onOpenMobile={handleOpenMobile}
         />
 
         {/* Dynamic Route Content */}
