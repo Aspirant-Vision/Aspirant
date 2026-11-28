@@ -86,15 +86,21 @@ export function HeroSection() {
     []
   );
 
-  // Debounce user keystrokes
+  // Debounce user keystrokes (only fetch when user types something)
   useEffect(() => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
 
+    if (!searchQuery.trim()) {
+      setSuggestions(null);
+      setIsOpen(false);
+      return;
+    }
+
     debounceTimerRef.current = setTimeout(() => {
       fetchSuggestions(searchQuery, selectedLocation, activeTab);
-    }, 200);
+    }, 180);
 
     return () => {
       if (debounceTimerRef.current) {
@@ -179,7 +185,7 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative w-full min-h-0 sm:min-h-[640px] lg:min-h-[720px] flex items-center overflow-visible bg-[#F7F8FC]">
+    <section className="relative z-30 w-full min-h-0 sm:min-h-[640px] lg:min-h-[720px] flex items-center overflow-visible bg-[#F7F8FC]">
       {/* 1. CINEMATIC FULL-WIDTH BACKGROUND PHOTOGRAPHY (herobg.png) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <Image
@@ -193,7 +199,7 @@ export function HeroSection() {
       </div>
 
       {/* 2. HERO CONTENT LAYER */}
-      <div className="relative z-10 w-full max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-16 lg:py-20">
+      <div className="relative z-30 w-full max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-16 lg:py-20">
         <div className="max-w-2xl space-y-3.5 sm:space-y-5">
           {/* Eyebrow Trust Badge & Mobile Student Metric Row */}
           <div className="flex flex-wrap items-center gap-2">
@@ -295,13 +301,18 @@ export function HeroSection() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setIsOpen(true);
+                    const val = e.target.value;
+                    setSearchQuery(val);
+                    if (val.trim().length > 0) {
+                      setIsOpen(true);
+                    } else {
+                      setIsOpen(false);
+                      setSuggestions(null);
+                    }
                   }}
                   onFocus={() => {
-                    setIsOpen(true);
-                    if (!suggestions) {
-                      fetchSuggestions(searchQuery, selectedLocation, activeTab);
+                    if (searchQuery.trim().length > 0) {
+                      setIsOpen(true);
                     }
                   }}
                   onKeyDown={handleKeyDown}
@@ -324,6 +335,8 @@ export function HeroSection() {
                       type="button"
                       onClick={() => {
                         setSearchQuery("");
+                        setSuggestions(null);
+                        setIsOpen(false);
                         setSelectedIndex(-1);
                         inputRef.current?.focus();
                       }}
@@ -343,7 +356,9 @@ export function HeroSection() {
                   value={selectedLocation}
                   onChange={(e) => {
                     setSelectedLocation(e.target.value);
-                    setIsOpen(true);
+                    if (searchQuery.trim().length > 0) {
+                      setIsOpen(true);
+                    }
                   }}
                   className="bg-transparent text-[11px] sm:text-xs font-semibold text-[#15182D] outline-none cursor-pointer"
                 >
@@ -372,9 +387,9 @@ export function HeroSection() {
               </button>
             </form>
 
-            {/* LIVE AUTOCOMPLETE DROPDOWN POPOVER */}
-            {isOpen && (
-              <div className="absolute left-0 right-0 top-full mt-2.5 z-50 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden divide-y divide-gray-100 max-h-[460px] flex flex-col">
+            {/* LIVE AUTOCOMPLETE DROPDOWN POPOVER (only when user types) */}
+            {isOpen && searchQuery.trim().length > 0 && (
+              <div className="absolute left-0 right-0 top-full mt-2.5 z-50 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden divide-y divide-gray-100 max-h-[380px] flex flex-col">
                 {/* Header status */}
                 <div className="px-4 py-2 bg-gray-50/80 flex items-center justify-between text-[11px] text-[#687086] font-medium border-b border-gray-100">
                   <span>

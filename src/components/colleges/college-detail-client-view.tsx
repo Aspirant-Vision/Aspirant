@@ -1244,11 +1244,11 @@ export function CollegeDetailClientView({
                     </Link>
                     <CounselingTriggerButton
                       collegeName={rel.name}
-                      variant="outline"
+                      variant="primary"
                       size="sm"
                       label="Enquire"
                       showIcon={false}
-                      className="px-3 py-2 text-xs font-bold border-gray-200 hover:border-[#E31E2B]"
+                      className="px-4 py-2 rounded-xl text-xs font-bold text-white shrink-0"
                     />
                   </div>
                 </div>
